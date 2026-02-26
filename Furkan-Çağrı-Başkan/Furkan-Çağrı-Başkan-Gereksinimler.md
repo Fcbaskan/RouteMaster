@@ -35,13 +35,13 @@
    - **Açıklama:** Daha önce paylaşılmış bir gezi yazısının başlık, içerik veya lokasyon gibi bilgilerinin güncellenmesini sağlar. Yalnızca yazıyı oluşturan yazar (veya yönetici yetkisi olanlar) bu işlemi gerçekleştirebilir, yetki kontrolü zorunludur.
 
 10. **Gezi Yazısı Silme**
-   - **API Metodu:** `DELETE /posts/{postId}`
-   - **Açıklama:** Kullanıcının daha önce paylaştığı bir gezi yazısını ve ona bağlı verileri sistemden tamamen kaldırmasını sağlar. Yalnızca içeriğin sahibi tarafından yapılabilir. İşlem için giriş yapmış olmak gerekir.
+    - **API Metodu:** `DELETE /posts/{postId}`
+    - **Açıklama:** Kullanıcının daha önce paylaştığı bir gezi yazısını ve ona bağlı verileri sistemden tamamen kaldırmasını sağlar. Yalnızca içeriğin sahibi tarafından yapılabilir. İşlem için giriş yapmış olmak gerekir.
 
 11. **Şehir Bazlı Yazıları Listeleme**
-   - **API Metodu:** `GET /posts?city={cityName}`
-   - **Açıklama:** Kullanıcıların belirli bir şehre (örn: Roma, Paris) ait tüm gezi yazılarını listelemesini sağlar. Arama ve filtreleme işlemleri için kullanılır. Sisteme üye olmayan ziyaretçiler tarafından da serbestçe kullanılabilir.
+    - **API Metodu:** `GET /posts?city={cityName}`
+    - **Açıklama:** Kullanıcıların belirli bir şehre (örn: Roma, Paris) ait tüm gezi yazılarını listelemesini sağlar. Arama ve filtreleme işlemleri için kullanılır. Sisteme üye olmayan ziyaretçiler tarafından da serbestçe kullanılabilir.
 
 12. **Şehir Puanlama**
-   - **API Metodu:** `POST /ratings`
-   - **Açıklama:** Kullanıcıların ziyaret ettikleri bir şehre veya okudukları bir deneyime puan vererek değerlendirme yapmasını sağlar. Bu veriler genel puan ortalamasını hesaplamak için veritabanına kaydedilir. İşlemi yapmak için sisteme giriş yapmış olmak gerekir.
+    - **API Metodu:** `POST /ratings`
+    - **Açıklama:** Kullanıcıların ziyaret ettikleri bir şehre veya okudukları bir deneyime puan vererek değerlendirme yapmasını sağlar. Bu veriler genel puan ortalamasını hesaplamak için veritabanına kaydedilir. İşlemi yapmak için sisteme giriş yapmış olmak gerekir.

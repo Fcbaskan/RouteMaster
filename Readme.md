@@ -18,32 +18,24 @@ Etkileşimli yorum seçenekleri, güvenilir mekan değerlendirmeleri ve kullanı
 RouteMaster gezi platformumuza hoş geldiniz, dünyayı birlikte keşfetmek için sizleri bekliyoruz!
 
 **Proje Kategorisi:** 
-> Projenin hangi alanda yapıldığını belirten bir kategori. Örnek: E-Ticaret, Sosyal Medya vb.
-
-**Referans Uygulama:** 
-> [Örnek Referans Uygulama](https://example.com)
+Sosyal Seyahat ve Paylaşım Platformu
 
 ---
 
 ## Proje Linkleri
 
-- **REST API Adresi:** [api.yazmuh.com](https://api.yazmuh.com)
-- **Web Frontend Adresi:** [frontend.yazmuh.com](https://frontend.yazmuh.com)
+- **REST API Adresi:** [api.RouteMaster.com](https://api.RouteMaster.com)
+- **Web Frontend Adresi:** [frontend.RouteMaster.com](https://frontend.RouteMaster.com)
 
 ---
 
 ## Proje Ekibi
 
 **Grup Adı:** 
-> Belirlediğiniz grup adı buraya yazılacaktır.
+RotaX
 
 **Ekip Üyeleri:** 
-- Ali Tutar
-- Veli Yılmaz
-- Selami Demir
-- Ayşe Kaya
-- Fatma Öztürk
-- Hayriye Şahin
+- Furkan Çağrı Başkan
 
 ---
 
@@ -58,82 +50,3 @@ Proje dokümantasyonuna aşağıdaki linklerden erişebilirsiniz:
 5. [Mobil Front-End](MobilFrontEnd.md)
 6. [Mobil Backend](MobilBackEnd.md)
 7. [Video Sunum](Sunum.md)
-
----
-
-## Projeyi Klonlama ve Düzenleme
-
-**ÖNEMLİ:** Aşağıdaki işlemleri sadece grup lideri veya grup tarafından seçilen bir üye yapmalıdır.
-
-### Kendi Reponuzu Oluşturma ve Şablonu Ekleme (Grup Lideri veya Seçilen Üye)
-
-**Adım 1: Bu Şablon Repoyu Klonlama**
-1. Bu (YazMuh şablon) repoyu yerel bilgisayarınıza klonlayın:
-
-```bash
-git clone https://github.com/yazmuh/YazMuh.git
-```
-
-**Adım 2: Kendi Reponuza Ekleme**
-1. Kendi reponuzu da git clone ile çekerek Yazmuh şablonunu içine ekleyin.
-2. Böylece şablon projenin tüm içeriği kendi reponuza kopyalanmış olur.
-3. Grup lideri ya da seçilen üye şablon eklenmiş repoyu push etmeli ve diğer grup üyelerinin erişimine açmalı.
-
-**Adım 3: Diğer Grup Üyelerini Collaborator Olarak Ekleme**
-1. Kendi repo sayfanızda **Settings** sekmesine gidin
-2. Sol menüden **Collaborators** seçeneğine tıklayın
-3. **Add people** butonuna tıklayın
-4. Diğer grup üyelerinin GitHub kullanıcı adlarını veya email adreslerini girin
-5. Her bir grup üyesini **collaborator** olarak ekleyin
-6. Eklenen üyelere GitHub üzerinden davet gönderilecektir
-7. Her grup üyesi email'deki daveti kabul etmelidir
-
-**Adım 4: Diğer Grup Üyelerinin Projeyi Klonlaması**
-Repo sahibi ve collaborator olarak eklenen tüm grup üyeleri:
-
-```bash
-git clone https://github.com/repo-sahibinin-kullanici-adi/proje-adi.git
-```
-
-### Projeyi Düzenleme
-
-Kendi reponuza ekledikten sonra projeyi kendi bilgilerinizle güncellemeniz gerekmektedir:
-
-1. **Proje Bilgilerini Güncelleme:**
-   - `Readme.md` dosyasındaki proje adı, grup adı, ekip üyeleri
-   - Proje tanımı ve kategorisi
-   - Referans uygulama bilgisi
-
-2. **Gereksinimleri Ekleme:**
-   - `Gereksinim-Analizi.md` dosyasına kendi gereksinimlerinizi ekleyin
-   - Her ekip üyesi için bir klasör oluşturun (örn: `Ali-Tutar/`)
-   - Her ekip üyesinin klasörüne gereksinim dosyası ekleyin (örn: `Ali-Tutar/Ali-Tutar-Gereksinimler.md`)
-   - Gereksinim sayılarına dikkat edin (Gereksinim-Analizi.md dosyasındaki kurallara göre)
-
-3. **Dokümantasyonu Güncelleme:**
-   - Tüm dokümantasyon dosyalarını kendi projenize göre düzenleyin
-   - Her ekip üyesinin klasörüne görev dosyalarını ekleyin:
-     - `[İsim-Soyisim]/[İsim-Soyisim]-Rest-API-Gorevleri.md`
-     - `[İsim-Soyisim]/[İsim-Soyisim]-Web-Frontend-Gorevleri.md`
-     - `[İsim-Soyisim]/[İsim-Soyisim]-Mobil-Frontend-Gorevleri.md`
-     - `[İsim-Soyisim]/[İsim-Soyisim]-Mobil-Backend-Gorevleri.md`
-   - Ekip üyelerinin görevlerini güncelleyin
-   - API endpoint'lerini ve açıklamalarını kontrol edin
-
-4. **Değişiklikleri Kaydetme:**
-   ```bash
-   git add .
-   git commit -m "Proje bilgileri güncellendi"
-   git push origin main
-   ```
-
-### Notlar
-
-- **Repo oluşturma:** Sadece grup lideri veya seçilen bir üye yeni repo oluşturup şablonu eklemelidir.
-- **Collaborator ekleme:** Repo sahibi, diğer tüm grup üyelerini collaborator olarak eklemelidir.
-- **Repo adı:** GitHub'da yeni repo oluştururken repo adını proje adınız ile belirleyin.
-- **Klasör yapısı:** Her grup üyesi kendi klasörünü oluşturmalıdır. Klasör adı formatı: `[İsim-Soyisim]` (örn: `Ali-Tutar/`, `Veli-Yılmaz/`). Her grup üyesinin tüm dosyaları (gereksinimler, REST API görevleri, frontend görevleri vb.) kendi klasöründe bulunmalıdır.
-- **Tüm placeholder'ları değiştirin:** (örn: [Grup Üyesi 2], [Soyisim], PROJE ADI vb.) kendi bilgilerinizle değiştirin
-- **Dokümantasyon:** Tüm dokümantasyon dosyalarını eksiksiz doldurun
-- **Görev dağılımı:** Her ekip üyesi kendi görevlerini tamamlamalıdır
-- **İşbirliği:** Collaborator olarak eklenen üyeler, projeye doğrudan commit ve push yapabilirler

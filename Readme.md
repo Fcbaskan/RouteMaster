@@ -5,7 +5,7 @@
 
 ## Proje Hakkında
 
-![Ürün Tanıtım Görseli](RouteMater.png)
+![Ürün Tanıtım Görseli](RouteMaster.png)
 
 **Proje Tanımı:** 
 

@@ -1,17 +1,21 @@
 # RouteMater
 
-> **Not:** Bu bölüm proje adı ile güncellenmelidir.
 
 ---
 
 ## Proje Hakkında
 
-![Ürün Tanıtım Görseli](Product.png)
+![Ürün Tanıtım Görseli](RouteMater.png)
 
 **Proje Tanımı:** 
-> Projenin ne iş yaptığını anlatan bir paragraflık tanıtım metni buraya yazılacaktır.
 
-**Örnek:** ASY isimli e-ticaret sitemiz, online alışveriş deneyimini kolay ve keyifli hale getirmek için tasarlandı. Geniş ürün yelpazemiz sayesinde müşterilerimize en iyi seçenekleri sunarken, kullanıcı dostu arayüzümüz ile de alışveriş yapmayı daha rahat hale getiriyoruz. Sitemizde yer alan ürünler, kaliteli ve güvenilir markaların en yeni ve trend ürünlerinden oluşuyor. Müşterilerimiz, aradıkları ürünleri hızlı ve kolay bir şekilde bulabilirken, aynı zamanda satın alma süreçlerinde de sorunsuz bir deneyim yaşayacaklar. Hızlı teslimat seçenekleri, güvenli ödeme sistemleri ve müşteri memnuniyetine önem veren satış sonrası hizmetlerimizle, ASY olarak müşterilerimizin beklentilerini en üst seviyede karşılamayı hedefliyoruz. Her zaman en iyi fiyatlarla, kaliteli ürünleri müşterilerimize sunmak için çalışıyoruz ve müşteri memnuniyeti bizim için her zaman önceliklidir. ASY e-ticaret sitemize hoş geldiniz, size hizmet vermek için sabırsızlanıyoruz.
+RouteMaster isimli gezi ve deneyim paylaşım platformumuz, seyahat planlamayı ve yeni rotalar keşfetmeyi kolay ve keyifli hale getirmek için tasarlandı. Geniş lokasyon ağımız sayesinde dünyanın dört bir yanından şehirler için çok sayıda keşif seçeneği sunarken, kullanıcı dostu arayüzümüz ile seyahat anılarınızı paylaşmayı daha pratik hale getiriyoruz.
+
+Sitemizde yer alan içerikler, gerçek gezginlerin samimi düşüncelerinden, favori mekan önerilerinden ve gizli kalmış rotalardan oluşmaktadır. Aradığınız şehre ait deneyimlere hızlı ve kolay bir şekilde ulaşırken, aynı zamanda kendi gezi anılarınızı da topluluğumuzla paylaşarak ilham verici bir deneyim barındırıyorsunuz.
+
+Etkileşimli yorum seçenekleri, güvenilir mekan değerlendirmeleri ve kullanıcı deneyimine önem veren yapımızla, RouteMater olarak seyahat tutkunlarının beklentilerini en üst düzeyde karşılamayı hedefliyoruz. Her zaman en doğru seyahat ipuçlarını ve samimi tavsiyeleri sunmak bizim için birinci önceliktir.
+
+RouteMaster gezi platformumuza hoş geldiniz, dünyayı birlikte keşfetmek için sizleri bekliyoruz!
 
 **Proje Kategorisi:** 
 > Projenin hangi alanda yapıldığını belirten bir kategori. Örnek: E-Ticaret, Sosyal Medya vb.

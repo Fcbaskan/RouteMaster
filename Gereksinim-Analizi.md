@@ -1,40 +1,56 @@
 # Gereksinim Analizi
 
-Tüm gereksinimlerinizi çıkardıktan sonra beraber tartışıyoruz ve son gereksinimlerin isimlerini hangi API metoduna karşılık geleceğini ve kısa açıklamalarını buraya numaralı bir şekilde yazıyorsunuz. Daha sonra aşağıya herkes kendi gereksinimiyle ilgili sayfayı oluşturmalı ve kendi sayfasında kendine ait gereksinimleri numaralı bir şekilde listeleyerek her bir gereksinimin açıklamalarını yazmalı. Toplamda grup üyesi sayısı kadar sayfa oluşturulmalı. Her grup üyesine eşit sayıda gereksinim atanmalı.
-
-## Gereksinim Sayıları (En Az)
-
-- **1 Kişi:** 10 gereksinim
-- **2 Kişi:** 16 gereksinim
-- **3 Kişi:** 21 gereksinim
-- **4 Kişi:** 24 gereksinim
-- **5 Kişi:** 30 gereksinim
-
-## Gereksinimlerde Uyulması Gereken Kurallar
-
-1. **İsimler anlamlı olmalı:** Gereksinim isimleri net ve anlaşılır olmalıdır.
-2. **Açıklamalar net olmalı:** Her gereksinimin açıklaması açık ve anlaşılır şekilde yazılmalıdır.
-3. **Açıklamalar teknik jargon ve kısaltmalar içermemeli:** Gereksinim açıklamaları herkesin anlayabileceği basit bir dille yazılmalıdır.
-4. **Gereksinim isimleri çok uzun olmamalı ve bir eylem bildirmeli:** 
-   - İsimler kısa ve öz olmalıdır
-   - Bir eylem fiili içermelidir
-   - Örnekler: "Kayıt Olma", "Giriş Yapma", "Profil Güncelleme", "Hesap Silme"
-
 # Tüm Gereksinimler 
 
-1. **Giriş Yapma** (Ali Tutar)
-   - **API Metodu:** `POST /auth/login`
-   - **Açıklama:** Kullanıcıların sisteme giriş yaparak hizmetlere erişmesini sağlar. Email adresi ve şifre ile kimlik doğrulama yapılır. Başarılı giriş sonrası kullanıcıya erişim izni verilir ve kişisel verilerin güvenliği sağlanır.
-
-2. **Üye Olma** (Ali Tutar)
+1. **Üye Olma** (Furkan Çağrı Başkan)
    - **API Metodu:** `POST /auth/register`
-   - **Açıklama:** Kullanıcıların yeni hesaplar oluşturarak sisteme kayıt olmasını sağlar. Kişisel bilgilerin toplanmasını ve hesap oluşturma işlemlerini içerir. Kullanıcılar email adresi ve şifre belirleyerek hesap oluşturur.
+   - **Açıklama:** Kullanıcıların sisteme yeni bir hesap oluşturarak kayıt olmasını sağlar. Ad, soyad, e-posta ve şifre gibi temel bilgilerin toplanıp veritabanına kaydedilmesini içerir. Hesap oluşturulduktan sonra kullanıcı sisteme giriş yapabilir duruma gelir.
+
+2. **Profil Getirme** (Furkan Çağrı Başkan)
+   - **API Metodu:** `GET /users/{userId}`
+   - **Açıklama:** Belirli bir kullanıcının profil sayfasını ve genel bilgilerini görüntülemek için kullanılır. Ziyaretçiler diğer yazarların profillerini ve o güne kadar paylaştıkları yazıları bu uç nokta üzerinden inceleyebilir.
+
+3. **Profil Güncelleme** (Furkan Çağrı Başkan)
+   - **API Metodu:** `PUT /users/{userId}`
+   - **Açıklama:** Kullanıcının mevcut profil bilgilerini değiştirmesini sağlar. İsim, e-posta, biyografi veya profil fotoğrafı gibi alanlar güncellenebilir. Güvenlik için kullanıcının sisteme giriş yapmış (yetkilendirilmiş) olması gerekir ve herkes yalnızca kendi profilini güncelleyebilir.
+
+4. **Şifreyi Güncelleme** (Furkan Çağrı Başkan)
+   - **API Metodu:** `PUT /auth/password`
+   - **Açıklama:** Kullanıcının mevcut hesap şifresini yeni bir şifre ile değiştirmesini sağlar. Güvenlik amacıyla eski şifrenin doğrulanmasını gerektirir. Kullanıcının güvenli bir şekilde giriş yapmış olması zorunludur.
+
+5. **Favori Getirme** (Furkan Çağrı Başkan)
+   - **API Metodu:** `GET /users/{userId}/favorites`
+   - **Açıklama:** Kullanıcının daha önce beğendiği veya "Gidilecek Yerler" listesine eklediği gezi yazılarını listelemesini sağlar. Özel bir liste olduğu için sadece kullanıcının kendi favorilerini görebilmesi adına yetkilendirme (giriş yapma) şarttır.
+
+6. **Hesap Silme** (Furkan Çağrı Başkan)
+   - **API Metodu:** `DELETE /users/{userId}`
+   - **Açıklama:** Kullanıcının kendi hesabını platformdan kalıcı olarak silmesini sağlar. Bu işlem geri alınamaz ve kullanıcının kişisel verilerini sistemden temizler. Güvenlik için giriş yapmış olmak zorunludur.
+
+7. **Yeni Gezi Yazısı Ekleme** (Furkan Çağrı Başkan)
+   - **API Metodu:** `POST /posts`
+   - **Açıklama:** Kullanıcıların gezdiği bir ülke veya şehir hakkındaki deneyimlerini, mekan önerilerini ve anılarını sisteme eklemesini sağlar. İçeriğin veritabanına kaydedilebilmesi için kullanıcının üye girişi yapmış olması zorunludur.
+
+8. **Gezi Yazısı Detayını Görüntüleme** (Furkan Çağrı Başkan)
+   - **API Metodu:** `GET /posts/{postId}`
+   - **Açıklama:** Belirli bir gezi yazısının tüm içeriğinin, yazar bilgilerinin ve (varsa) eklenen fotoğrafların detaylı olarak okunmasını sağlar. Bu işlem herkese açıktır, içeriği okumak için üye girişi gerektirmez.
+
+9. **Gezi Yazısı Düzenleme** (Furkan Çağrı Başkan)
+   - **API Metodu:** `PUT /posts/{postId}`
+   - **Açıklama:** Daha önce paylaşılmış bir gezi yazısının başlık, içerik veya lokasyon gibi bilgilerinin güncellenmesini sağlar. Yalnızca yazıyı oluşturan yazar (veya yönetici yetkisi olanlar) bu işlemi gerçekleştirebilir, yetki kontrolü zorunludur.
+
+10. **Gezi Yazısı Silme** (Furkan Çağrı Başkan)
+   - **API Metodu:** `DELETE /posts/{postId}`
+   - **Açıklama:** Kullanıcının daha önce paylaştığı bir gezi yazısını ve ona bağlı verileri sistemden tamamen kaldırmasını sağlar. Yalnızca içeriğin sahibi tarafından yapılabilir. İşlem için giriş yapmış olmak gerekir.
+
+11. **Şehir Bazlı Yazıları Listeleme** (Furkan Çağrı Başkan)
+   - **API Metodu:** `GET /posts?city={cityName}`
+   - **Açıklama:** Kullanıcıların belirli bir şehre (örn: Roma, Paris) ait tüm gezi yazılarını listelemesini sağlar. Arama ve filtreleme işlemleri için kullanılır. Sisteme üye olmayan ziyaretçiler tarafından da serbestçe kullanılabilir.
+
+12. **Şehir Puanlama** (Furkan Çağrı Başkan)
+   - **API Metodu: POST /ratings**
+   - **Açıklama:** Kullanıcıların ziyaret ettikleri bir şehre veya okudukları bir deneyime puan vererek değerlendirme yapmasını sağlar. Bu veriler genel puan ortalamasını hesaplamak için veritabanına kaydedilir. İşlemi yapmak için sisteme giriş yapmış olmak gerekir.
+
 
 # Gereksinim Dağılımları
 
-1. [Ali Tutar'ın Gereksinimleri](Ali-Tutar/Ali-Tutar-Gereksinimler.md)
-2. [Grup Üyesi 2'nin Gereksinimleri](Grup-Uyesi-2/Grup-Uyesi-2-Gereksinimler.md)
-3. [Grup Üyesi 3'ün Gereksinimleri](Grup-Uyesi-3/Grup-Uyesi-3-Gereksinimler.md)
-4. [Grup Üyesi 4'ün Gereksinimleri](Grup-Uyesi-4/Grup-Uyesi-4-Gereksinimler.md)
-5. [Grup Üyesi 5'in Gereksinimleri](Grup-Uyesi-5/Grup-Uyesi-5-Gereksinimler.md)
-6. [Grup Üyesi 6'nın Gereksinimleri](Grup-Uyesi-6/Grup-Uyesi-6-Gereksinimler.md)
+1. [Furkan Çağrı Başkan'ın Gereksinimleri](Furkan-Çağrı-Başkan/Furkan-Çağrı-Başkan-Gereksinimler.md)

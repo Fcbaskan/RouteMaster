@@ -47,7 +47,7 @@
    - **Açıklama:** Kullanıcıların belirli bir şehre (örn: Roma, Paris) ait tüm gezi yazılarını listelemesini sağlar. Arama ve filtreleme işlemleri için kullanılır. Sisteme üye olmayan ziyaretçiler tarafından da serbestçe kullanılabilir.
 
 12. **Şehir Puanlama** (Furkan Çağrı Başkan)
-   - **API Metodu: POST /ratings**
+   - **API Metodu:** `POST /ratings`
    - **Açıklama:** Kullanıcıların ziyaret ettikleri bir şehre veya okudukları bir deneyime puan vererek değerlendirme yapmasını sağlar. Bu veriler genel puan ortalamasını hesaplamak için veritabanına kaydedilir. İşlemi yapmak için sisteme giriş yapmış olmak gerekir.
 
 

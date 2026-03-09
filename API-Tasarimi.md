@@ -2,8 +2,13 @@
 
 Bu doküman, OpenAPI Specification (OAS) 3.0 standardına göre hazırlanmış örnek bir API tasarımını içermektedir.
 
+## Genel Bakış
+
+Bu örnek, bir e-ticaret platformu için kullanıcı ve ürün yönetimi API'sini göstermektedir.
+
 ## OpenAPI Specification
 
+```yaml
 openapi: 3.0.3
 info:
   title: RouteMaster API
@@ -891,3 +896,4 @@ components:
       required:
         - message
 
+```

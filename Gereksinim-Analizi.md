@@ -15,7 +15,7 @@
    - **Açıklama:** Kullanıcının mevcut profil bilgilerini değiştirmesini sağlar. İsim, e-posta, biyografi veya profil fotoğrafı gibi alanlar güncellenebilir. Güvenlik için kullanıcının sisteme giriş yapmış (yetkilendirilmiş) olması gerekir ve herkes yalnızca kendi profilini güncelleyebilir.
 
 4. **Şifreyi Güncelleme** (Furkan Çağrı Başkan)
-   - **API Metodu:** `PUT /auth/password`
+   - **API Metodu:** `PUT /auth/users/{userid}/password`
    - **Açıklama:** Kullanıcının mevcut hesap şifresini yeni bir şifre ile değiştirmesini sağlar. Güvenlik amacıyla eski şifrenin doğrulanmasını gerektirir. Kullanıcının güvenli bir şekilde giriş yapmış olması zorunludur.
 
 5. **Favori Getirme** (Furkan Çağrı Başkan)
@@ -23,27 +23,27 @@
    - **Açıklama:** Kullanıcının daha önce beğendiği veya "Gidilecek Yerler" listesine eklediği gezi yazılarını listelemesini sağlar. Özel bir liste olduğu için sadece kullanıcının kendi favorilerini görebilmesi adına yetkilendirme (giriş yapma) şarttır.
 
 6. **Hesap Silme** (Furkan Çağrı Başkan)
-   - **API Metodu:** `DELETE /users/{userId}`
+   - **API Metodu:** `DELETE /auth/users/{userId}`
    - **Açıklama:** Kullanıcının kendi hesabını platformdan kalıcı olarak silmesini sağlar. Bu işlem geri alınamaz ve kullanıcının kişisel verilerini sistemden temizler. Güvenlik için giriş yapmış olmak zorunludur.
 
 7. **Yeni Gezi Yazısı Ekleme** (Furkan Çağrı Başkan)
-   - **API Metodu:** `POST /posts`
+   - **API Metodu:** `POST /travelogue`
    - **Açıklama:** Kullanıcıların gezdiği bir ülke veya şehir hakkındaki deneyimlerini, mekan önerilerini ve anılarını sisteme eklemesini sağlar. İçeriğin veritabanına kaydedilebilmesi için kullanıcının üye girişi yapmış olması zorunludur.
 
 8. **Gezi Yazısı Detayını Görüntüleme** (Furkan Çağrı Başkan)
-   - **API Metodu:** `GET /posts/{postId}`
+   - **API Metodu:** `GET /travelogue/{travelogueId}`
    - **Açıklama:** Belirli bir gezi yazısının tüm içeriğinin, yazar bilgilerinin ve (varsa) eklenen fotoğrafların detaylı olarak okunmasını sağlar. Bu işlem herkese açıktır, içeriği okumak için üye girişi gerektirmez.
 
 9. **Gezi Yazısı Düzenleme** (Furkan Çağrı Başkan)
-   - **API Metodu:** `PUT /posts/{postId}`
+   - **API Metodu:** `PUT /travelogue/{travelogueId}`
    - **Açıklama:** Daha önce paylaşılmış bir gezi yazısının başlık, içerik veya lokasyon gibi bilgilerinin güncellenmesini sağlar. Yalnızca yazıyı oluşturan yazar (veya yönetici yetkisi olanlar) bu işlemi gerçekleştirebilir, yetki kontrolü zorunludur.
 
 10. **Gezi Yazısı Silme** (Furkan Çağrı Başkan)
-    - **API Metodu:** `DELETE /posts/{postId}`
+    - **API Metodu:** `DELETE /travelogue/{travelogueId}`
     - **Açıklama:** Kullanıcının daha önce paylaştığı bir gezi yazısını ve ona bağlı verileri sistemden tamamen kaldırmasını sağlar. Yalnızca içeriğin sahibi tarafından yapılabilir. İşlem için giriş yapmış olmak gerekir.
 
 11. **Şehir Bazlı Yazıları Listeleme** (Furkan Çağrı Başkan)
-    - **API Metodu:** `GET /posts?city={cityName}`
+    - **API Metodu:** `GET /travelogue?city={cityName}`
     - **Açıklama:** Kullanıcıların belirli bir şehre (örn: Roma, Paris) ait tüm gezi yazılarını listelemesini sağlar. Arama ve filtreleme işlemleri için kullanılır. Sisteme üye olmayan ziyaretçiler tarafından da serbestçe kullanılabilir.
 
 12. **Şehir Puanlama** (Furkan Çağrı Başkan)

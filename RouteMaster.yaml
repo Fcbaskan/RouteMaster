@@ -410,63 +410,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /travelogue?city={cityname}:
-    parameters:
-      - name: cityid
-        in: path
-        required: true
-        description: Şehrin benzersiz kimlik numarası veya şehir adı
-        schema:
-          type: string
-        example: "istanbul"
-
-    get:
-      tags:
-        - Şehirler
-      summary: Şehir Bazlı Gönderileri Listele
-      operationId: listCityTravelogues
-      parameters:
-        - name: page
-          in: query
-          required: false
-          description: Sayfa numarası (varsayılan 1)
-          schema:
-            type: integer
-            minimum: 1
-            default: 1
-          example: 1
-        - name: limit
-          in: query
-          required: false
-          description: Sayfa başına sonuç sayısı (varsayılan 10, maksimum 50)
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 50
-            default: 10
-          example: 10
-      responses:
-        "200":
-          description: Şehir bazlı gönderiler başarıyla listelendi
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Travelogue'
-        "401":
-          description: Kimlik doğrulama başarısız (token eksik veya geçersiz)
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        "404":
-          description: Şehir bulunamadı
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
   /ratings:
     parameters:
       - name: cityid
@@ -514,7 +457,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /usrs/{userid}/favorites:
+  /users/{userid}/favorites:
     get:
       tags:
         - Favoriler

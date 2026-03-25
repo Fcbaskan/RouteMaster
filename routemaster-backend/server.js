@@ -3,32 +3,55 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
+// Modelleri İçe Aktar
 const { User, Travelogue, CityRating, Favorite } = require('./models');
 
 const app = express();
+
+// --- Gerekli Ayarlar (Middleware) ---
+app.use(express.json());
+app.use(cors());
+
 // --- Ana Sayfa (Test İçin) ---
 app.get('/', (req, res) => {
     res.send("RouteMaster API Vercel Üzerinde Başarıyla Çalışıyor! 🚀");
 });
-const PORT = 3000;
 
-// --- Kurşungeçirmez MongoDB Bağlantısı ---
+// --- VERCEL SUNUCUSUZ (SERVERLESS) BAĞLANTI SİSTEMİ ---
+let isConnected = false; // Bağlantı durumunu hafızada tut
 
-// 1. Mongoose'un o sinir bozucu "bekleme" (buffering) huyunu kapatalım ki 
-// bağlanamazsa 10 saniye beklemesin, hatayı anında yüzümüze söylesin.
-mongoose.set('bufferCommands', false);
+const connectDB = async () => {
+    if (isConnected) {
+        return; // Zaten bağlıysa tekrar uğraşma
+    }
+    
+    try {
+        // Await ile bağlantının TAMAMEN bitmesini bekle
+        const db = await mongoose.connect(process.env.MONGODB_URI);
+        isConnected = db.connections[0].readyState === 1;
+        console.log("MongoDB Atlas'a Başarıyla Bağlanıldı! 🚀");
+    } catch (error) {
+        console.error("Veritabanı bağlantı hatası:", error);
+        throw error;
+    }
+};
 
-// 2. Doğrudan bağlantı kuralım
-mongoose.connect(process.env.MONGODB_URI, {
-    serverSelectionTimeoutMS: 5000 // Bağlanması 5 saniyeyi geçerse direkt hata ver
-})
-.then(() => console.log("MongoDB Atlas'a başarıyla bağlanıldı! 🚀"))
-.catch((err) => console.error("MongoDB Bağlantı Hatası (Detaylı):", err));
+// --- SİHİRLİ BEKLEME KAPISI (MIDDLEWARE) ---
+// Postman'den gelen her istek önce buraya çarpar. 
+// Veritabanı %100 bağlanana kadar alt satırdaki rotalara inmez!
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next(); // Bağlantı bittiyse yola devam et (Giriş yap, kayıt ol vs.)
+    } catch (err) {
+        res.status(500).json({ error: "Sunucu veritabanına bağlanamadı." });
+    }
+});
 
-app.use(express.json());
-app.use(cors());
-
-
+// ==========================================
+// BUNDAN SONRA SENİN YAZDIĞIN ROTALAR BAŞLAYACAK
+// Örneğin: app.post('/auth/login', async (req, res) => { ... })
+// ==========================================
 app.post('/auth/register', async (req, res) => {
     try {
         const { username, email, password, displayName } = req.body;

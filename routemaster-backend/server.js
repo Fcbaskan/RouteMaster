@@ -15,10 +15,26 @@ const PORT = 3000;
 app.use(express.json());
 app.use(cors());
 
-mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log("MongoDB Atlas'a (Buluta) Başarıyla Bağlanıldı!"))
-    .catch((err) => console.log("Veritabanı bağlantı hatası:", err));
+// --- Vercel Uyku Modu İçin Akıllı Veritabanı Bağlantısı ---
+const connectDB = async () => {
+    // Eğer bağlantı zaten varsa (sunucu uyanıksa), tekrar bağlanmaya çalışma
+    if (mongoose.connection.readyState >= 1) {
+        return;
+    }
+    // Bağlantı kopmuşsa veya ilk kez çalışıyorsa bağlan
+    try {
+        await mongoose.connect(process.env.MONGODB_URI);
+        console.log("MongoDB Atlas'a Başarıyla Bağlanıldı!");
+    } catch (error) {
+        console.log("Veritabanı bağlantı hatası:", error);
+    }
+};
 
+// Vercel'e gelen HER istekten önce bağlantının hayatta olup olmadığını kontrol et
+app.use(async (req, res, next) => {
+    await connectDB();
+    next();
+});
 
 app.post('/auth/register', async (req, res) => {
     try {

@@ -6,6 +6,10 @@ const mongoose = require('mongoose');
 const { User, Travelogue, CityRating, Favorite } = require('./models');
 
 const app = express();
+// --- Ana Sayfa (Test İçin) ---
+app.get('/', (req, res) => {
+    res.send("RouteMaster API Vercel Üzerinde Başarıyla Çalışıyor! 🚀");
+});
 const PORT = 3000;
 
 app.use(express.json());
@@ -362,3 +366,6 @@ app.put('/auth/users/:userid/password', async (req, res) => {
 app.listen(PORT, () => {
     console.log(`🚀 RouteMaster API çalışıyor: http://localhost:${PORT}`);
 });
+
+// VERCEL İÇİN GEREKLİ DIŞA AKTARMA KODU
+module.exports = app;

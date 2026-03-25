@@ -363,9 +363,15 @@ app.put('/auth/users/:userid/password', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`🚀 RouteMaster API çalışıyor: http://localhost:${PORT}`);
-});
+// --- Vercel ve Localhost Uyumlu Başlatma Kodu ---
 
-// VERCEL İÇİN GEREKLİ DIŞA AKTARMA KODU
+// Eğer ortam 'production' (yani Vercel) değilse, yerel sunucuyu başlat (Postman testleri için)
+if (process.env.NODE_ENV !== 'production') {
+    const PORT = 3000;
+    app.listen(PORT, () => {
+        console.log(`Yerel sunucu ${PORT} portunda çalışıyor...`);
+    });
+}
+
+// Vercel'in API'yi okuyabilmesi için gerekli dışa aktarma (Kilit Nokta!)
 module.exports = app;

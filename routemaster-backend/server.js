@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -10,9 +11,9 @@ const PORT = 3000;
 app.use(express.json());
 app.use(cors());
 
-mongoose.connect('mongodb://127.0.0.1:27017/routemaster')
-  .then(() => console.log('✅ MongoDB veritabanına başarıyla bağlanıldı!'))
-  .catch((err) => console.error('❌ MongoDB bağlantı hatası:', err));
+mongoose.connect(process.env.MONGODB_URI)
+    .then(() => console.log("MongoDB Atlas'a (Buluta) Başarıyla Bağlanıldı!"))
+    .catch((err) => console.log("Veritabanı bağlantı hatası:", err));
 
 
 app.post('/auth/register', async (req, res) => {
@@ -47,6 +48,41 @@ app.post('/auth/register', async (req, res) => {
 
     } catch (error) {
         console.error("Kayıt hatası:", error);
+        res.status(500).json({ message: "Sunucu hatası oluştu.", error: error.message });
+    }
+});
+
+// --- Kullanıcı Girişi / Login (POST) ---
+app.post('/auth/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // Kullanıcı e-posta ve şifre girmiş mi kontrolü
+        if (!email || !password) {
+            return res.status(400).json({ message: "E-posta ve şifre zorunludur!" });
+        }
+
+        // Veritabanında bu e-postaya sahip bir kullanıcı ara
+        const user = await User.findOne({ email });
+
+        // Kullanıcı yoksa veya şifre eşleşmiyorsa hata dön
+        if (!user || user.password !== password) {
+            return res.status(401).json({ message: "Geçersiz e-posta veya şifre!" });
+        }
+
+        // Güvenlik: Şifreyi frontend'e (veya Postman'e) geri gönderme
+        const userResponse = user.toObject();
+        delete userResponse.password;
+
+        // Normalde burada JWT (Json Web Token) üretilip gönderilir, 
+        // ancak projenin bu aşamasında girişin başarılı olduğunu ve kullanıcı bilgilerini dönmemiz yeterli.
+        res.status(200).json({ 
+            message: "Giriş başarılı!", 
+            user: userResponse 
+        });
+
+    } catch (error) {
+        console.error("Giriş hatası:", error);
         res.status(500).json({ message: "Sunucu hatası oluştu.", error: error.message });
     }
 });

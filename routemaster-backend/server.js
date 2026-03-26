@@ -274,6 +274,26 @@ app.post('/ratings/:travelogueId', async (req, res) => {
     }
 });
 
+app.delete('/ratings/:travelogueId/:userId', async (req, res) => {
+    try {
+        const travelogueId = req.params.travelogueId;
+        const userId = req.params.userId;
+
+        const deletedRating = await CityRating.findOneAndDelete({ 
+            travelogueId: travelogueId, 
+            userId: userId 
+        });
+
+        if (!deletedRating) {
+            return res.status(404).json({ message: "Bu gezi yazısına ait bir puanlamanız bulunamadı." });
+        }
+
+        res.status(200).json({ message: "Puanlama başarıyla silindi." });
+    } catch (error) {
+        res.status(500).json({ message: "Puanlama silinirken hata oluştu.", error: error.message });
+    }
+});
+
 app.put('/auth/users/:userid/password', async (req, res) => {
     try {
         const { currentPassword, newPassword } = req.body;

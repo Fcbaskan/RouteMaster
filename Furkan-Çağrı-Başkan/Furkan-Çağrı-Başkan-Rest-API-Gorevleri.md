@@ -202,4 +202,3 @@
 - **Path Parameters:** - id (string, required) - Favori ID'si
 
 - **Response:** `204 No Content` - Rota favorilerden çıkarıldı
-```

@@ -306,8 +306,11 @@ app.post('/favorites', async (req, res) => {
             message: "Gezi yazısı favorilere başarıyla eklendi!", 
             favorite: newFavorite 
         });
-    } catch (error) {
-        res.status(500).json({ error: "Favori eklenirken sunucu hatası oluştu." });
+} catch (error) {
+        res.status(500).json({ 
+            error: "Favori eklenirken sunucu hatası oluştu.", 
+            detay: error.message 
+        });
     }
 });
 

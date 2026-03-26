@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
-const { User, Travelogue, CityRating, Favorite } = require('./models');
+const { User, Travelogue, TravelogueRating, Favorite } = require('./models');
 
 const app = express();
 
@@ -250,24 +250,26 @@ app.get('/travelogue', async (req, res) => {
     }
 });
 
-app.post('/ratings/:cityid', async (req, res) => {
+app.post('/ratings/:travelogueId', async (req, res) => {
     try {
-        const cityId = req.params.cityid;
-        
+        const travelogueId = req.params.travelogueId;
         const { userId, rating } = req.body; 
 
         if (!userId || !rating) {
             return res.status(400).json({ message: "Kullanıcı ID ve puan (rating) zorunludur." });
         }
-
-        const newRating = new CityRating({
-            cityId,
-            userId,
-            rating
+    
+        const newRating = new TravelogueRating({
+            travelogueId: travelogueId,
+            userId: userId,
+            rating: rating
         });
 
         await newRating.save();
-        res.status(201).json(newRating);
+        res.status(201).json({
+            message: "Gezi yazısı başarıyla puanlandı! ⭐",
+            data: newRating
+        });
     } catch (error) {
         res.status(500).json({ message: "Puanlama yapılırken hata oluştu.", error: error.message });
     }

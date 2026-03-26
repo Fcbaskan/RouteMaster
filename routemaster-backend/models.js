@@ -22,7 +22,7 @@ var travelogueSchema = new mongoose.Schema({
     updatedAt: { type: Date, default: Date.now }
 });
 
-var cityRatingSchema = new mongoose.Schema({
+var travelogueRatingSchema = new mongoose.Schema({
     cityId: { type: String, required: true },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     rating: { type: Number, required: true, min: 1, max: 5 },
@@ -38,7 +38,7 @@ var favoriteSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema, 'users');
 const Travelogue = mongoose.model('Travelogue', travelogueSchema, 'travelogues');
-const CityRating = mongoose.model('CityRating', cityRatingSchema, 'cityratings');
+const TravelogueRating = mongoose.model('TravelogueRating', travelogueRatingSchema, 'travelogueratings');
 const Favorite = mongoose.model('Favorite', favoriteSchema, 'favorites');
 
-module.exports = { User, Travelogue, CityRating, Favorite };
+module.exports = { User, Travelogue, TravelogueRating, Favorite };

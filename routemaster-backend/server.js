@@ -107,12 +107,11 @@ app.post('/auth/login', async (req, res) => {
 app.put('/users/:userid', async (req, res) => {
     try {
         const userId = req.params.userid; 
-        
-        const { displayName, bio, avatarUrl } = req.body;
+        const { email, displayName } = req.body;
 
         const updatedUser = await User.findByIdAndUpdate(
             userId, 
-            { displayName, bio, avatarUrl }, 
+            { email, displayName }, 
             { new: true, runValidators: true }
         );
 

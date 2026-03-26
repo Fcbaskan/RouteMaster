@@ -299,7 +299,6 @@ app.put('/auth/users/:userid/password', async (req, res) => {
 
 app.post('/favorites', async (req, res) => {
     try {
-        // Modelin beklediği gerçek kelimeleri (itemId ve type) alıyoruz
         const { userId, itemId, type } = req.body;
 
         const newFavorite = new Favorite({ userId, itemId, type });
@@ -327,15 +326,21 @@ app.get('/favorites/:userId', async (req, res) => {
     }
 });
 
-app.delete('/favorites/:userid', async (req, res) => {
+app.delete('/favorites/:itemId', async (req, res) => {
     try {
-        const deletedFavorite = await Favorite.findByIdAndDelete(req.params.id);
+        const { userId } = req.body;
+        const itemId = req.params.itemId;
 
+        const deletedFavorite = await Favorite.findOneAndDelete({ 
+            userId: userId, 
+            itemId: itemId 
+        });
+        
         if (!deletedFavorite) {
-            return res.status(404).json({ message: "Silinmek istenen favori bulunamadı." });
+            return res.status(404).json({ message: "Bu gezi yazısı zaten favorilerinizde yok." });
         }
         
-        res.status(200).json({ message: "Gezi favorilerden başarıyla çıkarıldı." });
+        res.status(200).json({ message: "Gezi yazısı favorilerden başarıyla çıkarıldı." });
     } catch (error) {
         res.status(500).json({ message: "Favori silinirken bir hata oluştu.", error: error.message });
     }

@@ -279,7 +279,7 @@ app.delete('/ratings/:travelogueId/:userId', async (req, res) => {
         const travelogueId = req.params.travelogueId;
         const userId = req.params.userId;
 
-        const deletedRating = await CityRating.findOneAndDelete({ 
+        const deletedRating = await TravelogueRating.findOneAndDelete({ 
             travelogueId: travelogueId, 
             userId: userId 
         });

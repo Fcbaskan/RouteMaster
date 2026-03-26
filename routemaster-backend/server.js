@@ -297,16 +297,17 @@ app.put('/auth/users/:userid/password', async (req, res) => {
 
 app.post('/favorites', async (req, res) => {
     try {
-        const { userId, travelogueId } = req.body;
+        // Modelin beklediği gerçek kelimeleri (itemId ve type) alıyoruz
+        const { userId, itemId, type } = req.body;
 
-        const newFavorite = new Favorite({ userId, travelogueId });
+        const newFavorite = new Favorite({ userId, itemId, type });
         await newFavorite.save();
 
         res.status(201).json({ 
-            message: "Gezi yazısı favorilere başarıyla eklendi!", 
+            message: "Başarıyla favorilere eklendi!", 
             favorite: newFavorite 
         });
-} catch (error) {
+    } catch (error) {
         res.status(500).json({ 
             error: "Favori eklenirken sunucu hatası oluştu.", 
             detay: error.message 

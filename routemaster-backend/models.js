@@ -31,8 +31,8 @@ var cityRatingSchema = new mongoose.Schema({
 
 var favoriteSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    type: { type: String, enum: ['travelogue', 'city'], required: true }, // Ne favorilendi?
-    itemId: { type: String, required: true }, // Gezi yazısı ID'si veya Şehir adı
+    type: { type: String, enum: ['travelogue', 'city'], required: true },
+    itemId: { type: String, required: true },
     createdAt: { type: Date, default: Date.now }
 });
 

@@ -104,7 +104,7 @@ app.post('/auth/login', async (req, res) => {
     }
 });
 
-app.put('/users/:userid', async (req, res) => {
+app.put('/auth/users/:userid', async (req, res) => {
     try {
         const userId = req.params.userid; 
         const { email, displayName } = req.body;
@@ -130,7 +130,7 @@ app.put('/users/:userid', async (req, res) => {
     }
 });
 
-app.get('/users/:userid', async (req, res) => {
+app.get('/auth/users/:userid', async (req, res) => {
     try {
         const user = await User.findById(req.params.userid).select('-password');
         

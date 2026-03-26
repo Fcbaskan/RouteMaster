@@ -326,10 +326,10 @@ app.get('/favorites/:userId', async (req, res) => {
     }
 });
 
-app.delete('/favorites/:itemId', async (req, res) => {
+app.delete('/favorites/:itemId/:userId', async (req, res) => {
     try {
-        const { userId } = req.body;
         const itemId = req.params.itemId;
+        const userId = req.params.userId;
 
         const deletedFavorite = await Favorite.findOneAndDelete({ 
             userId: userId, 

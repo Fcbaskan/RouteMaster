@@ -273,45 +273,6 @@ app.post('/ratings/:cityid', async (req, res) => {
     }
 });
 
-app.post('/users/:userid/favorites', async (req, res) => {
-    try {
-        const userId = req.params.userid;
-        const { type, itemId } = req.body; 
-
-        if (!type || !itemId) {
-            return res.status(400).json({ message: "Tip (type) ve Öğe (itemId) zorunludur." });
-        }
-
-        const existingFavorite = await Favorite.findOne({ userId, type, itemId });
-        if (existingFavorite) {
-            return res.status(409).json({ message: "Bu öğe zaten favorilerinizde ekli!" });
-        }
-
-        const newFavorite = new Favorite({ userId, type, itemId });
-        await newFavorite.save();
-
-        res.status(201).json(newFavorite);
-    } catch (error) {
-        res.status(500).json({ message: "Favorilere eklenirken hata oluştu.", error: error.message });
-    }
-});
-
-app.get('/users/:userid/favorites', async (req, res) => {
-    try {
-        const { type } = req.query;
-        let filter = { userId: req.params.userid };
-        
-        if (type) {
-            filter.type = type;
-        }
-
-        const favorites = await Favorite.find(filter).sort({ createdAt: -1 });
-        res.status(200).json(favorites);
-    } catch (error) {
-        res.status(500).json({ message: "Favoriler getirilirken hata oluştu.", error: error.message });
-    }
-});
-
 app.put('/auth/users/:userid/password', async (req, res) => {
     try {
         const { currentPassword, newPassword } = req.body;
@@ -334,7 +295,33 @@ app.put('/auth/users/:userid/password', async (req, res) => {
     }
 });
 
-app.delete('/favorites/:id', async (req, res) => {
+app.post('/favorites', async (req, res) => {
+    try {
+        const { userId, travelogueId } = req.body;
+
+        const newFavorite = new Favorite({ userId, travelogueId });
+        await newFavorite.save();
+
+        res.status(201).json({ 
+            message: "Gezi yazısı favorilere başarıyla eklendi!", 
+            favorite: newFavorite 
+        });
+    } catch (error) {
+        res.status(500).json({ error: "Favori eklenirken sunucu hatası oluştu." });
+    }
+});
+
+app.get('/favorites/:userId', async (req, res) => {
+    try {
+        const userFavorites = await Favorite.find({ userId: req.params.userId });
+        
+        res.status(200).json(userFavorites);
+    } catch (error) {
+        res.status(500).json({ error: "Favoriler getirilirken hata oluştu." });
+    }
+});
+
+app.delete('/favorites/:userid', async (req, res) => {
     try {
         const deletedFavorite = await Favorite.findByIdAndDelete(req.params.id);
 

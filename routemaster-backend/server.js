@@ -334,6 +334,20 @@ app.put('/auth/users/:userid/password', async (req, res) => {
     }
 });
 
+app.delete('/favorites/:id', async (req, res) => {
+    try {
+        const deletedFavorite = await Favorite.findByIdAndDelete(req.params.id);
+
+        if (!deletedFavorite) {
+            return res.status(404).json({ message: "Silinmek istenen favori bulunamadı." });
+        }
+        
+        res.status(200).json({ message: "Gezi favorilerden başarıyla çıkarıldı." });
+    } catch (error) {
+        res.status(500).json({ message: "Favori silinirken bir hata oluştu.", error: error.message });
+    }
+});
+
 if (process.env.NODE_ENV !== 'production') {
     const PORT = 3000;
     app.listen(PORT, () => {

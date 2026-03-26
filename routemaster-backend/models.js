@@ -23,7 +23,7 @@ var travelogueSchema = new mongoose.Schema({
 });
 
 var travelogueRatingSchema = new mongoose.Schema({
-    cityId: { type: String, required: true },
+    travelogueId: { type: String, required: true },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     rating: { type: Number, required: true, min: 1, max: 5 },
     createdAt: { type: Date, default: Date.now }

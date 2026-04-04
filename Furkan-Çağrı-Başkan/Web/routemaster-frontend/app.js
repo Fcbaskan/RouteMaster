@@ -136,14 +136,25 @@ async function fetchTravelogues(arananSehir = "") {
             return;
         }
 
-        yazilar.forEach(yazi => {
+yazilar.forEach(yazi => {
             container.innerHTML += `
                 <div class="card">
                     <h3>${yazi.title}</h3>
                     <span class="city-tag">${yazi.city}, ${yazi.country}</span>
                     <p>${yazi.content.substring(0, 150)}...</p>
                     <small>📍 Gezilecek Yerler: ${yazi.placesToVisit ? yazi.placesToVisit.join(', ') : '-'}</small>
-                    <button class="action-btn" onclick="favoriyeEkle('${yazi._id}')">❤️ Favoriye Ekle</button>
+                    
+                    <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee;">
+                        <small style="font-weight: bold; margin-right: 5px;">Puan Ver:</small>
+                        <span style="cursor:pointer; font-size:22px; color:#ffc107;" onclick="puanVer('${yazi._id}', 1)">★</span>
+                        <span style="cursor:pointer; font-size:22px; color:#ffc107;" onclick="puanVer('${yazi._id}', 2)">★</span>
+                        <span style="cursor:pointer; font-size:22px; color:#ffc107;" onclick="puanVer('${yazi._id}', 3)">★</span>
+                        <span style="cursor:pointer; font-size:22px; color:#ffc107;" onclick="puanVer('${yazi._id}', 4)">★</span>
+                        <span style="cursor:pointer; font-size:22px; color:#ffc107;" onclick="puanVer('${yazi._id}', 5)">★</span>
+                        <button onclick="puanSil('${yazi._id}')" style="margin-left:10px; background:#dc3545; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">Puanı Sil 🗑️</button>
+                    </div>
+
+                    <button class="action-btn" style="margin-top: 15px;" onclick="favoriyeEkle('${yazi._id}')">❤️ Favoriye Ekle</button>
                 </div>
             `;
         });
@@ -489,5 +500,64 @@ async function eskiVerileriDoldur(id) {
     } catch (error) {
         console.error("Veriler getirilemedi:", error);
         alert("Eski veriler yüklenirken bir hata oluştu.");
+    }
+}
+
+// --- 9. PUANLAMA (RATING) İŞLEMLERİ ---
+
+// Puan Verme İşlemi
+async function puanVer(yaziId, verilenPuan) {
+    const userId = localStorage.getItem("aktif_kullanici_id");
+    if (!userId) { alert("Puan vermek için giriş yapmalısınız!"); return; }
+
+    try {
+        // Senin Backend kuralın: Linkte yaziId, Body'de userId ve rating!
+        const response = await fetch(`${BASE_URL}/ratings/${yaziId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                userId: userId, 
+                rating: verilenPuan 
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            // Senin backend'den gönderdiğin o güzel mesajı ekrana basıyoruz
+            alert(data.message); 
+        } else {
+            alert("Hata: " + data.message);
+        }
+    } catch (error) {
+        console.error("Puanlama hatası:", error);
+        alert("Sunucuya ulaşılamadı.");
+    }
+}
+
+// Puan Silme İşlemi
+async function puanSil(yaziId) {
+    const userId = localStorage.getItem("aktif_kullanici_id");
+    if (!userId) { alert("Lütfen önce giriş yapın!"); return; }
+
+    const onay = confirm("Bu yazıya verdiğiniz puanı silmek istediğinize emin misiniz?");
+    if (!onay) return;
+
+    try {
+        // Senin Backend kuralın: DELETE isteği, hem yaziId hem userId linkin içinde!
+        const response = await fetch(`${BASE_URL}/ratings/${yaziId}/${userId}`, {
+            method: 'DELETE'
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert(data.message); // Backend'in "Puanlama başarıyla silindi." mesajı
+        } else {
+            alert("Hata: " + data.message);
+        }
+    } catch (error) {
+        console.error("Puan silme hatası:", error);
+        alert("Sunucuya ulaşılamadı.");
     }
 }

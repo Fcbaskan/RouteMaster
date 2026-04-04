@@ -99,20 +99,27 @@ function logout() {
 }
 
 // Vercel'den Gezi Yazılarını Çeken Fonksiyon
-async function fetchTravelogues() {
+// Güncellenmiş Vercel'den Yazı Çekme Fonksiyonu (Artık şehir de alabiliyor!)
+async function fetchTravelogues(arananSehir = "") {
     try {
-        const response = await fetch(`${BASE_URL}/travelogues`);
+        // Eğer fonksiyona bir şehir adı gönderildiyse linkin sonuna ?city=... ekle
+        // Gönderilmediyse (tüm yazılar isteniyorsa) sade linki kullan
+        const url = arananSehir 
+            ? `${BASE_URL}/travelogues?city=${arananSehir}` 
+            : `${BASE_URL}/travelogues`;
+
+        const response = await fetch(url);
         const yazilar = await response.json();
 
         const container = document.getElementById('traveloguesContainer');
-        container.innerHTML = ""; // "Yükleniyor..." yazısını temizle
+        container.innerHTML = ""; // Önceki yazıları temizle
 
         if (yazilar.length === 0) {
-            container.innerHTML = "<p>Henüz hiç gezi yazısı eklenmemiş.</p>";
+            container.innerHTML = `<p>Burası şimdilik boş. Belki de bu şehre ilk sen gitmelisin!</p>`;
             return;
         }
 
-        // Gelen her bir yazı için HTML kartı oluştur
+        // Gelen yazıları HTML'e bas
         yazilar.forEach(yazi => {
             const card = `
                 <div class="card">
@@ -120,10 +127,10 @@ async function fetchTravelogues() {
                     <span class="city-tag">${yazi.city}, ${yazi.country}</span>
                     <p>${yazi.content.substring(0, 100)}...</p>
                     <small>Gezilecek Yerler: ${yazi.placesToVisit.join(', ')}</small>
+                    <br>
                     <button class="action-btn" onclick="favoriyeEkle('${yazi._id}')">❤️ Favoriye Ekle</button>
                 </div>
             `;
-            // Oluşturulan kartı sayfaya ekle
             container.innerHTML += card;
         });
 
@@ -131,6 +138,19 @@ async function fetchTravelogues() {
         console.error("Yazılar çekilemedi:", error);
         document.getElementById('traveloguesContainer').innerHTML = "<p>Yazılar yüklenirken bir hata oluştu.</p>";
     }
+}
+
+// Yeni Arama Butonu Fonksiyonu
+function sehireGoreAra() {
+    const sehirAdi = document.getElementById('searchInput').value.trim();
+    
+    if (sehirAdi === "") {
+        alert("Lütfen aramak istediğiniz şehri kutucuğa yazın!");
+        return;
+    }
+
+    // Seçilen şehri az önce güncellediğimiz ana fonksiyona yolla
+    fetchTravelogues(sehirAdi);
 }
 
 // Geçiçi Favori Fonksiyonu (Sonra içini dolduracağız)

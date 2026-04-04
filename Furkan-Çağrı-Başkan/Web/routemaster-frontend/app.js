@@ -74,19 +74,16 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 // --- 3. DASHBOARD (ANA SAYFA) İŞLEMLERİ ---
 
 // Sayfa yüklendiğinde otomatik çalışacak kontroller
-document.addEventListener('DOMContentLoaded', () => {
-    const container = document.getElementById('traveloguesContainer');
-    
-    // Eğer dashboard sayfasındaysak
-    if (container) {
-        checkAuth(); // 1. Önce kullanıcı giriş yapmış mı bak
-        
-        // 2. Sayfa ilk açıldığında HİÇBİR parametre göndermeden fonksiyonu çağır.
-        // Bu sayede fonksiyon "arananSehir"i boş algılayacak ve TÜM yazıları getirecek.
-        fetchTravelogues(); 
-    }
-});
+// --- DASHBOARD (ANA SAYFA) DOĞRUDAN BAŞLATICI ---
 
+// Sayfada 'traveloguesContainer' var mı diye bak (Yani Ana Sayfada mıyız?)
+const container = document.getElementById('traveloguesContainer');
+
+if (container) {
+    // Sayfadaysak beklemeden doğrudan çalıştır!
+    checkAuth(); 
+    fetchTravelogues(); 
+}
 // Güvenlik: Giriş yapmayanları index.html'e geri kovala!
 function checkAuth() {
     const userId = localStorage.getItem("aktif_kullanici_id");

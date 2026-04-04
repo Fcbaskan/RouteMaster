@@ -169,11 +169,6 @@ function sehireGoreAra() {
     }
 }
 
-// Geçiçi Favori Fonksiyonu (Sonra içini dolduracağız)
-function favoriyeEkle(yaziId) {
-    alert("Favoriye ekleme özelliği yakında gelecek! Seçilen Yazı ID: " + yaziId);
-}
-
 // --- 4. YENİ GEZİ YAZISI EKLEME İŞLEMİ ---
 const addTravelogueForm = document.getElementById('addTravelogueForm');
 
@@ -225,4 +220,48 @@ if (addTravelogueForm) {
             alert("Sunucuya bağlanırken bir hata oluştu.");
         }
     });
+}
+
+// --- 5. FAVORİLERE EKLEME İŞLEMİ ---
+async function favoriyeEkle(yaziId) {
+    // 1. Önce kimin favoriye eklediğini bulalım
+    const userId = localStorage.getItem("aktif_kullanici_id");
+
+    if (!userId) {
+        alert("Lütfen önce giriş yapın!");
+        return;
+    }
+
+    // 2. Backend'in bizden beklediği paketi hazırlayalım
+    // (Postman'de test ederken Body kısmına tam olarak bunları yazmıştık)
+    const favoriVerisi = {
+        userId: userId,
+        itemId: yaziId,
+        type: "travelogue" // Gezi yazısı olduğunu belirtiyoruz
+    };
+
+    try {
+        // 3. Vercel'deki favoriler API'mize POST (Ekleme) isteği atıyoruz
+        const response = await fetch(`${BASE_URL}/favorites`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(favoriVerisi)
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            // Başarılıysa butona basan kişiye güzel bir mesaj ver
+            alert("Harika! Bu gezi yazısı favorilerinize eklendi. ❤️");
+            // İstersen burada butonun rengini değiştiren ekstra kodlar da yazılabilir.
+        } else {
+            // Eğer daha önce eklediyse backend "Zaten favorilerinizde" uyarısı dönecektir
+            alert("Bilgi: " + (data.message || "Favoriye eklenemedi."));
+        }
+    } catch (error) {
+        console.error("Favoriye eklerken hata:", error);
+        alert("Sunucu bağlantı hatası.");
+    }
 }

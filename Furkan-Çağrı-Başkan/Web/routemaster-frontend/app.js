@@ -47,12 +47,13 @@ if (registerForm) {
 
 // --- 2. GİRİŞ YAP (LOGIN) İŞLEMİ ---
 const loginForm = document.getElementById('loginForm');
-if (loginForm) { // EĞER SAYFADA BU FORM VARSA ÇALIŞTIR!
+if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const email = document.getElementById('regEmail').value;
-        const password = document.getElementById('regPassword').value;
+        // 1. DÜZELTME: HTML'de güncellediğimiz yeni ID'leri buraya yazdık
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
 
         try {
             const response = await fetch(`${BASE_URL}/auth/login`, {
@@ -61,26 +62,28 @@ if (loginForm) { // EĞER SAYFADA BU FORM VARSA ÇALIŞTIR!
                 body: JSON.stringify({ email, password })
             });
 
+            // 2. DÜZELTME: response.json()'u SADECE BİR KERE burada okuyoruz!
             const data = await response.json();
 
-        if (response.ok) {
-                const data = await response.json();
-                localStorage.setItem("aktif_kullanici_id", data.userId);
+            if (response.ok) {
+                // 3. DÜZELTME: Senin backend'ine göre ID yolu data.user._id şeklindedir!
+                localStorage.setItem("aktif_kullanici_id", data.user._id);
 
-                // Klasik alert yerine bizim havalı pencere:
                 if (typeof showModal === "function") {
                     showModal("Giriş Başarılı! 🌍\nRouteMaster'a yönlendiriliyorsunuz...", true, () => {
-                        window.location.href = "dashboard.html"; // "Tamam"a basınca ana sayfaya uçur
+                        window.location.href = "dashboard.html"; 
                     });
                 }
             } else {
-                const data = await response.json();
                 if (typeof showModal === "function") {
                     showModal("Hata: \n" + (data.message || "Giriş yapılamadı."), false, null);
                 }
             }
         } catch (error) {
             console.error("Sunucuya ulaşılamadı:", error);
+            if (typeof showModal === "function") {
+                showModal("Sunucuya ulaşılamadı. Lütfen bağlantınızı kontrol edin.", false, null);
+            }
         }
     });
 }

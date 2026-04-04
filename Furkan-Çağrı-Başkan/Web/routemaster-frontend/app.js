@@ -5,7 +5,6 @@ const BASE_URL = "https://route-master-ten.vercel.app";
 const registerForm = document.getElementById('registerForm');
 if (registerForm) { // EĞER SAYFADA BU FORM VARSA ÇALIŞTIR!
     registerForm.addEventListener('submit', async (e) => {
-    document.getElementById('registerForm').addEventListener('submit', async (e) => {
         e.preventDefault(); // Butona basınca sayfanın yenilenmesini engeller
 
     // Formdaki verileri alıyoruz
@@ -35,7 +34,7 @@ if (registerForm) { // EĞER SAYFADA BU FORM VARSA ÇALIŞTIR!
             console.error("Sunucuya ulaşılamadı:", error);
             alert("Sunucu ile bağlantı kurulamadı.");
         }
-    });
+    
 });
 }
 
@@ -43,7 +42,6 @@ if (registerForm) { // EĞER SAYFADA BU FORM VARSA ÇALIŞTIR!
 const loginForm = document.getElementById('loginForm');
 if (loginForm) { // EĞER SAYFADA BU FORM VARSA ÇALIŞTIR!
     loginForm.addEventListener('submit', async (e) => {
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const email = document.getElementById('loginEmail').value;
@@ -78,8 +76,7 @@ if (loginForm) { // EĞER SAYFADA BU FORM VARSA ÇALIŞTIR!
         } catch (error) {
             console.error("Sunucuya ulaşılamadı:", error);
         }
-});
-});
+    });
 }
 
 // --- 3. DASHBOARD (ANA SAYFA) İŞLEMLERİ ---

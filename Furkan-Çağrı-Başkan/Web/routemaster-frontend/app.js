@@ -51,8 +51,8 @@ if (loginForm) { // EĞER SAYFADA BU FORM VARSA ÇALIŞTIR!
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
+        const email = document.getElementById('regEmail').value;
+        const password = document.getElementById('regPassword').value;
 
         try {
             const response = await fetch(`${BASE_URL}/auth/login`, {

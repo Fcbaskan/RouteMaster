@@ -108,7 +108,7 @@ async function fetchTravelogues(arananSehir = "") {
     try {
         // NOT: Eğer backend'de rotayı 'travelogue' (tekil) yaptıysan aşağıdaki 's' harfini sil.
         // Postman'de hangisi çalıştıysa onu kullan: /travelogues veya /travelogue
-        let url = `${BASE_URL}/travelogues`;
+        let url = `${BASE_URL}/travelogue`;
 
         // Eğer bir şehir ismi gelmişse linke ekle
         if (arananSehir !== "") {

@@ -113,11 +113,11 @@ app.put('/auth/users/:userid', async (req, res) => {
         const userId = req.params.userid; 
         
         // displayName'i kaldırdık, yerine firstName ve lastName ekledik
-        const { email, firstName, lastName } = req.body;
+        const { email, firstName, lastName, username } = req.body;
 
         const updatedUser = await User.findByIdAndUpdate(
             userId, 
-            { email, firstName, lastName }, // Veritabanına bu 3'ünü kaydet diyoruz
+            { email, firstName, lastName,username }, // Veritabanına bu 3'ünü kaydet diyoruz
             { new: true, runValidators: true }
         );
 
@@ -132,6 +132,10 @@ app.put('/auth/users/:userid', async (req, res) => {
 
     } catch (error) {
         console.error("Profil güncelleme hatası:", error);
+        // Eğer başkasının aldığı bir kullanıcı adını denerse MongoDB 11000 hatası verir
+        if (error.code === 11000) {
+            return res.status(400).json({ message: "Bu e-posta veya kullanıcı adı zaten kullanımda!" });
+        }
         res.status(400).json({ message: "Geçersiz istek veya sunucu hatası.", error: error.message });
     }
 });

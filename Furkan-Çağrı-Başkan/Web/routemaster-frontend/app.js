@@ -336,3 +336,71 @@ async function favoridenCikar(itemId) {
         alert("Sunucu bağlantı hatası.");
     }
 }
+
+// --- 7. BENİM YAZILARIM (FİLTRELEME VE SİLME) ---
+
+const myContainer = document.getElementById('myTraveloguesContainer');
+if (myContainer) {
+    checkAuth();
+    fetchMyTravelogues();
+}
+
+async function fetchMyTravelogues() {
+    const userId = localStorage.getItem("aktif_kullanici_id");
+    
+    try {
+        // Tüm yazıları çekiyoruz
+        const response = await fetch(`${BASE_URL}/travelogue`); // Sendeki link tekil miydi çoğul muydu, ona dikkat et (/travelogues de olabilir)
+        const tumYazilar = await response.json();
+
+        myContainer.innerHTML = ""; 
+
+        // SADECE yazar ID'si benim ID'm ile eşleşenleri filtrele!
+        // (Backend'de yazar bilgisini 'author' adıyla kaydetmiştik hatırlarsan)
+        const benimYazilarim = tumYazilar.filter(yazi => yazi.author === userId || yazi.userId === userId);
+
+        if (benimYazilarim.length === 0) {
+            myContainer.innerHTML = "<p>Henüz kendi eklediğiniz bir gezi yazısı bulunmuyor. Hemen bir tane ekleyin!</p>";
+            return;
+        }
+
+        benimYazilarim.forEach(yazi => {
+            myContainer.innerHTML += `
+                <div class="card">
+                    <h3>${yazi.title}</h3>
+                    <span style="background: #17a2b8; color: white; padding: 3px 8px; border-radius: 10px; font-size: 12px;">${yazi.city}, ${yazi.country}</span>
+                    <p>${yazi.content.substring(0, 100)}...</p>
+                    <button class="delete-btn" onclick="yaziSil('${yazi._id}')">🗑️ Bu Yazıyı Sil</button>
+                </div>
+            `;
+        });
+
+    } catch (error) {
+        console.error("Yazılar çekilemedi:", error);
+        myContainer.innerHTML = "<p style='color:red;'>Yazılar yüklenirken bir hata oluştu.</p>";
+    }
+}
+
+// Gezi Yazısını Veritabanından Silme (DELETE)
+async function yaziSil(yaziId) {
+    const onay = confirm("Bu gezi yazısını KESİNLİKLE silmek istiyor musunuz? Bu işlem geri alınamaz!");
+    if (!onay) return;
+
+    try {
+        // Vercel'deki silme rotasına istek atıyoruz
+        const response = await fetch(`${BASE_URL}/travelogue/${yaziId}`, {
+            method: 'DELETE'
+        });
+
+        if (response.ok) {
+            alert("Yazınız veritabanından başarıyla silindi! 🚀");
+            fetchMyTravelogues(); // Silinen yazının ekrandan anında kaybolması için listeyi yenile
+        } else {
+            const data = await response.json();
+            alert("Silinemedi: " + (data.message || "Bilinmeyen hata"));
+        }
+    } catch (error) {
+        console.error("Silme işlemi başarısız:", error);
+        alert("Sunucuya ulaşılamadı.");
+    }
+}

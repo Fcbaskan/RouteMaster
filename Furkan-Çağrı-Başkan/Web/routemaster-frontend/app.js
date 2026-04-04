@@ -70,3 +70,70 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         console.error("Sunucuya ulaşılamadı:", error);
     }
 });
+
+// --- 3. DASHBOARD (ANA SAYFA) İŞLEMLERİ ---
+
+// Sayfa yüklendiğinde otomatik çalışacak kontroller
+document.addEventListener('DOMContentLoaded', () => {
+    // Sadece dashboard.html sayfasındaysak bu kodları çalıştır
+    const container = document.getElementById('traveloguesContainer');
+    if (container) {
+        checkAuth(); // Kullanıcı giriş yapmış mı kontrol et
+        fetchTravelogues(); // Gezi yazılarını getir
+    }
+});
+
+// Güvenlik: Giriş yapmayanları index.html'e geri kovala!
+function checkAuth() {
+    const userId = localStorage.getItem("aktif_kullanici_id");
+    if (!userId) {
+        alert("Lütfen önce giriş yapın!");
+        window.location.href = "index.html";
+    }
+}
+
+// Çıkış Yapma Fonksiyonu
+function logout() {
+    localStorage.removeItem("aktif_kullanici_id");
+    window.location.href = "index.html";
+}
+
+// Vercel'den Gezi Yazılarını Çeken Fonksiyon
+async function fetchTravelogues() {
+    try {
+        const response = await fetch(`${BASE_URL}/travelogues`);
+        const yazilar = await response.json();
+
+        const container = document.getElementById('traveloguesContainer');
+        container.innerHTML = ""; // "Yükleniyor..." yazısını temizle
+
+        if (yazilar.length === 0) {
+            container.innerHTML = "<p>Henüz hiç gezi yazısı eklenmemiş.</p>";
+            return;
+        }
+
+        // Gelen her bir yazı için HTML kartı oluştur
+        yazilar.forEach(yazi => {
+            const card = `
+                <div class="card">
+                    <h3>${yazi.title}</h3>
+                    <span class="city-tag">${yazi.city}, ${yazi.country}</span>
+                    <p>${yazi.content.substring(0, 100)}...</p>
+                    <small>Gezilecek Yerler: ${yazi.placesToVisit.join(', ')}</small>
+                    <button class="action-btn" onclick="favoriyeEkle('${yazi._id}')">❤️ Favoriye Ekle</button>
+                </div>
+            `;
+            // Oluşturulan kartı sayfaya ekle
+            container.innerHTML += card;
+        });
+
+    } catch (error) {
+        console.error("Yazılar çekilemedi:", error);
+        document.getElementById('traveloguesContainer').innerHTML = "<p>Yazılar yüklenirken bir hata oluştu.</p>";
+    }
+}
+
+// Geçiçi Favori Fonksiyonu (Sonra içini dolduracağız)
+function favoriyeEkle(yaziId) {
+    alert("Favoriye ekleme özelliği yakında gelecek! Seçilen Yazı ID: " + yaziId);
+}

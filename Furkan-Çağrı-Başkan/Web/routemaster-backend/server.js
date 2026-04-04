@@ -43,7 +43,8 @@ app.use(async (req, res, next) => {
 
 app.post('/auth/register', async (req, res) => {
     try {
-        const { username, email, password, displayName } = req.body;
+        // req.body'den firstName ve lastName'i de alıyoruz!
+        const { username, email, password, firstName, lastName } = req.body;
 
         if (!username || !email || !password) {
             return res.status(400).json({ message: "Kullanıcı adı, e-posta ve şifre zorunludur!" });
@@ -57,12 +58,13 @@ app.post('/auth/register', async (req, res) => {
             return res.status(409).json({ message: "Bu e-posta adresi veya kullanıcı adı zaten kayıtlı!" });
         }
 
+        // Yeni kullanıcıyı oluştururken formdan gelen Ad ve Soyadı da ekliyoruz
         const newUser = new User({
             username,
             email,
             password,
-            firstName: "", // Başlangıçta boş atıyoruz
-            lastName: ""   // Başlangıçta boş atıyoruz
+            firstName: firstName || "", // Eğer boş bırakılırsa hata vermesin diye
+            lastName: lastName || ""
         });
 
         await newUser.save();

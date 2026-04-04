@@ -2,40 +2,38 @@
 const BASE_URL = "https://route-master-ten.vercel.app";
 
 // --- 1. KAYIT OL (REGISTER) İŞLEMİ ---
-const registerForm = document.getElementById('registerForm');
-if (registerForm) { // EĞER SAYFADA BU FORM VARSA ÇALIŞTIR!
-    registerForm.addEventListener('submit', async (e) => {
-        e.preventDefault(); // Butona basınca sayfanın yenilenmesini engeller
+const registerForm = document.getElementById('registerForm'); // Senin id'ne göre değişebilir
 
-    // Formdaki verileri alıyoruz
-        const firstName = document.getElementById('regFirstName').value;
-        const lastName = document.getElementById('regLastName').value;
-        const username = document.getElementById('regUsername').value;
-        const email = document.getElementById('regEmail').value;
-        const password = document.getElementById('regPassword').value;
+if (registerForm) {
+    registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // KUTULARIN ID'LERİNİ KENDİ index.html DOSYANDAKİ GİBİ DÜZELT (Aşağıdakiler örnektir)
+        const firstName = document.getElementById('regFirstName').value;       // Ad kutusu
+        const lastName = document.getElementById('regLastName').value;     // Soyad kutusu
+        const username = document.getElementById('regUsername').value;    // Kullanıcı Adı kutusu
+        const email = document.getElementById('regEmail').value;          // E-posta kutusu
+        const password = document.getElementById('regPassword').value;    // Şifre kutusu
 
         try {
-            // Vercel'deki /auth/register rotasına istek atıyoruz
-                const response = await fetch(`${BASE_URL}/auth/register`, {
+            const response = await fetch(`${BASE_URL}/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ firstName, lastName, username, email, password })
+                // JSON paketine firstName ve lastName'i de ekledik!
+                body: JSON.stringify({ username, email, password, firstName, lastName })
             });
 
-        const data = await response.json();
-
-        if (response.ok) {
-            alert("Kayıt Başarılı! Şimdi giriş yapabilirsiniz.");
-            document.getElementById('registerForm').reset(); // Formu temizle
-        } else {
-            alert("Kayıt Hatası: " + data.message);
-        }
+            if (response.ok) {
+                alert("Kayıt Başarılı! Şimdi giriş yapabilirsiniz.");
+                window.location.reload(); // Veya giriş formuna yönlendir
+            } else {
+                const data = await response.json();
+                alert("Kayıt Hatası: " + (data.message || "Bilinmeyen hata"));
+            }
         } catch (error) {
-            console.error("Sunucuya ulaşılamadı:", error);
-            alert("Sunucu ile bağlantı kurulamadı.");
+            console.error("Kayıt sunucusuna bağlanılamadı:", error);
         }
-    
-});
+    });
 }
 
 // --- 2. GİRİŞ YAP (LOGIN) İŞLEMİ ---

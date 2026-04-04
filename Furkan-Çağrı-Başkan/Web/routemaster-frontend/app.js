@@ -24,18 +24,19 @@ if (registerForm) {
             });
 
             if (response.ok) {
-                alert("Kayıt Başarılı! 🎉 Şimdi giriş yapabilirsiniz.");
-                
-                // Formu temizle
                 registerForm.reset(); 
-                
-                // Başarılı kayıttan sonra kullanıcıyı otomatik olarak Giriş Yap ekranına yönlendir!
-                if (typeof ekranDegistir === "function") {
-                    ekranDegistir('loginCard');
+                // Eski alert yerine yeni fonksiyonumuz:
+                if (typeof showModal === "function") {
+                    showModal("Aramıza Hoş Geldiniz! 🎉\nŞimdi giriş yapabilirsiniz.", true, () => {
+                        ekranDegistir('loginCard'); // "Tamam"a basınca giriş ekranına kaydır
+                    });
                 }
-            } else {
+            }
+            else {
                 const data = await response.json();
-                alert("Kayıt Hatası: " + (data.message || "Lütfen bilgilerinizi kontrol edin."));
+                if (typeof showModal === "function") {
+                    showModal("Kayıt Hatası: \n" + (data.message || "Bilgileri kontrol edin."), false, null);
+                }
             }
         } catch (error) {
             console.error("Kayıt işlemi sırasında hata:", error);
@@ -63,22 +64,21 @@ if (loginForm) { // EĞER SAYFADA BU FORM VARSA ÇALIŞTIR!
             const data = await response.json();
 
         if (response.ok) {
-            // Backend'den gelen cevabı konsola yazdır (F12'den görmek için)
-            console.log("Backend Yanıtı:", data);
+                const data = await response.json();
+                localStorage.setItem("aktif_kullanici_id", data.user._id);
 
-            // Bütün ihtimalleri kapsayan ID yakalama taktiği!
-            const userId = data.userId || data._id || (data.user ? data.user._id : null);
-
-            if (userId) {
-                alert("Giriş Başarılı! Ana sayfaya yönlendiriliyorsunuz...");
-                localStorage.setItem("aktif_kullanici_id", userId);
-                window.location.href = "dashboard.html"; 
+                // Klasik alert yerine bizim havalı pencere:
+                if (typeof showModal === "function") {
+                    showModal("Giriş Başarılı! 🌍\nRouteMaster'a yönlendiriliyorsunuz...", true, () => {
+                        window.location.href = "dashboard.html"; // "Tamam"a basınca ana sayfaya uçur
+                    });
+                }
             } else {
-                alert("Giriş yapıldı ama Backend'den Kullanıcı ID'si gelmedi! F12 Console'a bak.");
+                const data = await response.json();
+                if (typeof showModal === "function") {
+                    showModal("Hata: \n" + (data.message || "Giriş yapılamadı."), false, null);
+                }
             }
-        } else {
-            alert("Giriş Hatası: E-posta veya şifre yanlış.");
-        }
         } catch (error) {
             console.error("Sunucuya ulaşılamadı:", error);
         }

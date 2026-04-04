@@ -7,94 +7,46 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     
     <style>
-        /* Genel Ayarlar */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
 
-        /* Arka Plan Manzarası */
         body {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            min-height: 100vh; display: flex; justify-content: center; align-items: center;
             background: url('https://images.unsplash.com/photo-1506929562872-bb421503ef21?q=80&w=2000&auto=format&fit=crop') no-repeat center center/cover;
-            position: relative;
-            overflow: hidden;
+            position: relative; overflow: hidden;
         }
 
         body::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1;
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); z-index: 1;
         }
 
-        /* ÜST ŞEFFAF ÇUBUK (NAVBAR) */
         .top-nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 70px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            z-index: 10;
+            position: fixed; top: 0; left: 0; width: 100%; height: 70px;
+            display: flex; justify-content: center; align-items: center;
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); z-index: 10;
         }
 
         .top-nav h1 {
-            color: white;
-            font-size: 22px;
-            font-weight: 800;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: 0.3s;
+            color: white; font-size: 22px; font-weight: 800; letter-spacing: 3px;
+            text-transform: uppercase; cursor: pointer; transition: 0.3s;
         }
 
-        .top-nav h1:hover {
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.6); /* Şık beyaz bir parıltı */
-            transform: scale(1.05); /* Çok hafifçe büyüme efekti */
-        }
+        .top-nav h1:hover { text-shadow: 0 0 15px rgba(255, 255, 255, 0.6); transform: scale(1.05); }
 
-        /* Ana Konteyner */
-        .container {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-        }
+        .container { position: relative; z-index: 2; display: flex; justify-content: center; align-items: center; width: 100%; }
 
-        /* Cam Efektli Kartlar - BOYUT BÜYÜTÜLDÜ */
         .glass-card {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 25px;
-            padding: 50px; /* İç boşluk artırıldı */
-            width: 500px;  /* Genişlik 420px'den 500px'e çıkarıldı */
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-            color: white;
-            transition: all 0.5s ease-in-out;
+            background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px; padding: 50px; width: 500px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4); color: white; transition: all 0.5s ease-in-out;
         }
 
         .glass-card h2 { text-align: center; margin-bottom: 30px; font-size: 32px; font-weight: 600; }
         .glass-card h1 { text-align: center; margin-bottom: 15px; font-size: 48px; font-weight: 800; }
         .glass-card p { text-align: center; margin-bottom: 35px; font-size: 18px; color: #eee; line-height: 1.6; }
 
-        /* Form Elemanları */
         .form-group { margin-bottom: 22px; }
         .glass-card input {
             width: 100%; padding: 14px 18px; border: none; border-radius: 10px;
@@ -106,41 +58,45 @@
         .row { display: flex; gap: 15px; }
         .row .form-group { flex: 1; }
 
-        /* Butonlar */
         .btn {
             width: 100%; padding: 15px; border: none; border-radius: 10px; font-size: 17px; font-weight: 600;
             cursor: pointer; transition: 0.3s; margin-top: 10px; color: white;
         }
         .btn-primary { background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); }
         .btn-secondary { background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%); color: black; }
-        
         .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
 
-        /* YENİ: Geçiş Linki Stili */
-        .switch-text {
-            text-align: center;
-            margin-top: 25px;
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .switch-link {
-            color: #00d2ff;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            transition: 0.3s;
-        }
-
-        .switch-link:hover {
-            color: white;
-            text-decoration: underline;
-        }
+        .switch-text { text-align: center; margin-top: 25px; font-size: 14px; color: rgba(255, 255, 255, 0.8); }
+        .switch-link { color: #00d2ff; font-weight: 600; cursor: pointer; text-decoration: none; transition: 0.3s; }
+        .switch-link:hover { color: white; text-decoration: underline; }
 
         .hidden { display: none !important; }
+
+        /* --- YENİ EKLENEN: ÖZEL UYARI (MODAL) TASARIMI --- */
+        .custom-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); z-index: 999;
+            display: flex; justify-content: center; align-items: center;
+            backdrop-filter: blur(8px);
+        }
+        .modal-box {
+            width: 380px; padding: 40px 30px; text-align: center;
+            animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .modal-box h2 { font-size: 60px; margin-bottom: 10px; } /* İkon Boyutu */
+        .modal-box h3 { font-size: 22px; margin-bottom: 25px; font-weight: 600; }
+        @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
+
+    <div id="customModal" class="custom-modal hidden">
+        <div class="modal-box glass-card">
+            <h2 id="modalIcon">✅</h2>
+            <h3 id="modalMessage">İşlem Başarılı!</h3>
+            <button class="btn btn-primary" onclick="closeModal()">Tamam</button>
+        </div>
+    </div>
 
     <div id="topNavbar" class="top-nav hidden">
         <h1 onclick="ekranDegistir('welcomeScreen')">RouteMaster</h1>
@@ -158,51 +114,32 @@
         <div id="loginCard" class="glass-card hidden">
             <h2>Giriş Yap 🌍</h2>
             <form id="loginForm">
-                <div class="form-group">
-                    <input type="email" id="loginEmail" placeholder="E-posta Adresiniz" required>
-                </div>
-                <div class="form-group">
-                    <input type="password" id="loginPassword" placeholder="Şifreniz" required>
-                </div>
+                <div class="form-group"><input type="email" id="loginEmail" placeholder="E-posta Adresiniz" required></div>
+                <div class="form-group"><input type="password" id="loginPassword" placeholder="Şifreniz" required></div>
                 <button type="submit" class="btn btn-primary">Giriş Yap 🚀</button>
             </form>
-            <p class="switch-text">
-                Üyemiz değil misiniz? 
-                <span class="switch-link" onclick="ekranDegistir('registerCard')">Hemen kayıt olun</span>
-            </p>
+            <p class="switch-text">Üyemiz değil misiniz? <span class="switch-link" onclick="ekranDegistir('registerCard')">Hemen kayıt olun</span></p>
         </div>
 
         <div id="registerCard" class="glass-card hidden">
             <h2>Kayıt Ol ✍️</h2>
             <form id="registerForm">
                 <div class="row">
-                    <div class="form-group">
-                        <input type="text" id="regFirstName" placeholder="Adınız" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" id="regLastName" placeholder="Soyadınız" required>
-                    </div>
+                    <div class="form-group"><input type="text" id="regFirstName" placeholder="Adınız" required></div>
+                    <div class="form-group"><input type="text" id="regLastName" placeholder="Soyadınız" required></div>
                 </div>
-                <div class="form-group">
-                    <input type="text" id="regUsername" placeholder="Kullanıcı Adı" required>
-                </div>
-                <div class="form-group">
-                    <input type="email" id="regEmail" placeholder="E-posta" required>
-                </div>
-                <div class="form-group">
-                    <input type="password" id="regPassword" placeholder="Şifre" required>
-                </div>
+                <div class="form-group"><input type="text" id="regUsername" placeholder="Kullanıcı Adı" required></div>
+                <div class="form-group"><input type="email" id="regEmail" placeholder="E-posta" required></div>
+                <div class="form-group"><input type="password" id="regPassword" placeholder="Şifre" required></div>
                 <button type="submit" class="btn btn-secondary">Aramıza Katıl 🌟</button>
             </form>
-            <p class="switch-text">
-                Zaten üye misiniz? 
-                <span class="switch-link" onclick="ekranDegistir('loginCard')">Giriş yapın</span>
-            </p>
+            <p class="switch-text">Zaten üye misiniz? <span class="switch-link" onclick="ekranDegistir('loginCard')">Giriş yapın</span></p>
         </div>
 
     </div>
 
     <script>
+        // Ekran Geçişleri
         function ekranDegistir(hedefEkranId) {
             const navbar = document.getElementById('topNavbar');
             document.getElementById('welcomeScreen').classList.add('hidden');
@@ -211,11 +148,23 @@
             
             document.getElementById(hedefEkranId).classList.remove('hidden');
 
-            if (hedefEkranId === 'welcomeScreen') {
-                navbar.classList.add('hidden');
-            } else {
-                navbar.classList.remove('hidden');
-            }
+            if (hedefEkranId === 'welcomeScreen') navbar.classList.add('hidden');
+            else navbar.classList.remove('hidden');
+        }
+
+        // --- YENİ EKLENEN: MODAL KONTROL SİSTEMİ ---
+        let modalAction = null; // Butona basılınca çalışacak görev
+
+        function showModal(mesaj, isSuccess, gorevFonksiyonu) {
+            document.getElementById('modalMessage').innerText = mesaj;
+            document.getElementById('modalIcon').innerText = isSuccess ? '✅' : '❌'; // Başarılıysa tik, hatalıysa çarpı
+            document.getElementById('customModal').classList.remove('hidden');
+            modalAction = gorevFonksiyonu; // Yönlendirme görevini hafızaya al
+        }
+
+        function closeModal() {
+            document.getElementById('customModal').classList.add('hidden');
+            if (modalAction) modalAction(); // "Tamam" butonuna basınca hafızadaki görevi çalıştır!
         }
     </script>
 

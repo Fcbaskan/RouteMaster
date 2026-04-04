@@ -65,7 +65,7 @@ if (loginForm) { // EĞER SAYFADA BU FORM VARSA ÇALIŞTIR!
 
         if (response.ok) {
                 const data = await response.json();
-                localStorage.setItem("aktif_kullanici_id", data.user._id);
+                localStorage.setItem("aktif_kullanici_id", data.userId);
 
                 // Klasik alert yerine bizim havalı pencere:
                 if (typeof showModal === "function") {

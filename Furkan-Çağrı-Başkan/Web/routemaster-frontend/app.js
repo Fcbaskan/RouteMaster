@@ -265,3 +265,74 @@ async function favoriyeEkle(yaziId) {
         alert("Sunucu bağlantı hatası.");
     }
 }
+
+// --- 6. FAVORİLERİ GETİRME VE SİLME İŞLEMLERİ ---
+
+// Sayfa favoriler.html ise otomatik çalışsın
+const favContainer = document.getElementById('favoritesContainer');
+if (favContainer) {
+    checkAuth();
+    fetchFavorites();
+}
+
+// Favorileri Backend'den Çekme
+async function fetchFavorites() {
+    const userId = localStorage.getItem("aktif_kullanici_id");
+    
+    try {
+        // DİKKAT: Backend'de favorileri getirme URL'ni buraya doğru yazmalısın.
+        // Genelde /favorites/:userId veya /users/:userId/favorites şeklinde olur.
+        const response = await fetch(`${BASE_URL}/favorites/${userId}`);
+        const favoriler = await response.json();
+
+        favContainer.innerHTML = ""; // Yükleniyor yazısını sil
+
+        if (favoriler.length === 0) {
+            favContainer.innerHTML = "<p>Henüz favorilere eklediğiniz bir gezi yazısı yok.</p>";
+            return;
+        }
+
+        // Favorileri ekrana bas (Backend'den dönen yapıya göre yazi.itemId.title da olabilir, direkt yazi.title da)
+        favoriler.forEach(fav => {
+            // Eğer backend gezi yazısı detaylarını (populate) getirmiyorsa, sadece ID'ler döner.
+            // Biz şimdilik verilerin tam geldiğini varsayarak yazdırıyoruz:
+            favContainer.innerHTML += `
+                <div class="card">
+                    <h3>Favori Gezi Yazısı ID: ${fav.itemId || fav._id}</h3>
+                    <p>Bu yazı favorilerinizde duruyor.</p>
+                    <button class="remove-btn" onclick="favoridenCikar('${fav.itemId || fav._id}')">❌ Favorilerden Çıkar</button>
+                </div>
+            `;
+        });
+
+    } catch (error) {
+        console.error("Favoriler çekilemedi:", error);
+        favContainer.innerHTML = "<p style='color:red;'>Favoriler yüklenirken bir hata oluştu.</p>";
+    }
+}
+
+// Favorilerden Çıkarma (DELETE) - Hatırlarsan bunu sadece URL'den yollayarak çözmüştük!
+async function favoridenCikar(itemId) {
+    const userId = localStorage.getItem("aktif_kullanici_id");
+
+    const onay = confirm("Bu yazıyı favorilerden çıkarmak istediğinize emin misiniz?");
+    if (!onay) return;
+
+    try {
+        // Tam olarak Postman'de düzelttiğimiz o harika DELETE URL yapısı:
+        const response = await fetch(`${BASE_URL}/favorites/${itemId}/${userId}`, {
+            method: 'DELETE'
+        });
+
+        if (response.ok) {
+            alert("Yazı favorilerden başarıyla çıkarıldı!");
+            fetchFavorites(); // Listeyi otomatik olarak yenile (silinen ekrandan gitsin)
+        } else {
+            const data = await response.json();
+            alert("Hata: " + (data.message || "Silinemedi"));
+        }
+    } catch (error) {
+        console.error("Favori silinemedi:", error);
+        alert("Sunucu bağlantı hatası.");
+    }
+}

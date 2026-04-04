@@ -59,20 +59,20 @@ if (loginForm) { // EĞER SAYFADA BU FORM VARSA ÇALIŞTIR!
             const data = await response.json();
 
         if (response.ok) {
-            alert("Giriş Başarılı! Ana sayfaya yönlendiriliyorsunuz...");
-            
-            // DİKKAT: Postman'de otomatik aldığımız o kullanıcı ID'sini şimdi tarayıcıya kaydediyoruz!
-            // (Backend'in ID'yi nerede döndüğüne göre burası data.user._id veya data._id olabilir)
-            const userId = data.user ? data.user._id : data._id; 
-            localStorage.setItem("aktif_kullanici_id", userId);
-            
-            // Eğer token döndürüyorsan onu da kaydedebilirsin:
-            // localStorage.setItem("token", data.token);
+            // Backend'den gelen cevabı konsola yazdır (F12'den görmek için)
+            console.log("Backend Yanıtı:", data);
 
-            // Giriş başarılıysa gezi yazılarının olduğu sayfaya yönlendir
-            window.location.href = "dashboard.html"; 
-        } 
-        else {
+            // Bütün ihtimalleri kapsayan ID yakalama taktiği!
+            const userId = data.userId || data._id || (data.user ? data.user._id : null);
+
+            if (userId) {
+                alert("Giriş Başarılı! Ana sayfaya yönlendiriliyorsunuz...");
+                localStorage.setItem("aktif_kullanici_id", userId);
+                window.location.href = "dashboard.html"; 
+            } else {
+                alert("Giriş yapıldı ama Backend'den Kullanıcı ID'si gelmedi! F12 Console'a bak.");
+            }
+        } else {
             alert("Giriş Hatası: E-posta veya şifre yanlış.");
         }
         } catch (error) {
@@ -96,14 +96,16 @@ if (container) {
     fetchTravelogues(); 
 }
 // Güvenlik: Giriş yapmayanları index.html'e geri kovala!
+// Güvenlik: Giriş yapmayanları index.html'e geri kovala!
 function checkAuth() {
     const userId = localStorage.getItem("aktif_kullanici_id");
-    if (!userId) {
-        alert("Lütfen önce giriş yapın!");
+    
+    // Eğer ID yoksa veya kelime olarak "undefined" kaydedildiyse
+    if (!userId || userId === "undefined" || userId === "null") {
+        localStorage.removeItem("aktif_kullanici_id"); // Bozuk veriyi temizle
         window.location.href = "index.html";
     }
 }
-
 // Çıkış Yapma Fonksiyonu
 function logout() {
     localStorage.removeItem("aktif_kullanici_id");

@@ -201,7 +201,7 @@ if (addTravelogueForm) {
             country: country,
             content: content,
             placesToVisit: placesToVisit,
-            userId: userId
+            authorIdId: userId
         };
 
         try {

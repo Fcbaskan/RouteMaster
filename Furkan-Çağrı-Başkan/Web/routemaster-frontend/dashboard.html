@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RouteMaster - Ana Sayfa</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 15px 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .logout-btn { background-color: #dc3545; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; }
+        .card-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .card h3 { margin-top: 0; color: #333; }
+        .city-tag { display: inline-block; background: #007bff; color: white; padding: 5px 10px; border-radius: 15px; font-size: 12px; margin-bottom: 10px; }
+        .action-btn { background-color: #ffc107; color: #000; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; margin-top: 10px; width: 100%; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2>🌍 RouteMaster Ana Sayfa</h2>
+        <button class="logout-btn" onclick="logout()">Çıkış Yap</button>
+    </div>
+
+    <div class="card-container" id="traveloguesContainer">
+        <p>Gezi yazıları yükleniyor...</p>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

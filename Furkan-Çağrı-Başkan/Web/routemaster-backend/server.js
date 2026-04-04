@@ -61,7 +61,8 @@ app.post('/auth/register', async (req, res) => {
             username,
             email,
             password,
-            displayName: displayName || username
+            firstName: "", // Başlangıçta boş atıyoruz
+            lastName: ""   // Başlangıçta boş atıyoruz
         });
 
         await newUser.save();
@@ -108,11 +109,13 @@ app.post('/auth/login', async (req, res) => {
 app.put('/auth/users/:userid', async (req, res) => {
     try {
         const userId = req.params.userid; 
-        const { email, displayName } = req.body;
+        
+        // displayName'i kaldırdık, yerine firstName ve lastName ekledik
+        const { email, firstName, lastName } = req.body;
 
         const updatedUser = await User.findByIdAndUpdate(
             userId, 
-            { email, displayName }, 
+            { email, firstName, lastName }, // Veritabanına bu 3'ünü kaydet diyoruz
             { new: true, runValidators: true }
         );
 

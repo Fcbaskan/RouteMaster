@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RouteMaster - Profilim</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-top: 4px solid #6f42c1; }
+        .section { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #333; }
+        input[type="text"], input[type="email"], input[type="password"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .btn { width: 100%; padding: 10px; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .btn-update { background-color: #007bff; }
+        .btn-password { background-color: #28a745; }
+        .btn-danger { background-color: #dc3545; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h2>Profil Yönetimi 👤</h2>
+            <button onclick="window.location.href='dashboard.html'" style="background-color: #6c757d; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Ana Sayfaya Dön</button>
+        </div>
+
+        <div class="section">
+            <h3 style="color: #007bff;">Kişisel Bilgiler</h3>
+            <form id="profileUpdateForm">
+                <div class="form-group">
+                    <label>Ad</label>
+                    <input type="text" id="pName" required>
+                </div>
+                <div class="form-group">
+                    <label>Soyad</label>
+                    <input type="text" id="pSurname" required>
+                </div>
+                <div class="form-group">
+                    <label>Kullanıcı Adı</label>
+                    <input type="text" id="pUsername" required>
+                </div>
+                <div class="form-group">
+                    <label>E-posta</label>
+                    <input type="email" id="pEmail" required>
+                </div>
+                <button type="submit" class="btn btn-update">Bilgilerimi Güncelle 💾</button>
+            </form>
+        </div>
+
+        <div class="section">
+            <h3 style="color: #28a745;">Şifre Değiştir</h3>
+            <form id="passwordUpdateForm">
+                <div class="form-group">
+                    <label>Eski Şifre</label>
+                    <input type="password" id="oldPassword" required>
+                </div>
+                <div class="form-group">
+                    <label>Yeni Şifre</label>
+                    <input type="password" id="newPassword" required>
+                </div>
+                <button type="submit" class="btn btn-password">Şifremi Güncelle 🔑</button>
+            </form>
+        </div>
+
+        <div>
+            <h3 style="color: #dc3545;">Tehlikeli Bölge</h3>
+            <p style="font-size: 14px; color: #666;">Hesabınızı silerseniz, tüm gezi yazılarınız ve favorileriniz kalıcı olarak silinir.</p>
+            <button onclick="hesapSil()" class="btn btn-danger">Hesabımı Kalıcı Olarak Sil 🗑️</button>
+        </div>
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

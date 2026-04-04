@@ -561,3 +561,123 @@ async function puanSil(yaziId) {
         alert("Sunucuya ulaşılamadı.");
     }
 }
+
+// --- 10. PROFİL YÖNETİMİ İŞLEMLERİ ---
+
+const profileUpdateForm = document.getElementById('profileUpdateForm');
+const passwordUpdateForm = document.getElementById('passwordUpdateForm');
+
+if (profileUpdateForm && passwordUpdateForm) {
+    checkAuth();
+    profilGetir(); // Sayfa açılınca mevcut bilgileri kutulara doldur
+
+    // 1. PROFİL BİLGİLERİNİ GETİRME (GET)
+    async function profilGetir() {
+        const userId = localStorage.getItem("aktif_kullanici_id");
+        try {
+            const response = await fetch(`${BASE_URL}/auth/users/${userId}`); 
+            
+            if (response.ok) {
+            const user = await response.json();
+            
+            // Backend'den artık firstName ve lastName geliyor
+            document.getElementById('pName').value = user.firstName || "";
+            document.getElementById('pSurname').value = user.lastName || "";
+            document.getElementById('pEmail').value = user.email || "";
+        }
+        } catch (error) {
+            console.error("Profil getirilemedi:", error);
+        }
+    }
+
+    // 2. PROFİL GÜNCELLEME (PUT)
+    profileUpdateForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const userId = localStorage.getItem("aktif_kullanici_id");
+
+        // Backend'inin tam olarak beklediği paket: { email, displayName }
+// Backend'inin tam olarak beklediği paket: { email, firstName, lastName }
+        const updatedData = {
+            firstName: document.getElementById('pName').value,
+            lastName: document.getElementById('pSurname').value,
+            email: document.getElementById('pEmail').value 
+        };
+
+        try {
+            const response = await fetch(`${BASE_URL}/auth/users/${userId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedData)
+            });
+
+            if (response.ok) {
+                alert("Profil bilgileriniz başarıyla güncellendi! ✅");
+            } else {
+                const data = await response.json();
+                alert("Güncelleme başarısız: " + (data.message || "Bilinmeyen hata"));
+            }
+        } catch (error) {
+            console.error("Profil güncellenirken hata:", error);
+        }
+    });
+
+    // 3. ŞİFRE GÜNCELLEME (PUT)
+    passwordUpdateForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const userId = localStorage.getItem("aktif_kullanici_id");
+        
+        // Backend'inin tam olarak beklediği değişken isimleri: currentPassword, newPassword
+        const currentPassword = document.getElementById('oldPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+
+        try {
+            const response = await fetch(`${BASE_URL}/auth/users/${userId}/password`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ currentPassword, newPassword })
+            });
+
+            const data = await response.json();
+            
+            if (response.ok) {
+                alert(data.message); // Backend'den gelen "Şifre başarıyla güncellendi!" mesajı
+                document.getElementById('oldPassword').value = "";
+                document.getElementById('newPassword').value = "";
+            } else {
+                alert("Hata: " + (data.message || "Şifre değiştirilemedi."));
+            }
+        } catch (error) {
+            console.error("Şifre hatası:", error);
+        }
+    });
+}
+
+// 4. HESAP SİLME (DELETE)
+async function hesapSil() {
+    const userId = localStorage.getItem("aktif_kullanici_id");
+    if (!userId) return;
+
+    const onay = confirm("DİKKAT! Hesabınızı silerseniz tüm verileriniz kalıcı olarak yok olur. Emin misiniz?");
+    if (!onay) return;
+
+    const sonOnay = confirm("Bu işlem geri alınamaz. Gerçekten silmek istiyor musunuz?");
+    if (!sonOnay) return;
+
+    try {
+        const response = await fetch(`${BASE_URL}/auth/users/${userId}`, { 
+            method: 'DELETE' 
+        });
+
+        // Backend 204 (No Content) döndüğü için response.json() yapmıyoruz, direkt siliyoruz!
+        if (response.ok) {
+            alert("Hesabınız başarıyla silindi. Elveda! 👋");
+            localStorage.removeItem("aktif_kullanici_id"); 
+            window.location.href = "index.html"; 
+        } else {
+            alert("Hesap silinemedi.");
+        }
+    } catch (error) {
+        console.error("Hesap silinirken hata:", error);
+        alert("Sunucuya ulaşılamadı.");
+    }
+}

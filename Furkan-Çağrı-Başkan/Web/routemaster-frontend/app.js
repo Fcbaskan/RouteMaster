@@ -75,11 +75,15 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
 // Sayfa yüklendiğinde otomatik çalışacak kontroller
 document.addEventListener('DOMContentLoaded', () => {
-    // Sadece dashboard.html sayfasındaysak bu kodları çalıştır
     const container = document.getElementById('traveloguesContainer');
+    
+    // Eğer dashboard sayfasındaysak
     if (container) {
-        checkAuth(); // Kullanıcı giriş yapmış mı kontrol et
-        fetchTravelogues(); // Gezi yazılarını getir
+        checkAuth(); // 1. Önce kullanıcı giriş yapmış mı bak
+        
+        // 2. Sayfa ilk açıldığında HİÇBİR parametre göndermeden fonksiyonu çağır.
+        // Bu sayede fonksiyon "arananSehir"i boş algılayacak ve TÜM yazıları getirecek.
+        fetchTravelogues(); 
     }
 });
 
@@ -102,41 +106,45 @@ function logout() {
 // Güncellenmiş Vercel'den Yazı Çekme Fonksiyonu (Artık şehir de alabiliyor!)
 async function fetchTravelogues(arananSehir = "") {
     try {
-        // Eğer fonksiyona bir şehir adı gönderildiyse linkin sonuna ?city=... ekle
-        // Gönderilmediyse (tüm yazılar isteniyorsa) sade linki kullan
-        const url = arananSehir 
-            ? `${BASE_URL}/travelogue?city=${encodeURIComponent(arananSehir)}` 
-            : `${BASE_URL}/travelogue`;
+        // NOT: Eğer backend'de rotayı 'travelogue' (tekil) yaptıysan aşağıdaki 's' harfini sil.
+        // Postman'de hangisi çalıştıysa onu kullan: /travelogues veya /travelogue
+        let url = `${BASE_URL}/travelogues`;
+
+        // Eğer bir şehir ismi gelmişse linke ekle
+        if (arananSehir !== "") {
+            url += `?city=${encodeURIComponent(arananSehir)}`;
+        }
 
         const response = await fetch(url);
-        const yazilar = await response.json();
+        
+        // Eğer sunucu 404 veya 500 dönerse catch bloğuna gitmesi için kontrol
+        if (!response.ok) throw new Error("Sunucu yanıt vermedi: " + response.status);
 
+        const yazilar = await response.json();
         const container = document.getElementById('traveloguesContainer');
-        container.innerHTML = ""; // Önceki yazıları temizle
+        container.innerHTML = ""; 
 
         if (yazilar.length === 0) {
-            container.innerHTML = `<p>Burası şimdilik boş. Belki de bu şehre ilk sen gitmelisin!</p>`;
+            container.innerHTML = `<p style="text-align:center;">Şu an gösterilecek yazı bulunamadı. 🌍</p>`;
             return;
         }
 
-        // Gelen yazıları HTML'e bas
         yazilar.forEach(yazi => {
-            const card = `
+            container.innerHTML += `
                 <div class="card">
                     <h3>${yazi.title}</h3>
                     <span class="city-tag">${yazi.city}, ${yazi.country}</span>
-                    <p>${yazi.content.substring(0, 100)}...</p>
-                    <small>Gezilecek Yerler: ${yazi.placesToVisit.join(', ')}</small>
-                    <br>
+                    <p>${yazi.content.substring(0, 150)}...</p>
+                    <small>📍 Gezilecek Yerler: ${yazi.placesToVisit ? yazi.placesToVisit.join(', ') : '-'}</small>
                     <button class="action-btn" onclick="favoriyeEkle('${yazi._id}')">❤️ Favoriye Ekle</button>
                 </div>
             `;
-            container.innerHTML += card;
         });
 
     } catch (error) {
-        console.error("Yazılar çekilemedi:", error);
-        document.getElementById('traveloguesContainer').innerHTML = "<p>Yazılar yüklenirken bir hata oluştu.</p>";
+        console.error("Hata Detayı:", error);
+        document.getElementById('traveloguesContainer').innerHTML = 
+            `<p style="color:red; text-align:center;">Hata: Yazılar yüklenemedi. Sunucu bağlantısını kontrol edin.</p>`;
     }
 }
 

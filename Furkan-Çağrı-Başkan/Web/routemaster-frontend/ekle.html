@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RouteMaster - Yeni Gezi Yazısı</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input[type="text"], textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        textarea { resize: vertical; height: 120px; }
+        .submit-btn { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .submit-btn:hover { background-color: #0056b3; }
+        .back-link { display: block; text-align: center; margin-top: 15px; color: #6c757d; text-decoration: none; }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2 style="text-align: center;">Yeni Rota Ekle 🌍</h2>
+        
+        <form id="addTravelogueForm">
+            <div class="form-group">
+                <label>Gezi Başlığı</label>
+                <input type="text" id="tTitle" placeholder="Örn: Harika Bir Antalya Turu" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Şehir</label>
+                <input type="text" id="tCity" placeholder="Örn: Antalya" required>
+            </div>
+
+            <div class="form-group">
+                <label>Ülke</label>
+                <input type="text" id="tCountry" placeholder="Örn: Türkiye" required>
+            </div>
+
+            <div class="form-group">
+                <label>Gezilecek Yerler (Virgülle ayırın)</label>
+                <input type="text" id="tPlaces" placeholder="Örn: Kaleiçi, Düden Şelalesi, Konyaaltı" required>
+            </div>
+
+            <div class="form-group">
+                <label>Gezi Notlarınız (İçerik)</label>
+                <textarea id="tContent" placeholder="Deneyimlerinizi buraya yazın..." required></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">Yazıyı Paylaş 🚀</button>
+        </form>
+
+        <a href="dashboard.html" class="back-link">Ana Sayfaya Dön</a>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

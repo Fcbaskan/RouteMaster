@@ -173,3 +173,59 @@ function sehireGoreAra() {
 function favoriyeEkle(yaziId) {
     alert("Favoriye ekleme özelliği yakında gelecek! Seçilen Yazı ID: " + yaziId);
 }
+
+// --- 4. YENİ GEZİ YAZISI EKLEME İŞLEMİ ---
+const addTravelogueForm = document.getElementById('addTravelogueForm');
+
+if (addTravelogueForm) {
+    // Sayfaya izinsiz girenleri at
+    checkAuth();
+
+    addTravelogueForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Formdaki değerleri alıyoruz
+        const title = document.getElementById('tTitle').value;
+        const city = document.getElementById('tCity').value;
+        const country = document.getElementById('tCountry').value;
+        const content = document.getElementById('tContent').value;
+        
+        // Gezilecek yerleri virgülle ayırıp bir Dizi (Array) yapıyoruz
+        const placesToVisit = document.getElementById('tPlaces').value.split(',').map(place => place.trim());
+
+        // Kimin paylaştığını bilmek için LocalStorage'dan ID'yi alıyoruz
+        const userId = localStorage.getItem("aktif_kullanici_id");
+
+        // Backend'e gönderilecek JSON verisi
+        const newTravelogue = {
+            title: title,
+            city: city,
+            country: country,
+            content: content,
+            placesToVisit: placesToVisit,
+            author: userId // NOT: Backend'de yazarı tuttuğun alanın adı 'userId' ise burayı 'userId: userId' yap.
+        };
+
+        try {
+            // DİKKAT: Ana sayfada hangi link çalıştıysa onu kullan (/travelogue veya /travelogues)
+            const response = await fetch(`${BASE_URL}/travelogue`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newTravelogue)
+            });
+
+            if (response.ok) {
+                alert("Gezi yazınız başarıyla eklendi! 🎉");
+                window.location.href = "dashboard.html"; // Başarılı olunca ana sayfaya dön
+            } else {
+                const data = await response.json();
+                alert("Ekleme başarısız oldu: " + (data.message || "Bilinmeyen hata"));
+            }
+        } catch (error) {
+            console.error("Yazı eklenirken hata oluştu:", error);
+            alert("Sunucuya bağlanırken bir hata oluştu.");
+        }
+    });
+}

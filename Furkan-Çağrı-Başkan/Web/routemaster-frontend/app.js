@@ -156,16 +156,17 @@ async function fetchTravelogues(arananSehir = "") {
 }
 
 // Yeni Arama Butonu Fonksiyonu
+// Güncellenmiş Arama Butonu Fonksiyonu
 function sehireGoreAra() {
     const sehirAdi = document.getElementById('searchInput').value.trim();
     
+    // Eğer kutucuk boşsa (kullanıcı silip arama tuşuna bastıysa), TÜM yazıları getir!
     if (sehirAdi === "") {
-        alert("Lütfen aramak istediğiniz şehri kutucuğa yazın!");
-        return;
+        fetchTravelogues(); 
+    } else {
+        // Kutu doluysa, sadece o şehri getir
+        fetchTravelogues(sehirAdi);
     }
-
-    // Seçilen şehri az önce güncellediğimiz ana fonksiyona yolla
-    fetchTravelogues(sehirAdi);
 }
 
 // Geçiçi Favori Fonksiyonu (Sonra içini dolduracağız)

@@ -2,23 +2,26 @@
 const BASE_URL = "https://route-master-ten.vercel.app";
 
 // --- 1. KAYIT OL (REGISTER) İŞLEMİ ---
-document.getElementById('registerForm').addEventListener('submit', async (e) => {
-    e.preventDefault(); // Butona basınca sayfanın yenilenmesini engeller
+const registerForm = document.getElementById('registerForm');
+if (registerForm) { // EĞER SAYFADA BU FORM VARSA ÇALIŞTIR!
+    registerForm.addEventListener('submit', async (e) => {
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault(); // Butona basınca sayfanın yenilenmesini engeller
 
     // Formdaki verileri alıyoruz
-    const firstName = document.getElementById('regFirstName').value;
-    const lastName = document.getElementById('regLastName').value;
-    const username = document.getElementById('regUsername').value;
-    const email = document.getElementById('regEmail').value;
-    const password = document.getElementById('regPassword').value;
+        const firstName = document.getElementById('regFirstName').value;
+        const lastName = document.getElementById('regLastName').value;
+        const username = document.getElementById('regUsername').value;
+        const email = document.getElementById('regEmail').value;
+        const password = document.getElementById('regPassword').value;
 
-    try {
-        // Vercel'deki /auth/register rotasına istek atıyoruz
-        const response = await fetch(`${BASE_URL}/auth/register`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ firstName, lastName, username, email, password })
-        });
+        try {
+            // Vercel'deki /auth/register rotasına istek atıyoruz
+                const response = await fetch(`${BASE_URL}/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ firstName, lastName, username, email, password })
+            });
 
         const data = await response.json();
 
@@ -28,27 +31,32 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         } else {
             alert("Kayıt Hatası: " + data.message);
         }
-    } catch (error) {
-        console.error("Sunucuya ulaşılamadı:", error);
-        alert("Sunucu ile bağlantı kurulamadı.");
-    }
+        } catch (error) {
+            console.error("Sunucuya ulaşılamadı:", error);
+            alert("Sunucu ile bağlantı kurulamadı.");
+        }
+    });
 });
+}
 
 // --- 2. GİRİŞ YAP (LOGIN) İŞLEMİ ---
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
+const loginForm = document.getElementById('loginForm');
+if (loginForm) { // EĞER SAYFADA BU FORM VARSA ÇALIŞTIR!
+    loginForm.addEventListener('submit', async (e) => {
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
 
-    try {
-        const response = await fetch(`${BASE_URL}/auth/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
-        });
+        try {
+            const response = await fetch(`${BASE_URL}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
 
-        const data = await response.json();
+            const data = await response.json();
 
         if (response.ok) {
             alert("Giriş Başarılı! Ana sayfaya yönlendiriliyorsunuz...");
@@ -63,13 +71,16 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
             // Giriş başarılıysa gezi yazılarının olduğu sayfaya yönlendir
             window.location.href = "dashboard.html"; 
-        } else {
+        } 
+        else {
             alert("Giriş Hatası: E-posta veya şifre yanlış.");
         }
-    } catch (error) {
-        console.error("Sunucuya ulaşılamadı:", error);
-    }
+        } catch (error) {
+            console.error("Sunucuya ulaşılamadı:", error);
+        }
 });
+});
+}
 
 // --- 3. DASHBOARD (ANA SAYFA) İŞLEMLERİ ---
 

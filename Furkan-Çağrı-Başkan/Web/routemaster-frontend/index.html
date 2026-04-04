@@ -34,7 +34,7 @@
             z-index: 1;
         }
 
-        /* --- YENİ: ÜST ŞEFFAF ÇUBUK (NAVBAR) --- */
+        /* ÜST ŞEFFAF ÇUBUK (NAVBAR) */
         .top-nav {
             position: fixed;
             top: 0;
@@ -49,7 +49,6 @@
             -webkit-backdrop-filter: blur(15px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             z-index: 10;
-            transition: 0.5s ease;
         }
 
         .top-nav h1 {
@@ -62,11 +61,6 @@
             transition: 0.3s;
         }
 
-        .top-nav h1:hover {
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
-            transform: scale(1.05);
-        }
-
         /* Ana Konteyner */
         .container {
             position: relative;
@@ -77,49 +71,68 @@
             width: 100%;
         }
 
-        /* Cam Efektli Kartlar */
+        /* Cam Efektli Kartlar - BOYUT BÜYÜTÜLDÜ */
         .glass-card {
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 20px;
-            padding: 40px;
-            width: 420px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border-radius: 25px;
+            padding: 50px; /* İç boşluk artırıldı */
+            width: 500px;  /* Genişlik 420px'den 500px'e çıkarıldı */
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
             color: white;
             transition: all 0.5s ease-in-out;
         }
 
-        .glass-card h2 { text-align: center; margin-bottom: 25px; font-size: 26px; font-weight: 600; }
-        .glass-card h1 { text-align: center; margin-bottom: 10px; font-size: 42px; font-weight: 800; }
-        .glass-card p { text-align: center; margin-bottom: 30px; font-size: 16px; color: #eee; line-height: 1.6; }
+        .glass-card h2 { text-align: center; margin-bottom: 30px; font-size: 32px; font-weight: 600; }
+        .glass-card h1 { text-align: center; margin-bottom: 15px; font-size: 48px; font-weight: 800; }
+        .glass-card p { text-align: center; margin-bottom: 35px; font-size: 18px; color: #eee; line-height: 1.6; }
 
         /* Form Elemanları */
-        .form-group { margin-bottom: 18px; }
+        .form-group { margin-bottom: 22px; }
         .glass-card input {
-            width: 100%; padding: 12px 15px; border: none; border-radius: 8px;
-            background: rgba(255, 255, 255, 0.2); color: white; font-size: 14px; outline: none; transition: 0.3s;
+            width: 100%; padding: 14px 18px; border: none; border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2); color: white; font-size: 15px; outline: none; transition: 0.3s;
         }
         .glass-card input::placeholder { color: rgba(255, 255, 255, 0.6); }
-        .glass-card input:focus { background: rgba(255, 255, 255, 0.3); }
+        .glass-card input:focus { background: rgba(255, 255, 255, 0.3); border: 1px solid rgba(255, 255, 255, 0.4); }
 
-        .row { display: flex; gap: 10px; }
+        .row { display: flex; gap: 15px; }
         .row .form-group { flex: 1; }
 
         /* Butonlar */
         .btn {
-            width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600;
+            width: 100%; padding: 15px; border: none; border-radius: 10px; font-size: 17px; font-weight: 600;
             cursor: pointer; transition: 0.3s; margin-top: 10px; color: white;
         }
         .btn-primary { background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 210, 255, 0.4); }
-        
         .btn-secondary { background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%); color: black; }
-        .btn-secondary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(242, 153, 74, 0.4); }
+        
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
 
-        /* Yardımcı Sınıf */
-        .hidden { display: none !important; opacity: 0; }
+        /* YENİ: Geçiş Linki Stili */
+        .switch-text {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .switch-link {
+            color: #00d2ff;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .switch-link:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -131,7 +144,7 @@
     <div class="container">
         
         <div id="welcomeScreen" class="glass-card">
-            <h1 style="text-align: center; margin-bottom: 10px;">RouteMaster</h1>
+            <h1>RouteMaster</h1>
             <p>Dünyayı keşfetmeye, rotanı çizmeye ve deneyimlerini paylaşmaya hazır mısın?</p>
             <button onclick="ekranDegistir('loginCard')" class="btn btn-primary">Giriş Yap</button>
             <button onclick="ekranDegistir('registerCard')" class="btn btn-secondary">Kayıt Ol</button>
@@ -148,6 +161,10 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Giriş Yap 🚀</button>
             </form>
+            <p class="switch-text">
+                Üyemiz değil misiniz? 
+                <span class="switch-link" onclick="ekranDegistir('registerCard')">Hemen kayıt olun</span>
+            </p>
         </div>
 
         <div id="registerCard" class="glass-card hidden">
@@ -172,6 +189,10 @@
                 </div>
                 <button type="submit" class="btn btn-secondary">Aramıza Katıl 🌟</button>
             </form>
+            <p class="switch-text">
+                Zaten üye misiniz? 
+                <span class="switch-link" onclick="ekranDegistir('loginCard')">Giriş yapın</span>
+            </p>
         </div>
 
     </div>
@@ -179,16 +200,12 @@
     <script>
         function ekranDegistir(hedefEkranId) {
             const navbar = document.getElementById('topNavbar');
-            
-            // Tüm kartları gizle
             document.getElementById('welcomeScreen').classList.add('hidden');
             document.getElementById('loginCard').classList.add('hidden');
             document.getElementById('registerCard').classList.add('hidden');
             
-            // Seçilen kartı göster
             document.getElementById(hedefEkranId).classList.remove('hidden');
 
-            // Navbar Kontrolü: Sadece hoşgeldin ekranı DEĞİLSE göster
             if (hedefEkranId === 'welcomeScreen') {
                 navbar.classList.add('hidden');
             } else {

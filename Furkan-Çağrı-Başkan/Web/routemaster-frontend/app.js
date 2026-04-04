@@ -105,8 +105,8 @@ async function fetchTravelogues(arananSehir = "") {
         // Eğer fonksiyona bir şehir adı gönderildiyse linkin sonuna ?city=... ekle
         // Gönderilmediyse (tüm yazılar isteniyorsa) sade linki kullan
         const url = arananSehir 
-            ? `${BASE_URL}/travelogues?city=${arananSehir}` 
-            : `${BASE_URL}/travelogues`;
+            ? `${BASE_URL}/travelogue?city=${encodeURIComponent(arananSehir)}` 
+            : `${BASE_URL}/travelogue`;
 
         const response = await fetch(url);
         const yazilar = await response.json();

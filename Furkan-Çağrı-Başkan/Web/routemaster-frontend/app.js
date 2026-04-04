@@ -581,6 +581,7 @@ if (profileUpdateForm && passwordUpdateForm) {
             // Backend'den artık firstName ve lastName geliyor
             document.getElementById('pName').value = user.firstName || "";
             document.getElementById('pSurname').value = user.lastName || "";
+            document.getElementById('pUsername').value = user.username || "";
             document.getElementById('pEmail').value = user.email || "";
         }
         } catch (error) {
@@ -598,6 +599,7 @@ if (profileUpdateForm && passwordUpdateForm) {
         const updatedData = {
             firstName: document.getElementById('pName').value,
             lastName: document.getElementById('pSurname').value,
+            username: document.getElementById('pUsername').value,
             email: document.getElementById('pEmail').value 
         };
 

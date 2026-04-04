@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RouteMaster - Yazıyı Düzenle</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-top: 4px solid #ffc107; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input[type="text"], textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        textarea { resize: vertical; height: 120px; }
+        .update-btn { width: 100%; padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .update-btn:hover { background-color: #218838; }
+        .back-link { display: block; text-align: center; margin-top: 15px; color: #6c757d; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2 style="text-align: center;">Yazıyı Düzenle ✏️</h2>
+        <p style="text-align: center; color: #666;">Değiştirmek istediğiniz alanları güncelleyip kaydedin.</p>
+        
+        <form id="editTravelogueForm">
+            <div class="form-group">
+                <label>Gezi Başlığı</label>
+                <input type="text" id="eTitle" value="Yükleniyor..." required>
+            </div>
+            
+            <div class="form-group">
+                <label>Yazar Adı</label>
+                <input type="text" id="eAuthorName" value="Yükleniyor..." required>
+            </div>
+
+            <div class="form-group">
+                <label>Şehir</label>
+                <input type="text" id="eCity" value="Yükleniyor..." required>
+            </div>
+
+            <div class="form-group">
+                <label>Ülke</label>
+                <input type="text" id="eCountry" value="Yükleniyor..." required>
+            </div>
+
+            <div class="form-group">
+                <label>Gezilecek Yerler (Virgülle ayırın)</label>
+                <input type="text" id="ePlaces" value="Yükleniyor..." required>
+            </div>
+
+            <div class="form-group">
+                <label>Gezi Notlarınız (İçerik)</label>
+                <textarea id="eContent" required>Yükleniyor...</textarea>
+            </div>
+
+            <button type="submit" class="update-btn">Değişiklikleri Kaydet 💾</button>
+        </form>
+
+        <a href="benimyazilarim.html" class="back-link">İptal Et ve Geri Dön</a>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

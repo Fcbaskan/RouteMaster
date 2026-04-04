@@ -364,13 +364,17 @@ async function fetchMyTravelogues() {
             return;
         }
 
-        benimYazilarim.forEach(yazi => {
+benimYazilarim.forEach(yazi => {
             myContainer.innerHTML += `
                 <div class="card">
                     <h3>${yazi.title}</h3>
                     <span style="background: #17a2b8; color: white; padding: 3px 8px; border-radius: 10px; font-size: 12px;">${yazi.city}, ${yazi.country}</span>
                     <p>${yazi.content.substring(0, 100)}...</p>
-                    <button class="delete-btn" onclick="yaziSil('${yazi._id}')">🗑️ Bu Yazıyı Sil</button>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button onclick="duzenleyeGit('${yazi._id}')" style="background-color: #ffc107; color: black; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; flex: 1; font-weight: bold;">✏️ Düzenle</button>
+                        <button class="delete-btn" onclick="yaziSil('${yazi._id}')" style="flex: 1;">🗑️ Sil</button>
+                    </div>
                 </div>
             `;
         });
@@ -402,5 +406,88 @@ async function yaziSil(yaziId) {
     } catch (error) {
         console.error("Silme işlemi başarısız:", error);
         alert("Sunucuya ulaşılamadı.");
+    }
+}
+
+// Düzenle Butonuna Basılınca ID'yi alıp yeni sayfaya götürür
+function duzenleyeGit(yaziId) {
+    window.location.href = `duzenle.html?id=${yaziId}`;
+}
+
+// --- 8. YAZI DÜZENLEME (UPDATE) İŞLEMLERİ ---
+
+const editForm = document.getElementById('editTravelogueForm');
+
+if (editForm) {
+    checkAuth();
+    
+    // Linkteki ?id=... kısmından yazi ID'sini yakalıyoruz
+    const urlParams = new URLSearchParams(window.location.search);
+    const yaziId = urlParams.get('id');
+
+    if (yaziId) {
+        // Sayfa açılır açılmaz eski verileri kutulara doldur!
+        eskiVerileriDoldur(yaziId);
+    } else {
+        alert("Düzenlenecek yazı bulunamadı!");
+        window.location.href = "benimyazilarim.html";
+    }
+
+    // "Değişiklikleri Kaydet" Butonuna Basıldığında (PUT İsteği)
+    editForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Kutulardaki yeni (değiştirilmiş) verileri topla
+        const updatedData = {
+            title: document.getElementById('eTitle').value,
+            authorName: document.getElementById('eAuthorName').value,
+            city: document.getElementById('eCity').value,
+            country: document.getElementById('eCountry').value,
+            content: document.getElementById('eContent').value,
+            placesToVisit: document.getElementById('ePlaces').value.split(',').map(p => p.trim()),
+            author: localStorage.getItem("aktif_kullanici_id")
+        };
+
+        try {
+            // Vercel'e PUT (Güncelle) isteği atıyoruz
+            const response = await fetch(`${BASE_URL}/travelogue/${yaziId}`, {
+                method: 'PUT', // DİKKAT: Backend'de güncelleme metodun PUT mu PATCH mi ayarladığına göre değişir. Genelde PUT'tur.
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedData)
+            });
+
+            if (response.ok) {
+                alert("Yazınız başarıyla güncellendi! 🛠️");
+                window.location.href = "benimyazilarim.html"; 
+            } else {
+                const data = await response.json();
+                alert("Güncellenemedi: " + (data.message || "Hata"));
+            }
+        } catch (error) {
+            console.error("Güncelleme hatası:", error);
+            alert("Sunucuya ulaşılamadı.");
+        }
+    });
+}
+
+// Eski verileri çekip kutulara yapıştıran fonksiyon
+async function eskiVerileriDoldur(id) {
+    try {
+        const response = await fetch(`${BASE_URL}/travelogue/${id}`);
+        if (!response.ok) throw new Error("Yazı bulunamadı");
+        
+        const yazi = await response.json();
+
+        // Kutuların içini veritabanından gelen verilerle doldur
+        document.getElementById('eTitle').value = yazi.title;
+        document.getElementById('eAuthorName').value = yazi.authorName || "";
+        document.getElementById('eCity').value = yazi.city;
+        document.getElementById('eCountry').value = yazi.country;
+        document.getElementById('ePlaces').value = yazi.placesToVisit ? yazi.placesToVisit.join(', ') : "";
+        document.getElementById('eContent').value = yazi.content;
+
+    } catch (error) {
+        console.error("Veriler getirilemedi:", error);
+        alert("Eski veriler yüklenirken bir hata oluştu.");
     }
 }

@@ -60,9 +60,9 @@ app.post('/auth/register', async (req, res) => {
 
         // Yeni kullanıcıyı oluştururken formdan gelen Ad ve Soyadı da ekliyoruz
         const newUser = new User({
-            username,
-            email,
-            password,
+            username: username,
+            email: email,
+            password: password,
             firstName: firstName || "", // Eğer boş bırakılırsa hata vermesin diye
             lastName: lastName || ""
         });

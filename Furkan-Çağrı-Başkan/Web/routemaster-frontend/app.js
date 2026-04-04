@@ -203,7 +203,7 @@ if (addTravelogueForm) {
             country: country,
             content: content,
             placesToVisit: placesToVisit,
-            userId: userId // NOT: Backend'de yazarı tuttuğun alanın adı 'userId' ise burayı 'userId: userId' yap.
+            authorId: userId // NOT: Backend'de yazarı tuttuğun alanın adı 'userId' ise burayı 'userId: userId' yap.
         };
 
         try {

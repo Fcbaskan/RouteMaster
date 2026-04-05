@@ -146,45 +146,45 @@ async function fetchTravelogues(arananSehir = "") {
         }
 
 yazilar.forEach(yazi => {
-            // SİHİRLİ DOKUNUŞ 2.0: Unsplash kapandığı için Picsum servisini kullanıyoruz.
-            // 'seed/${yazi._id}' kısmı sayesinde fotoğraf rastgele çekilse bile o yazıya sabitlenir. 
-            const fotoUrl = `https://picsum.photos/seed/${yazi._id}/800/400`;
+    const fotoUrl = `https://picsum.photos/seed/${yazi._id}/800/400`;
 
-            container.innerHTML += `
-                <div class="card glass-panel">
-                    <div class="card-image-wrapper">
-                        <img src="${fotoUrl}" alt="${yazi.city} manzarası" loading="lazy">
-                        <span class="city-tag">${yazi.city}, ${yazi.country}</span>
-                    </div>
+    // YENİ: Puana göre yıldızları hazırlayan mantık
+    // Backend'den 'averageRating' (ortalama puan) geldiğini varsayıyoruz.
+    const puan = Math.round(yazi.averageRating || 0); 
+    let yildizHtml = "";
+    for (let i = 1; i <= 5; i++) {
+        if (i <= puan) {
+            yildizHtml += `<span style="color:#ffc107; font-size:20px;">★</span>`; // Dolu yıldız
+        } else {
+            yildizHtml += `<span style="color:#ccc; font-size:20px;">☆</span>`; // Boş yıldız
+        }
+    }
 
-                    <div class="card-body">
-                        <h3>${yazi.title}</h3>
-                        
-                        <div class="author-line">👤 ${yazi.authorName || "Gizemli Gezgin"}</div>
-                        
-                        <p>${yazi.content.substring(0, 130)}...</p>
-                        
-                        <small>📍 Gezilecek Yerler: ${yazi.placesToVisit && yazi.placesToVisit.length > 0 ? yazi.placesToVisit.join(', ') : '-'}</small>
-                        <button onclick="window.location.href='detay.html?id=${yazi._id}'" style="width:100%; margin-top:15px; padding:10px; background:rgba(255,255,255,0.2); color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:8px; cursor:pointer; font-weight:600; transition:0.3s;">Tamamını Oku 📖</button>
-                    </div>
+    container.innerHTML += `
+        <div class="card glass-panel">
+            <div class="card-image-wrapper">
+                <img src="${fotoUrl}" alt="${yazi.city} manzarası" loading="lazy">
+                <span class="city-tag">${yazi.city}, ${yazi.country}</span>
+            </div>
 
-                    <div class="card-footer">
-                        <div class="star-rating">
-                            <small style="margin-right: 5px; opacity: 1;">Puanla:</small>
-                            <span id="star-container-${yazi._id}">
-                                <span style="cursor:pointer; font-size:20px; color:#ccc;" onclick="puanVer('${yazi._id}', 1)">☆</span>
-                                <span style="cursor:pointer; font-size:20px; color:#ccc;" onclick="puanVer('${yazi._id}', 2)">☆</span>
-                                <span style="cursor:pointer; font-size:20px; color:#ccc;" onclick="puanVer('${yazi._id}', 3)">☆</span>
-                                <span style="cursor:pointer; font-size:20px; color:#ccc;" onclick="puanVer('${yazi._id}', 4)">☆</span>
-                                <span style="cursor:pointer; font-size:20px; color:#ccc;" onclick="puanVer('${yazi._id}', 5)">☆</span>
-                            </span>
-                        </div>
+            <div class="card-body">
+                <h3>${yazi.title}</h3>
+                <div class="author-line">👤 ${yazi.authorName || "Gizemli Gezgin"}</div>
+                <p>${yazi.content.substring(0, 130)}...</p>
+                <small>📍 Gezilecek Yerler: ${yazi.placesToVisit && yazi.placesToVisit.length > 0 ? yazi.placesToVisit.join(', ') : '-'}</small>
+                
+                <button onclick="window.location.href='detay.html?id=${yazi._id}'" style="width:100%; margin-top:15px; padding:10px; background:rgba(255,255,255,0.2); color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:8px; cursor:pointer; font-weight:600; transition:0.3s;">Tamamını Oku 📖</button>
+            </div>
 
-                        <button class="action-btn" onclick="favoriyeEkle('${yazi._id}', this)">❤️ Favori</button>
-                    </div>
-                </div>
-            `;
-        });
+            <div class="card-footer">
+                <div class="star-rating">
+                    <small style="margin-right: 5px; opacity: 1;">Puan:</small>
+                    <div>${yildizHtml}</div> </div>
+                <button class="action-btn" onclick="favoriyeEkle('${yazi._id}', this)">❤️ Favori</button>
+            </div>
+        </div>
+    `;
+});
 
     } catch (error) {
         console.error("Hata Detayı:", error);
@@ -726,11 +726,11 @@ async function geziDetaylariniGetir(id) {
         if (!response.ok) throw new Error("Yazı bulunamadı");
         
         const yazi = await response.json();
-        
-        // Dashboard ile aynı yüksek kaliteli fotoğrafı çekelim
         const fotoUrl = `https://picsum.photos/seed/${yazi._id}/1000/500`;
 
-        // Detay sayfasının HTML yapısını çiziyoruz (Puanlama ve Favori butonları dahil!)
+        // Mevcut puanı hesapla (Backend yapına göre yazi.averageRating veya yazi.userRating)
+        const mevcutPuan = Math.round(yazi.averageRating || 0);
+
         detayContainer.innerHTML = `
             <div class="detail-header">
                 <h1>${yazi.title}</h1>
@@ -757,11 +757,9 @@ async function geziDetaylariniGetir(id) {
                 <div class="star-rating">
                     <span style="font-size: 18px; color: rgba(255,255,255,0.8);">Bu yazıyı puanla:</span>
                     <span id="star-container-${yazi._id}">
-                        <span style="color:#ccc;" onclick="puanVer('${yazi._id}', 1)">☆</span>
-                        <span style="color:#ccc;" onclick="puanVer('${yazi._id}', 2)">☆</span>
-                        <span style="color:#ccc;" onclick="puanVer('${yazi._id}', 3)">☆</span>
-                        <span style="color:#ccc;" onclick="puanVer('${yazi._id}', 4)">☆</span>
-                        <span style="color:#ccc;" onclick="puanVer('${yazi._id}', 5)">☆</span>
+                        ${[1, 2, 3, 4, 5].map(num => `
+                            <span style="color:${num <= mevcutPuan ? '#ffc107' : '#ccc'}; cursor:pointer;" onclick="puanVer('${yazi._id}', ${num})">${num <= mevcutPuan ? '★' : '☆'}</span>
+                        `).join('')}
                     </span>
                     <button onclick="puanSil('${yazi._id}')" class="delete-rating-btn">Puanı Sil 🗑️</button>
                 </div>

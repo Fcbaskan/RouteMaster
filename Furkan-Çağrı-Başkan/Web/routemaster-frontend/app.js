@@ -165,6 +165,7 @@ yazilar.forEach(yazi => {
                         <p>${yazi.content.substring(0, 130)}...</p>
                         
                         <small>📍 Gezilecek Yerler: ${yazi.placesToVisit && yazi.placesToVisit.length > 0 ? yazi.placesToVisit.join(', ') : '-'}</small>
+                        <button onclick="window.location.href='detay.html?id=${yazi._id}'" style="width:100%; margin-top:15px; padding:10px; background:rgba(255,255,255,0.2); color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:8px; cursor:pointer; font-weight:600; transition:0.3s;">Tamamını Oku 📖</button>
                     </div>
 
                     <div class="card-footer">
@@ -699,5 +700,77 @@ async function hesapSil() {
     } catch (error) {
         console.error("Hesap silinirken hata:", error);
         alert("Sunucuya ulaşılamadı.");
+    }
+}
+
+// --- 11. DETAY SAYFASI (TEKİL GEZİ YAZISI) İŞLEMLERİ ---
+const detayContainer = document.getElementById('geziDetayContainer');
+
+if (detayContainer) {
+    checkAuth();
+    
+    // Tarayıcıdaki linkten id'yi yakala (Örn: detay.html?id=12345)
+    const urlParams = new URLSearchParams(window.location.search);
+    const yaziId = urlParams.get('id');
+
+    if (yaziId) {
+        geziDetaylariniGetir(yaziId);
+    } else {
+        detayContainer.innerHTML = "<h2 style='text-align:center;'>Gezi yazısı bulunamadı! ❌</h2>";
+    }
+}
+
+async function geziDetaylariniGetir(id) {
+    try {
+        const response = await fetch(`${BASE_URL}/travelogue/${id}`);
+        if (!response.ok) throw new Error("Yazı bulunamadı");
+        
+        const yazi = await response.json();
+        
+        // Dashboard ile aynı yüksek kaliteli fotoğrafı çekelim
+        const fotoUrl = `https://picsum.photos/seed/${yazi._id}/1000/500`;
+
+        // Detay sayfasının HTML yapısını çiziyoruz (Puanlama ve Favori butonları dahil!)
+        detayContainer.innerHTML = `
+            <div class="detail-header">
+                <h1>${yazi.title}</h1>
+                <div class="meta">
+                    <span>📍 ${yazi.city}, ${yazi.country}</span>
+                    <span>👤 ${yazi.authorName || "Gizemli Gezgin"}</span>
+                </div>
+            </div>
+
+            <div class="detail-image">
+                <img src="${fotoUrl}" alt="${yazi.city} manzarası">
+            </div>
+
+            <div class="detail-content">
+                <p>${yazi.content}</p>
+            </div>
+
+            <div class="places-list">
+                <h3>🎒 Gezilecek Yerler Rotası</h3>
+                <p>${yazi.placesToVisit && yazi.placesToVisit.length > 0 ? yazi.placesToVisit.join(' ➔ ') : 'Belirtilmemiş'}</p>
+            </div>
+
+            <div class="interaction-bar">
+                <div class="star-rating">
+                    <span style="font-size: 18px; color: rgba(255,255,255,0.8);">Bu yazıyı puanla:</span>
+                    <span id="star-container-${yazi._id}">
+                        <span style="color:#ccc;" onclick="puanVer('${yazi._id}', 1)">☆</span>
+                        <span style="color:#ccc;" onclick="puanVer('${yazi._id}', 2)">☆</span>
+                        <span style="color:#ccc;" onclick="puanVer('${yazi._id}', 3)">☆</span>
+                        <span style="color:#ccc;" onclick="puanVer('${yazi._id}', 4)">☆</span>
+                        <span style="color:#ccc;" onclick="puanVer('${yazi._id}', 5)">☆</span>
+                    </span>
+                    <button onclick="puanSil('${yazi._id}')" class="delete-rating-btn">Puanı Sil 🗑️</button>
+                </div>
+
+                <button class="action-btn" onclick="favoriyeEkle('${yazi._id}', this)">❤️ Favorilere Ekle</button>
+            </div>
+        `;
+    } catch (error) {
+        console.error("Detay getirme hatası:", error);
+        detayContainer.innerHTML = "<h2 style='text-align:center;'>Sunucuya ulaşılamadı! ❌</h2>";
     }
 }

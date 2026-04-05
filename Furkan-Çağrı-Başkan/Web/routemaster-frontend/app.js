@@ -152,7 +152,7 @@ yazilar.forEach(yazi => {
 
     // YENİ: Puana göre yıldızları hazırlayan mantık
     // Backend'den 'averageRating' (ortalama puan) geldiğini varsayıyoruz.
-    const puan = Math.round(yazi.averageRating || 0); 
+    const puan = Math.round(yazi.rating || 0); 
     let yildizHtml = "";
     for (let i = 1; i <= 5; i++) {
         if (i <= puan) {
@@ -731,7 +731,7 @@ async function geziDetaylariniGetir(id) {
         const fotoUrl = `https://picsum.photos/seed/${yazi._id}/1000/500`;
 
         // Mevcut puanı hesapla (Backend yapına göre yazi.averageRating veya yazi.userRating)
-        const mevcutPuan = Math.round(yazi.averageRating || 0);
+        const mevcutPuan = Math.round(yazi.rating || 0);
 
         detayContainer.innerHTML = `
             <div class="detail-header">

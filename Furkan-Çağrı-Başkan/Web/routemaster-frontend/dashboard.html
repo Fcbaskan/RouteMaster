@@ -68,7 +68,7 @@
 
         /* --- 2. HERO ARAMA BÖLÜMÜ --- */
         .hero-section {
-            padding: 120px 20px 60px; text-align: center; color: white;
+            padding: 120px 20px 60px; text-align: center; color: rgb(255, 255, 255);
             position: relative; z-index: 2;
         }
 
@@ -88,7 +88,7 @@
         .search-box input::placeholder { color: rgba(255, 255, 255, 0.7); }
 
         .search-box button {
-            background: #ffe066; color: #9c3600; border: none; padding: 14px 38px;
+            background: #ffffff; color: #9c3600; border: none; padding: 14px 38px;
             border-radius: 50px; cursor: pointer; font-weight: 600; font-size: 16px; transition: 0.3s;
         }
 
@@ -98,7 +98,7 @@
         .main-content { padding: 40px 5%; max-width: 1600px; margin: 0 auto; flex-grow: 1; position: relative; z-index: 2;}
         
         .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; }
-        .section-title { font-size: 30px; font-weight: 800; letter-spacing: -1px; color: #fff; border-left: 5px solid #ffe066; padding-left: 10px;}
+        .section-title { font-size: 30px; font-weight: 800; letter-spacing: -1px; color: #fff; border-left: 5px solid #ffffff; padding-left: 10px;}
         
         .card-container {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px;
@@ -157,11 +157,11 @@
 <body>
 
     <nav class="navbar glass-panel" id="mainNavbar">
-        <a href="dashboard.html" class="logo"><span>🌍</span> RouteMaster</a>
+        <a href="dashboard.html" class="logo"><span></span> RouteMaster</a>
         <div class="nav-links">
-            <button onclick="window.location.href='ekle.html'" class="nav-btn btn-add">➕ Yeni Rota</button>
-            <button onclick="window.location.href='favoriler.html'" class="nav-btn btn-fav">⭐ Favorilerim</button>
+            <button onclick="window.location.href='ekle.html'" class="nav-btn btn-add">➕ Yeni Yazı</button>
             <button onclick="window.location.href='benimyazilarim.html'" class="nav-btn btn-my">📝 Yazılarım</button>
+            <button onclick="window.location.href='favoriler.html'" class="nav-btn btn-fav">⭐ Favorilerim</button>
             <button onclick="window.location.href='profil.html'" class="nav-btn btn-profile" title="Profilim">👤</button>
             <button onclick="logout()" class="nav-btn btn-logout" title="Çıkış Yap">🚪</button>
         </div>
@@ -169,7 +169,7 @@
 
     <div class="hero-section">
         <h1>Sıradaki Maceranı Bul</h1>
-        <p>Diğer gezginlerin rotalarını incele, kendi maceranı planla.</p>
+        <p>Diğer gezginlerin Gezilerini incele, kendi maceranı planla.</p>
         <div class="search-box glass-panel">
             <input type="text" id="searchInput" placeholder="Şehir veya Ülke ara... (Örn: İstanbul)">
             <button onclick="sehireGoreAra()">Keşfet 🔍</button>
@@ -178,11 +178,11 @@
 
     <div class="main-content">
         <div class="section-header">
-            <h2 class="section-title">Popüler Rotalar</h2>
+            <h2 class="section-title">Popüler Gezi Yazıları</h2>
         </div>
         
         <div id="traveloguesContainer" class="card-container">
-            <p style="text-align:center; width: 100%; color: rgba(255, 255, 255, 0.7);">Rotalar yükleniyor... 🌍</p>
+            <p style="text-align:center; width: 100%; color: rgba(255, 255, 255, 0.7);">Gezi yazıları yükleniyor... 🌍</p>
         </div>
     </div>
 

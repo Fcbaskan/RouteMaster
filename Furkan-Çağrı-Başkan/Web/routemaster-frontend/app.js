@@ -148,11 +148,10 @@ async function fetchTravelogues(arananSehir = "") {
 yazilar.forEach(yazi => {
             // SİHİRLİ DOKUNUŞ 2.0: Unsplash kapandığı için Picsum servisini kullanıyoruz.
             // 'seed/${yazi._id}' kısmı sayesinde fotoğraf rastgele çekilse bile o yazıya sabitlenir. 
-            // Sayfayı her yenilediğinde fotoğraf değişmez, yazarın seçtiği fotoğrafla kalır!
             const fotoUrl = `https://picsum.photos/seed/${yazi._id}/800/400`;
 
             container.innerHTML += `
-                <div class="card">
+                <div class="card glass-panel">
                     <div class="card-image-wrapper">
                         <img src="${fotoUrl}" alt="${yazi.city} manzarası" loading="lazy">
                         <span class="city-tag">${yazi.city}, ${yazi.country}</span>
@@ -165,7 +164,7 @@ yazilar.forEach(yazi => {
                         
                         <p>${yazi.content.substring(0, 130)}...</p>
                         
-                        <small>📍 ${yazi.placesToVisit && yazi.placesToVisit.length > 0 ? yazi.placesToVisit.join(', ') : '-'}</small>
+                        <small>📍 Gezilecek Yerler: ${yazi.placesToVisit && yazi.placesToVisit.length > 0 ? yazi.placesToVisit.join(', ') : '-'}</small>
                     </div>
 
                     <div class="card-footer">

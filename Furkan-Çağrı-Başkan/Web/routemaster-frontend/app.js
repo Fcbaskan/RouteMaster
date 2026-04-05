@@ -145,30 +145,42 @@ async function fetchTravelogues(arananSehir = "") {
             return;
         }
 
-        yazilar.forEach(yazi => {
+yazilar.forEach(yazi => {
+            // SİHİRLİ DOKUNUŞ: Şehir ismine göre Unsplash'tan otomatik fotoğraf linki oluştur!
+            // encodeURIComponent şehir ismindeki Türkçe karakterleri internete uygun hale getirir.
+            const fotoUrl = `https://source.unsplash.com/featured/?${encodeURIComponent(yazi.city)},city,travel`;
+
             container.innerHTML += `
                 <div class="card">
-                    <h3>${yazi.title}</h3>
-                    <span class="city-tag">${yazi.city}, ${yazi.country}</span>
-                    <p>${yazi.content.substring(0, 150)}...</p>
-                    
-                    <small>📍 Gezilecek Yerler: ${yazi.placesToVisit && yazi.placesToVisit.length > 0 ? yazi.placesToVisit.join(', ') : '-'}</small>
-                    
-                    <small style="color: #3a7bd5; font-weight: 600; margin-top: 5px; display: block;">👤 Yazar: ${yazi.authorName || "Gizemli Gezgin"}</small>
-                    
-                    <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee;">
-                        <small style="font-weight: bold; margin-right: 5px;">Puan Ver:</small>
-                        <span id="star-container-${yazi._id}">
-                            <span style="cursor:pointer; font-size:22px; color:#ccc;" onclick="puanVer('${yazi._id}', 1)">☆</span>
-                            <span style="cursor:pointer; font-size:22px; color:#ccc;" onclick="puanVer('${yazi._id}', 2)">☆</span>
-                            <span style="cursor:pointer; font-size:22px; color:#ccc;" onclick="puanVer('${yazi._id}', 3)">☆</span>
-                            <span style="cursor:pointer; font-size:22px; color:#ccc;" onclick="puanVer('${yazi._id}', 4)">☆</span>
-                            <span style="cursor:pointer; font-size:22px; color:#ccc;" onclick="puanVer('${yazi._id}', 5)">☆</span>
-                        </span>
-                        <button onclick="puanSil('${yazi._id}')" style="margin-left:10px; background:#dc3545; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">Puanı Sil 🗑️</button>
+                    <div class="card-image-wrapper">
+                        <img src="${fotoUrl}" alt="${yazi.city} manzarası" loading="lazy">
+                        <span class="city-tag">${yazi.city}, ${yazi.country}</span>
                     </div>
 
-                    <button class="action-btn" style="margin-top: 15px;" onclick="favoriyeEkle('${yazi._id}', this)">❤️ Favoriye Ekle</button>
+                    <div class="card-body">
+                        <h3>${yazi.title}</h3>
+                        
+                        <div class="author-line">👤 ${yazi.authorName || "Gizemli Gezgin"}</div>
+                        
+                        <p>${yazi.content.substring(0, 130)}...</p>
+                        
+                        <small>📍 ${yazi.placesToVisit && yazi.placesToVisit.length > 0 ? yazi.placesToVisit.join(', ') : '-'}</small>
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="star-rating">
+                            <small style="margin-right: 5px; opacity: 1;">Puanla:</small>
+                            <span id="star-container-${yazi._id}">
+                                <span style="cursor:pointer; font-size:20px; color:#ccc;" onclick="puanVer('${yazi._id}', 1)">☆</span>
+                                <span style="cursor:pointer; font-size:20px; color:#ccc;" onclick="puanVer('${yazi._id}', 2)">☆</span>
+                                <span style="cursor:pointer; font-size:20px; color:#ccc;" onclick="puanVer('${yazi._id}', 3)">☆</span>
+                                <span style="cursor:pointer; font-size:20px; color:#ccc;" onclick="puanVer('${yazi._id}', 4)">☆</span>
+                                <span style="cursor:pointer; font-size:20px; color:#ccc;" onclick="puanVer('${yazi._id}', 5)">☆</span>
+                            </span>
+                        </div>
+
+                        <button class="action-btn" onclick="favoriyeEkle('${yazi._id}', this)">❤️ Favori</button>
+                    </div>
                 </div>
             `;
         });

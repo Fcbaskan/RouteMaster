@@ -151,7 +151,10 @@ async function fetchTravelogues(arananSehir = "") {
                     <h3>${yazi.title}</h3>
                     <span class="city-tag">${yazi.city}, ${yazi.country}</span>
                     <p>${yazi.content.substring(0, 150)}...</p>
-                    <small>📍 Gezilecek Yerler: ${yazi.placesToVisit ? yazi.placesToVisit.join(', ') : '-'}</small>
+                    
+                    <small>📍 Gezilecek Yerler: ${yazi.placesToVisit && yazi.placesToVisit.length > 0 ? yazi.placesToVisit.join(', ') : '-'}</small>
+                    
+                    <small style="color: #3a7bd5; font-weight: 600; margin-top: 5px; display: block;">👤 Yazar: ${yazi.authorName || "Gizemli Gezgin"}</small>
                     
                     <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee;">
                         <small style="font-weight: bold; margin-right: 5px;">Puan Ver:</small>

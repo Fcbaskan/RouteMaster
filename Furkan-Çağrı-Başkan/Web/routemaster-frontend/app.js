@@ -133,6 +133,7 @@ async function fetchTravelogues(arananSehir = "") {
 
 
         const response = await fetch(url);
+
         
         // Eğer sunucu 404 veya 500 dönerse catch bloğuna gitmesi için kontrol
         if (!response.ok) throw new Error("Sunucu yanıt vermedi: " + response.status);
@@ -147,45 +148,45 @@ async function fetchTravelogues(arananSehir = "") {
         }
 
 yazilar.forEach(yazi => {
-            const fotoUrl = `https://picsum.photos/seed/${yazi._id}/800/400`;
+    const fotoUrl = `https://picsum.photos/seed/${yazi._id}/800/400`;
 
-            // KRİTİK DÜZELTME: Veritabanından gelen puanı alıyoruz (Yoksa 0 sayıyoruz)
-            // Backend'den gelen değişken isminin 'averageRating' olduğunu varsayıyoruz
-            const puan = Math.round(yazi.averageRating || 0); 
-            
-            let yildizHtml = "";
-            for (let i = 1; i <= 5; i++) {
-                // Eğer döngüdeki sayı puandan küçükse dolu, büyükse boş yıldız bas
-                if (i <= puan) {
-                    yildizHtml += `<span style="color:#ffc107; font-size:20px;">★</span>`;
-                } else {
-                    yildizHtml += `<span style="color:#ccc; font-size:20px;">☆</span>`;
-                }
-            }
+    // YENİ: Puana göre yıldızları hazırlayan mantık
+    // Backend'den 'averageRating' (ortalama puan) geldiğini varsayıyoruz.
+    const puan = Math.round(yazi.averageRating || 0); 
+    let yildizHtml = "";
+    for (let i = 1; i <= 5; i++) {
+        if (i <= puan) {
+            yildizHtml += `<span style="color:#ffc107; font-size:20px;">★</span>`; // Dolu yıldız
+        } else {
+            yildizHtml += `<span style="color:#ccc; font-size:20px;">☆</span>`; // Boş yıldız
+        }
+    }
 
-            container.innerHTML += `
-                <div class="card glass-panel">
-                    <div class="card-image-wrapper">
-                        <img src="${fotoUrl}" alt="${yazi.city} manzarası">
-                        <span class="city-tag">${yazi.city}, ${yazi.country}</span>
-                    </div>
-                    <div class="card-body">
-                        <h3>${yazi.title}</h3>
-                        <div class="author-line">👤 ${yazi.authorName || "Gizemli Gezgin"}</div>
-                        <p>${yazi.content.substring(0, 130)}...</p>
-                        <small>📍 ${yazi.placesToVisit && yazi.placesToVisit.length > 0 ? yazi.placesToVisit.join(', ') : '-'}</small>
-                        <button onclick="window.location.href='detay.html?id=${yazi._id}'" style="width:100%; margin-top:15px; padding:10px; background:rgba(255,255,255,0.2); color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:8px; cursor:pointer; font-weight:600;">Tamamını Oku 📖</button>
-                    </div>
-                    <div class="card-footer">
-                        <div class="star-rating">
-                            <small style="margin-right: 5px;">Puan: </small>
-                            <div id="display-stars-${yazi._id}">${yildizHtml}</div>
-                        </div>
-                        <button class="action-btn" onclick="favoriyeEkle('${yazi._id}', this)">❤️ Favori</button>
-                    </div>
-                </div>
-            `;
-        });
+    container.innerHTML += `
+        <div class="card glass-panel">
+            <div class="card-image-wrapper">
+                <img src="${fotoUrl}" alt="${yazi.city} manzarası" loading="lazy">
+                <span class="city-tag">${yazi.city}, ${yazi.country}</span>
+            </div>
+
+            <div class="card-body">
+                <h3>${yazi.title}</h3>
+                <div class="author-line">👤 ${yazi.authorName || "Gizemli Gezgin"}</div>
+                <p>${yazi.content.substring(0, 130)}...</p>
+                <small>📍 Gezilecek Yerler: ${yazi.placesToVisit && yazi.placesToVisit.length > 0 ? yazi.placesToVisit.join(', ') : '-'}</small>
+                
+                <button onclick="window.location.href='detay.html?id=${yazi._id}'" style="width:100%; margin-top:15px; padding:10px; background:rgba(255,255,255,0.2); color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:8px; cursor:pointer; font-weight:600; transition:0.3s;">Tamamını Oku 📖</button>
+            </div>
+
+            <div class="card-footer">
+                <div class="star-rating">
+                    <small style="margin-right: 5px; opacity: 1;">Puan:</small>
+                    <div>${yildizHtml}</div> </div>
+                <button class="action-btn" onclick="favoriyeEkle('${yazi._id}', this)">❤️ Favori</button>
+            </div>
+        </div>
+    `;
+});
 
     } catch (error) {
         console.error("Hata Detayı:", error);
@@ -529,28 +530,32 @@ async function puanVer(yaziId, verilenPuan) {
     const userId = localStorage.getItem("aktif_kullanici_id");
     if (!userId) return;
 
-    // Görseli anında güncelle (Sayfa yenilenmeden önceki hali için)
+    // 1. ADIM: Ekranda alert vermek yerine yıldızları anında sarıya boya!
     const container = document.getElementById(`star-container-${yaziId}`);
     if (container) {
         const yildizlar = container.getElementsByTagName('span');
-        // İlk eleman "Puanla:" metni olduğu için 1. indisten başlıyoruz
-        for (let i = 1; i <= 5; i++) {
-            if (i <= verilenPuan) {
-                yildizlar[i].innerText = "★";
-                yildizlar[i].style.color = "#ffc107";
+        for (let i = 0; i < 5; i++) {
+            if (i < verilenPuan) {
+                yildizlar[i].innerText = "★"; // Dolu yıldız
+                yildizlar[i].style.color = "#ffc107"; // Sarı renk
             } else {
-                yildizlar[i].innerText = "☆";
-                yildizlar[i].style.color = "#ccc";
+                yildizlar[i].innerText = "☆"; // Boş yıldız
+                yildizlar[i].style.color = "#ccc"; // Gri renk
             }
         }
     }
 
-    // Backend'e kaydet
-    await fetch(`${BASE_URL}/ratings/${yaziId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: userId, rating: verilenPuan })
-    });
+    // 2. ADIM: Arka planda Vercel'e sessizce kaydet
+    try {
+        await fetch(`${BASE_URL}/ratings/${yaziId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: userId, rating: verilenPuan })
+        });
+        // İşlem tamamlandı, alert YOLK!
+    } catch (error) {
+        console.error("Puanlama hatası:", error);
+    }
 }
 
 async function puanSil(yaziId) {
@@ -720,34 +725,52 @@ if (detayContainer) {
 async function geziDetaylariniGetir(id) {
     try {
         const response = await fetch(`${BASE_URL}/travelogue/${id}`);
-        const yazi = await response.json();
+        if (!response.ok) throw new Error("Yazı bulunamadı");
         
-        // Veritabanındaki güncel puanı çekiyoruz
-        const aktifPuan = Math.round(yazi.averageRating || 0);
+        const yazi = await response.json();
+        const fotoUrl = `https://picsum.photos/seed/${yazi._id}/1000/500`;
+
+        // Mevcut puanı hesapla (Backend yapına göre yazi.averageRating veya yazi.userRating)
+        const mevcutPuan = Math.round(yazi.averageRating || 0);
 
         detayContainer.innerHTML = `
             <div class="detail-header">
                 <h1>${yazi.title}</h1>
-                <div class="meta"><span>📍 ${yazi.city}</span> | <span>👤 ${yazi.authorName || "Gezgin"}</span></div>
+                <div class="meta">
+                    <span>📍 ${yazi.city}, ${yazi.country}</span>
+                    <span>👤 ${yazi.authorName || "Gizemli Gezgin"}</span>
+                </div>
             </div>
-            <div class="detail-image"><img src="https://picsum.photos/seed/${yazi._id}/1000/500"></div>
-            <div class="detail-content"><p>${yazi.content}</p></div>
+
+            <div class="detail-image">
+                <img src="${fotoUrl}" alt="${yazi.city} manzarası">
+            </div>
+
+            <div class="detail-content">
+                <p>${yazi.content}</p>
+            </div>
+
+            <div class="places-list">
+                <h3>🎒 Gezilecek Yerler Rotası</h3>
+                <p>${yazi.placesToVisit && yazi.placesToVisit.length > 0 ? yazi.placesToVisit.join(' ➔ ') : 'Belirtilmemiş'}</p>
+            </div>
+
             <div class="interaction-bar">
                 <div class="star-rating">
-                    <span style="font-size: 16px;">Puanla: </span>
+                    <span style="font-size: 18px; color: rgba(255,255,255,0.8);">Bu yazıyı puanla:</span>
                     <span id="star-container-${yazi._id}">
-                        ${[1, 2, 3, 4, 5].map(n => `
-                            <span style="color:${n <= aktifPuan ? '#ffc107' : '#ccc'}; cursor:pointer;" onclick="puanVer('${yazi._id}', ${n})">
-                                ${n <= aktifPuan ? '★' : '☆'}
-                            </span>
+                        ${[1, 2, 3, 4, 5].map(num => `
+                            <span style="color:${num <= mevcutPuan ? '#ffc107' : '#ccc'}; cursor:pointer;" onclick="puanVer('${yazi._id}', ${num})">${num <= mevcutPuan ? '★' : '☆'}</span>
                         `).join('')}
                     </span>
-                    <button onclick="puanSil('${yazi._id}')" class="delete-rating-btn">Sıfırla 🗑️</button>
+                    <button onclick="puanSil('${yazi._id}')" class="delete-rating-btn">Puanı Sil 🗑️</button>
                 </div>
+
                 <button class="action-btn" onclick="favoriyeEkle('${yazi._id}', this)">❤️ Favorilere Ekle</button>
             </div>
         `;
     } catch (error) {
-        console.error("Detay hatası:", error);
+        console.error("Detay getirme hatası:", error);
+        detayContainer.innerHTML = "<h2 style='text-align:center;'>Sunucuya ulaşılamadı! ❌</h2>";
     }
 }

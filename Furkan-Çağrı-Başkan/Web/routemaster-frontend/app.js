@@ -146,9 +146,10 @@ async function fetchTravelogues(arananSehir = "") {
         }
 
 yazilar.forEach(yazi => {
-            // SİHİRLİ DOKUNUŞ: Şehir ismine göre Unsplash'tan otomatik fotoğraf linki oluştur!
-            // encodeURIComponent şehir ismindeki Türkçe karakterleri internete uygun hale getirir.
-            const fotoUrl = `https://source.unsplash.com/featured/?${encodeURIComponent(yazi.city)},city,travel`;
+            // SİHİRLİ DOKUNUŞ 2.0: Unsplash kapandığı için Picsum servisini kullanıyoruz.
+            // 'seed/${yazi._id}' kısmı sayesinde fotoğraf rastgele çekilse bile o yazıya sabitlenir. 
+            // Sayfayı her yenilediğinde fotoğraf değişmez, yazarın seçtiği fotoğrafla kalır!
+            const fotoUrl = `https://picsum.photos/seed/${yazi._id}/800/400`;
 
             container.innerHTML += `
                 <div class="card">

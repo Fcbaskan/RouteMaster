@@ -145,7 +145,7 @@ async function fetchTravelogues(arananSehir = "") {
             return;
         }
 
-yazilar.forEach(yazi => {
+        yazilar.forEach(yazi => {
             container.innerHTML += `
                 <div class="card">
                     <h3>${yazi.title}</h3>
@@ -155,15 +155,17 @@ yazilar.forEach(yazi => {
                     
                     <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee;">
                         <small style="font-weight: bold; margin-right: 5px;">Puan Ver:</small>
-                        <span style="cursor:pointer; font-size:22px; color:#ffc107;" onclick="puanVer('${yazi._id}', 1)">★</span>
-                        <span style="cursor:pointer; font-size:22px; color:#ffc107;" onclick="puanVer('${yazi._id}', 2)">★</span>
-                        <span style="cursor:pointer; font-size:22px; color:#ffc107;" onclick="puanVer('${yazi._id}', 3)">★</span>
-                        <span style="cursor:pointer; font-size:22px; color:#ffc107;" onclick="puanVer('${yazi._id}', 4)">★</span>
-                        <span style="cursor:pointer; font-size:22px; color:#ffc107;" onclick="puanVer('${yazi._id}', 5)">★</span>
+                        <span id="star-container-${yazi._id}">
+                            <span style="cursor:pointer; font-size:22px; color:#ccc;" onclick="puanVer('${yazi._id}', 1)">☆</span>
+                            <span style="cursor:pointer; font-size:22px; color:#ccc;" onclick="puanVer('${yazi._id}', 2)">☆</span>
+                            <span style="cursor:pointer; font-size:22px; color:#ccc;" onclick="puanVer('${yazi._id}', 3)">☆</span>
+                            <span style="cursor:pointer; font-size:22px; color:#ccc;" onclick="puanVer('${yazi._id}', 4)">☆</span>
+                            <span style="cursor:pointer; font-size:22px; color:#ccc;" onclick="puanVer('${yazi._id}', 5)">☆</span>
+                        </span>
                         <button onclick="puanSil('${yazi._id}')" style="margin-left:10px; background:#dc3545; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">Puanı Sil 🗑️</button>
                     </div>
 
-                    <button class="action-btn" style="margin-top: 15px;" onclick="favoriyeEkle('${yazi._id}')">❤️ Favoriye Ekle</button>
+                    <button class="action-btn" style="margin-top: 15px;" onclick="favoriyeEkle('${yazi._id}', this)">❤️ Favoriye Ekle</button>
                 </div>
             `;
         });
@@ -243,46 +245,38 @@ if (addTravelogueForm) {
 }
 
 // --- 5. FAVORİLERE EKLEME İŞLEMİ ---
-async function favoriyeEkle(yaziId) {
-    // 1. Önce kimin favoriye eklediğini bulalım
+async function favoriyeEkle(yaziId, butonElementi) {
     const userId = localStorage.getItem("aktif_kullanici_id");
+    if (!userId) return; // Giriş yapmadıysa sessizce dur
 
-    if (!userId) {
-        alert("Lütfen önce giriş yapın!");
-        return;
-    }
+    const favoriVerisi = { userId: userId, itemId: yaziId, type: "travelogue" };
 
-    // 2. Backend'in bizden beklediği paketi hazırlayalım
-    // (Postman'de test ederken Body kısmına tam olarak bunları yazmıştık)
-    const favoriVerisi = {
-        userId: userId,
-        itemId: yaziId,
-        type: "travelogue" // Gezi yazısı olduğunu belirtiyoruz
-    };
+    // Kullanıcıya anında tepki ver (Yükleniyor...)
+    butonElementi.innerHTML = "⏳ Ekleniyor...";
+    butonElementi.disabled = true;
 
     try {
-        // 3. Vercel'deki favoriler API'mize POST (Ekleme) isteği atıyoruz
         const response = await fetch(`${BASE_URL}/favorites`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(favoriVerisi)
         });
 
-        const data = await response.json();
-
         if (response.ok) {
-            // Başarılıysa butona basan kişiye güzel bir mesaj ver
-            alert("Harika! Bu gezi yazısı favorilerinize eklendi. ❤️");
-            // İstersen burada butonun rengini değiştiren ekstra kodlar da yazılabilir.
+            // Başarılı olursa butonu yeşil yap ve yazısını değiştir
+            butonElementi.innerHTML = "✅ Favorilere Eklendi";
+            butonElementi.style.backgroundColor = "#28a745"; // Yeşil
+            butonElementi.style.color = "white";
         } else {
-            // Eğer daha önce eklediyse backend "Zaten favorilerinizde" uyarısı dönecektir
-            alert("Bilgi: " + (data.message || "Favoriye eklenemedi."));
+            // Eğer zaten ekliyse sarı yapıp bilgi ver
+            butonElementi.innerHTML = "⭐ Zaten Favorilerde";
+            butonElementi.style.backgroundColor = "#ffc107"; // Sarı
+            butonElementi.style.color = "black";
         }
     } catch (error) {
         console.error("Favoriye eklerken hata:", error);
-        alert("Sunucu bağlantı hatası.");
+        butonElementi.innerHTML = "❤️ Favoriye Ekle"; // Hata olursa eski haline döndür
+        butonElementi.disabled = false;
     }
 }
 
@@ -514,60 +508,60 @@ async function eskiVerileriDoldur(id) {
 
 // --- 9. PUANLAMA (RATING) İŞLEMLERİ ---
 
-// Puan Verme İşlemi
 async function puanVer(yaziId, verilenPuan) {
     const userId = localStorage.getItem("aktif_kullanici_id");
-    if (!userId) { alert("Puan vermek için giriş yapmalısınız!"); return; }
+    if (!userId) return;
 
+    // 1. ADIM: Ekranda alert vermek yerine yıldızları anında sarıya boya!
+    const container = document.getElementById(`star-container-${yaziId}`);
+    if (container) {
+        const yildizlar = container.getElementsByTagName('span');
+        for (let i = 0; i < 5; i++) {
+            if (i < verilenPuan) {
+                yildizlar[i].innerText = "★"; // Dolu yıldız
+                yildizlar[i].style.color = "#ffc107"; // Sarı renk
+            } else {
+                yildizlar[i].innerText = "☆"; // Boş yıldız
+                yildizlar[i].style.color = "#ccc"; // Gri renk
+            }
+        }
+    }
+
+    // 2. ADIM: Arka planda Vercel'e sessizce kaydet
     try {
-        // Senin Backend kuralın: Linkte yaziId, Body'de userId ve rating!
-        const response = await fetch(`${BASE_URL}/ratings/${yaziId}`, {
+        await fetch(`${BASE_URL}/ratings/${yaziId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                userId: userId, 
-                rating: verilenPuan 
-            })
+            body: JSON.stringify({ userId: userId, rating: verilenPuan })
         });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            // Senin backend'den gönderdiğin o güzel mesajı ekrana basıyoruz
-            alert(data.message); 
-        } else {
-            alert("Hata: " + data.message);
-        }
+        // İşlem tamamlandı, alert YOLK!
     } catch (error) {
         console.error("Puanlama hatası:", error);
-        alert("Sunucuya ulaşılamadı.");
     }
 }
 
-// Puan Silme İşlemi
 async function puanSil(yaziId) {
     const userId = localStorage.getItem("aktif_kullanici_id");
-    if (!userId) { alert("Lütfen önce giriş yapın!"); return; }
-
-    const onay = confirm("Bu yazıya verdiğiniz puanı silmek istediğinize emin misiniz?");
-    if (!onay) return;
+    if (!userId) return;
 
     try {
-        // Senin Backend kuralın: DELETE isteği, hem yaziId hem userId linkin içinde!
         const response = await fetch(`${BASE_URL}/ratings/${yaziId}/${userId}`, {
             method: 'DELETE'
         });
 
-        const data = await response.json();
-
         if (response.ok) {
-            alert(data.message); // Backend'in "Puanlama başarıyla silindi." mesajı
-        } else {
-            alert("Hata: " + data.message);
+            // Silme başarılıysa alert verme, sadece yıldızları tekrar gri yap (sıfırla)
+            const container = document.getElementById(`star-container-${yaziId}`);
+            if (container) {
+                const yildizlar = container.getElementsByTagName('span');
+                for (let i = 0; i < 5; i++) {
+                    yildizlar[i].innerText = "☆";
+                    yildizlar[i].style.color = "#ccc";
+                }
+            }
         }
     } catch (error) {
         console.error("Puan silme hatası:", error);
-        alert("Sunucuya ulaşılamadı.");
     }
 }
 

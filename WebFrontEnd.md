@@ -1,6 +1,6 @@
 # Web Frontend Görev Dağılımı
 
-**Web Frontend Adresi:** [frontend.yazmuh.com](https://frontend.yazmuh.com)
+**Web Frontend Adresi:** [frontend.routemaster.com](https://route-master-frontend-gray.vercel.app)
 
 Bu dokümanda, web uygulamasının kullanıcı arayüzü (UI) ve kullanıcı deneyimi (UX) görevleri listelenmektedir. Her grup üyesi, kendisine atanan sayfaların tasarımı, implementasyonu ve kullanıcı etkileşimlerinden sorumludur.
 
@@ -8,96 +8,65 @@ Bu dokümanda, web uygulamasının kullanıcı arayüzü (UI) ve kullanıcı den
 
 ## Grup Üyelerinin Web Frontend Görevleri
 
-1. [Ali Tutar'ın Web Frontend Görevleri](Ali-Tutar/Ali-Tutar-Web-Frontend-Gorevleri.md)
-2. [Grup Üyesi 2'nin Web Frontend Görevleri](Grup-Uyesi-2/Grup-Uyesi-2-Frontend-Gorevleri.md)
-3. [Grup Üyesi 3'ün Web Frontend Görevleri](Grup-Uyesi-3/Grup-Uyesi-3-Frontend-Gorevleri.md)
-4. [Grup Üyesi 4'ün Web Frontend Görevleri](Grup-Uyesi-4/Grup-Uyesi-4-Frontend-Gorevleri.md)
-5. [Grup Üyesi 5'in Web Frontend Görevleri](Grup-Uyesi-5/Grup-Uyesi-5-Frontend-Gorevleri.md)
-6. [Grup Üyesi 6'nın Web Frontend Görevleri](Grup-Uyesi-6/Grup-Uyesi-6-Frontend-Gorevleri.md)
+1. [Furkan Çağrı Başkan Web Frontend Görevleri](Furkan-Çağrı-Başkan/Furkan-Çağrı-Başkan-Web-Frontend-Gorevleri.md)
 
 ---
 
 ## Genel Web Frontend Prensipleri
 
 ### 1. Responsive Tasarım
-- **Mobile-First Approach:** Önce mobil tasarım, sonra desktop
-- **Breakpoints:** 
-  - Mobile: < 768px
-  - Tablet: 768px - 1024px
-  - Desktop: > 1024px
-- **Flexible Layouts:** CSS Grid ve Flexbox kullanımı
-- **Responsive Images:** srcset ve sizes attributes
-- **Touch-Friendly:** Minimum 44x44px touch targets
+- **Mobile-First Approach:** Önce mobil tasarım, sonra desktop.
+- **Breakpoints:** Özel Medya Sorguları (@media (max-width: 650px)) ile formların ve grid yapısının mobilde alt alta dizilmesi
+- **Flexible Layouts:** CSS Grid (grid-template-columns: repeat(auto-fill, minmax(350px, 1fr))) ve Navbar/Menüler için Flexbox 
+- **Visual Optimization:** Unsplash/Picsum API'den gelen resimlerin mobil ekranlarda taşmaması için object-fit: cover ve width: 100% 
 
 ### 2. Tasarım Sistemi
-- **CSS Framework:** Bootstrap, Tailwind CSS, Material-UI, veya custom
-- **Renk Paleti:** Tutarlı renk kullanımı (CSS variables)
-- **Tipografi:** Web-safe fonts veya web fonts (Google Fonts)
-- **Spacing:** Tutarlı padding ve margin değerleri (8px grid sistemi)
-- **Iconography:** Icon library (Font Awesome, Material Icons, Heroicons)
-- **Component Library:** Reusable UI components
+- **CSS Framework:** Custom CSS ve Glassmorphism (Buzlu Cam) konsepti (backdrop-filter: blur(15px))
+- **Renk Paleti:** Turuncu/Sarı (#ffe066), Gök Mavisi, Kırmızı (#dc3545 - silme/hata işlemleri için) ve Beyaz transparan tonlarının tutarlı kullanımı
+- **Tipografi:** Modern ve okunaklı Google Fontu: 'Poppins'
+- **Iconography:** Harici ikon kütüphaneleri (FontAwesome vb.) yükleyip siteyi yavaşlatmak yerine, modern ve hızlı Native Emojiler (🌍, 📍, 👤, ❤️, ⭐)
+- **Component Library:** Ortak class'lar (.glass-panel, .action-btn, .form-control) ile tekrar kullanılabilir CSS yapıları
 
 ### 3. Performans Optimizasyonu
-- **Code Splitting:** Route-based ve component-based splitting
-- **Lazy Loading:** Images, components, ve routes
-- **Minification:** CSS ve JavaScript minification
-- **Compression:** Gzip/Brotli compression
-- **Caching:** Browser caching, service worker (PWA)
-- **Bundle Size:** Tree shaking, dead code elimination
+- **Light Architecture:** React veya Vue gibi büyük framework'ler kullanılmadığı için sayfa yüklenme süresi (Load time) sıfıra yakındır
+- **Lazy Loading:** Gezi kartlarındaki görsellerde loading="lazy" attribute'u kullanılarak sadece ekranda görünen fotoğrafların yüklenmesinin sağlanması
+- **Dynamic Content:** app.js üzerinden sayfalar arası geçişlerde sadece gerekli verilerin (JSON) Vercel'den çekilip DOM'a basılması
 
 ### 4. SEO (Search Engine Optimization)
-- **Meta Tags:** Title, description, keywords
-- **Structured Data:** JSON-LD schema markup
-- **Semantic HTML:** Proper HTML5 semantic elements
-- **Alt Text:** Image alt attributes
-- **Sitemap:** XML sitemap generation
-- **Robots.txt:** Search engine crawling rules
+- **Meta Tags:** Her sayfa için özelleştirilmiş başlıklar (Örn: <title>RouteMaster - Keşfet</title>)
+- **Dynamic Alt Texts:** Görme engelliler ve arama motorları için resimlerde dinamik alt etiketleri (alt="${yazi.city} manzarası")
+- **Semantic Structure:** Navigasyon için <nav>, formlar için <form>, kartlar için mantıklı <h3> ve <p> etiket hiyerarşisi.
 
 ### 5. Erişilebilirlik (Accessibility)
-- **WCAG 2.1 AA Compliance:** Minimum accessibility standard
-- **Keyboard Navigation:** Tab order, focus management
-- **Screen Reader Support:** ARIA labels, roles, landmarks
-- **Color Contrast:** Minimum 4.5:1 ratio
-- **Focus Indicators:** Visible focus states
-- **Skip Links:** Skip to main content
-
+- **Color Contrast:** Cam efektli arka planların okunabilirliği bozmaması için body::before ile arka plan fotoğraflarının hafifçe karartılması (rgba(0,0,0,0.45))
+- **User Feedback:** Tarayıcının standart alert() pencereleri yerine, ekrana şık bir şekilde gelen Custom Modal (Özel Uyarı Penceresi) sistemi
+- **Interactive Feedback:** Butonların (hover) üzerine gelindiğinde büyümesi ve renk değiştirmesi.
 ### 6. Browser Compatibility
 - **Modern Browsers:** Chrome, Firefox, Safari, Edge (son 2 versiyon)
-- **Polyfills:** ES6+ features için gerekli polyfills
-- **CSS Prefixes:** Autoprefixer kullanımı
-- **Feature Detection:** Modernizr veya native feature detection
-- **Graceful Degradation:** Eski tarayıcılar için fallback
+- **Polyfills:** ES6+ JavaScript özellikleri (Arrow functions, Template Literals, Destructuring)
+- **Asynchronous Operations:** Veri çekme işlemleri için tüm modern tarayıcıların desteklediği async/await ve Fetch API kullanımı.
 
 ### 7. State Management
-- **Global State:** Redux, Zustand, Context API (React), Vuex/Pinia (Vue)
-- **Local State:** Component state, hooks
-- **Server State:** React Query, SWR, Apollo Client
-- **Form State:** React Hook Form, Formik, React Final Form
+- **Local State:** Kullanıcı giriş bilgileri ve ID'sinin tarayıcının localStorage ("aktif_kullanici_id") belleğinde tutulması
+- **DOM Manipulation:** Gelen API verilerine göre JavaScript (document.getElementById) ile HTML'in dinamik olarak yeniden çizilmesi
 
 ### 8. Routing
-- **Client-Side Routing:** React Router, Vue Router, Angular Router
-- **Deep Linking:** URL-based navigation
-- **Protected Routes:** Authentication guards
-- **404 Handling:** Custom 404 page
-- **History Management:** Browser history API
+- **Client-Side Routing:** Saf HTML yönlendirmeleri (window.location.href = "dashboard.html")
+- **Protected Routes:** app.js içindeki checkAuth() fonksiyonu ile oturum açmamış kullanıcıların anında index.html'e geri postalanması (Route Guard mantığı)
+- **Dynamic URLs:** Detay sayfasına gidilirken URL üzerinden ID taşınması (detay.html?id=12345) ve URLSearchParams ile bu ID'nin yakalanması
 
 ### 9. API Entegrasyonu
-- **HTTP Client:** Axios, Fetch API, ky
-- **Request Interceptors:** Token injection, error handling
-- **Response Interceptors:** Error handling, token refresh
-- **Error Handling:** Centralized error handling
-- **Loading States:** Global loading indicator
+- **HTTP Client:** Fetch API
+- **Centralized URL Management:** BASE_URL değişkeni ile lokal testlerden canlı (Vercel) sunucuya tek tuşla geçiş imkanı
+- **Error Handling:** try...catch blokları içine alınarak sunucu çökse bile kullanıcıya "Sunucuya ulaşılamadı" şeklinde mantıklı hata mesajları gösterilmesi
 
 ### 10. Testing
-- **Unit Tests:** Jest, Vitest, Mocha
-- **Integration Tests:** React Testing Library, Vue Test Utils
-- **E2E Tests:** Cypress, Playwright, Selenium
-- **Visual Regression:** Percy, Chromatic
-- **Accessibility Tests:** axe-core, Lighthouse
+- **Frontend Validation:** HTML5 required attribute'ları ile boş form gönderiminin engellenmesi
+- **Debugging:** Chrome DevTools (F12) Console sekmesi üzerinden API yanıtlarının izlenmesi
+- **Postman Integration:** Backend API rotalarının (GET, POST, PUT, DELETE) Postman üzerinden düzenli olarak test edilmesi
 
 ### 11. Build ve Deployment
-- **Build Tool:** Webpack, Vite, Parcel, esbuild
-- **Module Bundler:** ES modules, CommonJS
+- **Build Tool:** Proje Vanilla (Saf) olduğu için Webpack veya Vite gibi derleyicilere ihtiyaç duymaz, dosyalar anında çalışır
+- **Database:** MongoDB Atlas
 - **Environment Variables:** .env files
-- **CI/CD:** GitHub Actions, GitLab CI, Jenkins
-- **Hosting:** Vercel, Netlify, AWS, Azure
+- **Hosting:** Vercel

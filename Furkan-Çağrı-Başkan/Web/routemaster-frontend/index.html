@@ -139,7 +139,6 @@
     </div>
 
     <script>
-        // Ekran Geçişleri
         function ekranDegistir(hedefEkranId) {
             const navbar = document.getElementById('topNavbar');
             document.getElementById('welcomeScreen').classList.add('hidden');
@@ -152,7 +151,6 @@
             else navbar.classList.remove('hidden');
         }
 
-        // --- YENİ EKLENEN: MODAL KONTROL SİSTEMİ ---
         let modalAction = null; // Butona basılınca çalışacak görev
 
         function showModal(mesaj, isSuccess, gorevFonksiyonu) {

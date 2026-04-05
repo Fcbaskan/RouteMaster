@@ -43,7 +43,6 @@ app.use(async (req, res, next) => {
 
 app.post('/auth/register', async (req, res) => {
     try {
-        // req.body'den firstName ve lastName'i de alıyoruz!
         const { username, email, password, firstName, lastName } = req.body;
 
         if (!username || !email || !password) {
@@ -58,12 +57,11 @@ app.post('/auth/register', async (req, res) => {
             return res.status(409).json({ message: "Bu e-posta adresi veya kullanıcı adı zaten kayıtlı!" });
         }
 
-        // Yeni kullanıcıyı oluştururken formdan gelen Ad ve Soyadı da ekliyoruz
         const newUser = new User({
             username: username,
             email: email,
             password: password,
-            firstName: firstName || "", // Eğer boş bırakılırsa hata vermesin diye
+            firstName: firstName || "",
             lastName: lastName || ""
         });
 
@@ -111,13 +109,11 @@ app.post('/auth/login', async (req, res) => {
 app.put('/auth/users/:userid', async (req, res) => {
     try {
         const userId = req.params.userid; 
-        
-        // displayName'i kaldırdık, yerine firstName ve lastName ekledik
         const { email, firstName, lastName, username } = req.body;
 
         const updatedUser = await User.findByIdAndUpdate(
             userId, 
-            { email, firstName, lastName,username }, // Veritabanına bu 3'ünü kaydet diyoruz
+            { email, firstName, lastName,username },
             { new: true, runValidators: true }
         );
 
@@ -132,7 +128,6 @@ app.put('/auth/users/:userid', async (req, res) => {
 
     } catch (error) {
         console.error("Profil güncelleme hatası:", error);
-        // Eğer başkasının aldığı bir kullanıcı adını denerse MongoDB 11000 hatası verir
         if (error.code === 11000) {
             return res.status(400).json({ message: "Bu e-posta veya kullanıcı adı zaten kullanımda!" });
         }

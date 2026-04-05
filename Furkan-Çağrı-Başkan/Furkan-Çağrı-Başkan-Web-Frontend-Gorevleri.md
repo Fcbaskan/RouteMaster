@@ -1,140 +1,121 @@
-# Ali Tutar'ın Web Frontend Görevleri
+# Furkan Çağrı Başkan'ın Web Frontend Görevleri
 
-## 1. Üye Olma (Kayıt) Sayfası
-- **API Endpoint:** `POST /auth/register`
-- **Görev:** Kullanıcı kayıt işlemi için web sayfası tasarımı ve implementasyonu
+**Front-end Test Videosu:** [Front-end Test Videosunu İzle](https://www.youtube.com/watch?v=fFpWMDKhJjo)
+
+---
+
+## 1. Üye Olma ve Giriş (Karşılama) Ekranı
+- **API Endpoints:** `POST /auth/register` ve `POST /auth/login`
+- **Görev:** Kullanıcı kayıt ve giriş işlemleri için "Glassmorphism" (Buzlu Cam) konseptli, tek sayfada çalışan (Single Page Application hissiyatlı) dinamik web arayüzü tasarımı ve entegrasyonu.
 - **UI Bileşenleri:**
-  - Responsive kayıt formu (desktop ve mobile uyumlu)
-  - Email input alanı (type="email", autocomplete="email")
-  - Şifre input alanı (type="password", şifre gücü göstergesi)
-  - Şifre tekrar input alanı (doğrulama için)
-  - Ad (firstName) input alanı (autocomplete="given-name")
-  - Soyad (lastName) input alanı (autocomplete="family-name")
-  - "Kayıt Ol" butonu (primary button style)
-  - "Zaten hesabınız var mı? Giriş Yap" linki
-  - Loading spinner (kayıt işlemi sırasında)
-  - Form container (card veya centered layout)
+  - Full-screen yüksek çözünürlüklü dinamik arka plan manzarası.
+  - Yarı şeffaf, blur efektli form kartları (Glass Panel).
+  - Ad, Soyad, Kullanıcı Adı, E-posta ve Şifre input alanları (Karanlık tema uyumlu).
+  - Formlar arası pürüzsüz geçiş sağlayan yönlendirme linkleri ("Zaten üye misiniz? Giriş yapın").
+  - Özel tasarımlı Gradient "Aramıza Katıl" ve "Giriş Yap" butonları.
+  - Tarayıcı standart `alert()` yerine ekrana animasyonla gelen Özel Uyarı Penceresi (Custom Modal).
 - **Form Validasyonu:**
-  - HTML5 form validation (required, pattern attributes)
-  - JavaScript real-time validation
-  - Email format kontrolü (regex pattern)
-  - Şifre güvenlik kuralları (min 8 karakter, büyük/küçük harf, rakam)
-  - Şifre eşleşme kontrolü
-  - Ad ve soyad boş olamaz kontrolü
-  - Tüm alanlar geçerli olmadan buton disabled
-  - Client-side ve server-side validation
+  - HTML5 native validation özellikleri (`required`, `type="email"`).
+  - Benzersiz veriler için Server-side hata yakalama (Örn: "Bu kullanıcı adı kullanımda" MongoDB 11000 hatası).
 - **Kullanıcı Deneyimi:**
-  - Form hatalarını input altında gösterilmesi (inline validation)
-  - Başarılı kayıt sonrası success notification ve otomatik giriş sayfasına yönlendirme
-  - Hata durumlarında kullanıcı dostu mesajlar (409 Conflict: "Bu email zaten kullanılıyor")
-  - Form submission prevention (double-click koruması)
-  - Accessible form labels ve ARIA attributes
-  - Keyboard navigation desteği (Tab, Enter)
+  - Başarılı kayıt işleminden sonra formun (`reset()`) temizlenerek kullanıcıyı yormadan otomatik olarak "Giriş Yap" paneline kaydırması.
+  - Giriş yapıldığında `localStorage`'a ID'nin kaydedilip doğrudan "Dashboard" (Ana Sayfa) arayüzüne yönlendirme.
+  - Hata durumlarında ekranı dondurmayan, şık ikonlu (✅, ❌) geri bildirimler.
 - **Teknik Detaylar:**
-  - Framework: React/Vue/Angular veya Vanilla JS
-  - Form library: React Hook Form, Formik, veya native HTML5
-  - State management (form state, loading state, error state)
-  - Routing (kayıt sayfasından giriş sayfasına geçiş)
-  - SEO optimization (meta tags, structured data)
-  - Accessibility (WCAG 2.1 AA compliance)
+  - Framework: Vanilla JavaScript, HTML5 ve Custom CSS.
+  - State Management: `localStorage` ("aktif_kullanici_id") üzerinden yerel oturum yönetimi.
+  - DOM Manipulation: `classList.remove('hidden')` ile sayfayı yenilemeden formlar arası akıcı geçiş.
+  - API Entegrasyonu: Asenkron Fetch API ve `try-catch` blokları ile güvenli veri transferi.
 
-## 2. Kullanıcı Profil Görüntüleme Sayfası
-- **API Endpoint:** `GET /users/{userId}`
-- **Görev:** Kullanıcı profil bilgilerini görüntüleme sayfası tasarımı ve implementasyonu
+## 2. Kullanıcı Profil Görüntüleme ve Düzenleme Sayfası
+- **API Endpoints:** `GET /auth/users/{userId}` ve `PUT /auth/users/{userId}` (Şifre için: `PUT /auth/users/{userId}/password`)
+- **Görev:** Kullanıcının mevcut hesap bilgilerini görüntüleyebildiği, kişisel bilgilerini ve şifresini güvenle güncelleyebildiği bir "Hesap Ayarları Merkezi" oluşturulması.
 - **UI Bileşenleri:**
-  - Responsive profil layout (desktop: sidebar + content, mobile: stacked)
-  - Profil fotoğrafı alanı (circular avatar, placeholder veya gerçek fotoğraf)
-  - Kullanıcı adı ve soyadı (H1 heading)
-  - Email adresi (icon + text, copy to clipboard özelliği)
-  - Telefon numarası (icon + text, varsa)
-  - Hesap oluşturulma tarihi (formatted date)
-  - "Profili Düzenle" butonu (secondary button)
-  - "Hesabı Sil" butonu (danger button, alt kısımda)
-  - Refresh butonu veya auto-refresh
-  - Breadcrumb navigation (opsiyonel)
-- **Kullanıcı Deneyimi:**
-  - Loading skeleton screen (veri yüklenirken)
-  - Empty state (veri yoksa)
-  - Error state (yükleme hatası durumunda retry butonu)
-  - Smooth page transitions
-  - Profil fotoğrafı için placeholder avatar (initials)
-  - Responsive grid layout
-  - Print-friendly styles
-- **Teknik Detaylar:**
-  - Lazy loading images (profil fotoğrafları için)
-  - Image optimization (WebP format, responsive images)
-  - Client-side caching (localStorage/sessionStorage)
-  - State management (user data, loading, error states)
-  - Routing (profil düzenleme sayfasına geçiş)
-  - Deep linking desteği (profil paylaşımı için)
-  - Meta tags (Open Graph, Twitter Cards)
-
-## 3. Kullanıcı Profil Düzenleme Sayfası
-- **API Endpoint:** `PUT /users/{userId}`
-- **Görev:** Kullanıcı profil bilgilerini düzenleme sayfası tasarımı ve implementasyonu
-- **UI Bileşenleri:**
-  - Responsive düzenleme formu
-  - Profil fotoğrafı düzenleme alanı (drag & drop upload, preview)
-  - Ad (firstName) input alanı (mevcut değerle dolu)
-  - Soyad (lastName) input alanı (mevcut değerle dolu)
-  - Email input alanı (mevcut değerle dolu, düzenlenebilir)
-  - Telefon numarası input alanı (mevcut değerle dolu, format maskesi)
-  - "Kaydet" butonu (primary button, sağ üst veya form altında)
-  - "İptal" butonu (secondary button, sol üst veya form altında)
-  - Değişiklik yapıldığında "Kaydet" butonu aktif olur
-  - Unsaved changes indicator
+  - RouteMaster premium tasarım diline uygun, cam efektli "Profil Ayarları" ve "Şifre Değiştirme" form panelleri.
+  - Input alanlarının varsayılan olarak kullanıcının mevcut verileriyle dolu gelmesi.
+  - "Değişiklikleri Kaydet" (Primary) ve "Şifreyi Güncelle" butonları.
+  - Profil sayfasından ana menüye dönmeyi sağlayan şık, üst sabit navigasyon barı (Navbar).
 - **Form Validasyonu:**
-  - Email format kontrolü (real-time)
-  - Telefon numarası format kontrolü (ülke kodu desteği, input masking)
-  - Real-time validation feedback
-  - Değişiklik yoksa "Kaydet" butonu disabled
-  - File upload validation (image type, size limits)
+  - Eski şifre ve yeni şifre eşleşme/doğrulama kontrolleri (Backend destekli).
+  - E-posta formati ve boş veri kontrolleri.
 - **Kullanıcı Deneyimi:**
-  - Optimistic update (kaydet butonuna basıldığında UI anında güncellenir)
-  - Başarılı güncelleme sonrası success notification (toast/snackbar)
-  - Hata durumunda error mesajı ve değişiklikler geri alınır
-  - "İptal" butonuna basıldığında değişiklik kaybı için browser confirmation dialog
-  - Beforeunload event (sayfa kapatılırken uyarı)
-  - Image preview (upload öncesi)
-  - Progress indicator (image upload için)
+  - Sayfa açıldığı an `profilGetir()` fonksiyonu ile verilerin arka planda yüklenip saniyeler içinde input kutularına yerleşmesi (Optimistic Data Fetching).
+  - Bilgiler güncellendiğinde sayfa yenilenmesine gerek kalmadan anında başarılı olduğuna dair bildirim verilmesi.
 - **Teknik Detaylar:**
-  - Form state management (initial values, edited values, dirty state)
-  - File upload component (drag & drop, file picker)
-  - Image compression (client-side, before upload)
-  - Image preview functionality
-  - Routing (geri dönüş, kaydetme sonrası profil sayfasına dönüş)
-  - Unsaved changes warning (browser navigation)
-  - Form persistence (localStorage, draft saving)
+  - `window.onload` anında kullanıcının giriş yapıp yapmadığını denetleyen `checkAuth()` güvenlik kalkanı (Route Guarding).
+  - JSON paketleme (`JSON.stringify`) ile Ad, Soyad ve Kullanıcı Adı verilerinin backend'e hatasız iletimi.
+  - Hata yakalama (Örn: Başkasının aldığı bir kullanıcı adını denerse 409 Conflict yakalama).
 
-## 4. Hesap Silme Akışı
-- **API Endpoint:** `DELETE /users/{userId}`
-- **Görev:** Kullanıcı hesabını silme işlemi için web UI akışı tasarımı ve implementasyonu
+## 3. Hesap Silme Akışı
+- **API Endpoint:** `DELETE /auth/users/{userId}`
+- **Görev:** Kullanıcının sistemdeki tüm verilerini (Gezi yazıları, favorileri, profili) kalıcı olarak silmesini sağlayan güvenli çıkış akışının kodlanması.
 - **UI Bileşenleri:**
-  - "Hesabı Sil" butonu (profil sayfasında, danger button style)
-  - Modal dialog (destructive action için)
-  - Şifre doğrulama alanı (güvenlik için opsiyonel)
-  - Son onay ekranı (uyarı mesajları ile)
-  - "Emin misiniz?" confirmation dialog (çift onay mekanizması)
-  - Warning icons ve visual cues
+  - Profil sayfasının en altında konumlandırılmış kırmızı, dikkat çekici "Hesabı Sil" butonu.
+  - Kritik işlemlere özel tarayıcı tabanlı onay (Confirmation) diyalogları.
 - **Kullanıcı Deneyimi:**
-  - Destructive action için görsel uyarılar (kırmızı renk, warning icons)
-  - Açık ve net uyarı mesajları ("Bu işlem geri alınamaz")
-  - İptal seçeneği her zaman mevcut (modal close, cancel button)
-  - Silme işlemi sırasında loading indicator
-  - Başarılı silme sonrası logout ve login sayfasına yönlendirme
-  - Success message gösterilmesi
+  - "Yanlışlıkla tıklama" ihtimalini sıfıra indirmek için tasarlanmış Çift Onay Mekanizması (1. "Emin misiniz?" -> 2. "Bu işlem geri alınamaz, siliyorum?").
+  - Başarılı silme işleminden sonra "Elveda" mesajı ile kullanıcının sistemsel bağlarının koparılması.
 - **Akış Adımları:**
-  1. Profil sayfasında "Hesabı Sil" butonuna tıklama
-  2. İlk uyarı modal dialog'u gösterilmesi
-  3. Onaylandığında şifre doğrulama (opsiyonel)
-  4. Son onay ekranı (detaylı uyarılar, checkbox confirmation)
-  5. Silme işlemi gerçekleştirme
-  6. Başarılı silme sonrası logout ve login sayfasına yönlendirme
+  - Kullanıcı "Hesabımı Sil" butonuna tıklar.
+  - Birinci uyarı çıkar: Bilgilerin kaybolacağı hatırlatılır.
+  - İkinci güvenlik onayı istenir.
+  - Onaylanırsa Backend'e `DELETE` isteği atılır.
+  - Tarayıcı önbelleğindeki (`localStorage`) oturum bilgileri temizlenir.
+  - Kullanıcı zorunlu olarak `index.html` (Kayıt) sayfasına yönlendirilir.
 - **Teknik Detaylar:**
-  - Modal/Dialog component kullanımı
-  - Multi-step flow yönetimi (state machine veya step-based)
-  - Error handling (silme başarısız olursa)
-  - Logout işlemi entegrasyonu
-  - Session storage ve localStorage temizleme
-  - Redirect handling (login sayfasına dönüş)
-  - Browser history management
+  - Asenkron Fetch ile `DELETE` metodunun kullanılması.
+  - Backend'in döndüğü 204 (No Content) veya 200 yanıt statüsüne göre `response.ok` ile başarı kontrolü yapılması.
+  - Session temizliği (`localStorage.removeItem`).
+
+## 4. Gezi Yazısı (İçerik) Yönetim Modülü
+- **API Endpoints:**
+  - `GET /travelogue` (Listeleme)
+  - `GET /travelogue/{id}` (Detay Getirme)
+  - `POST /travelogue` (Yeni Ekleme)
+  - `PUT /travelogue/{id}` (Güncelleme)
+  - `DELETE /travelogue/{id}` (Silme)
+- **Görev:** Kullanıcıların gezi rotalarını oluşturabildiği, listeleyebildiği, detaylarını okuyabildiği ve kendi yazılarını yönetebildiği uçtan uca içerik sisteminin entegrasyonu.
+- **UI Bileşenleri:**
+  - Ana Sayfa (Dashboard): Responsive grid mimarisi ile dizilmiş, dinamik resim çeken (Picsum API) Premium Cam Efektli gezi kartları.
+  - Ekleme/Düzenleme Formları: Karanlık tema uyumlu, geniş metin alanlarına sahip "İçerik Stüdyosu" hissiyatlı form panelleri.
+  - Detay Sayfası: Okyanus manzaralı arka plan üzerine oturan, tam sayfa genişliğinde, yazar, rota ve içerik detaylarını barındıran okuma arayüzü.
+- **Kullanıcı Deneyimi (UX):**
+  - Resimlerin sayfayı yavaşlatmaması için `loading="lazy"` (Tembel Yükleme) mimarisi.
+  - "Düzenle" butonuna tıklandığında `eskiVerileriDoldur()` fonksiyonu ile veritabanındaki verilerin saniyeler içinde inputlara otomatik yerleştirilmesi.
+  - Silme işlemi öncesi yanlışlıkları önlemek için `confirm()` ile güvenlik teyidi alınması ve silinen yazının DOM'dan anında kaldırılması (Sayfa yenilemeden).
+- **Teknik Detaylar:**
+  - URL Parametreleri: Detay ve Düzenle sayfalarına geçişte `URLSearchParams` kullanılarak ID'nin URL üzerinden güvenle taşınması (`?id=12345`).
+  - Dinamik Filtreleme: "Benim Yazılarım" sayfasında `Array.filter()` kullanılarak sadece aktif kullanıcının ID'si ile eşleşen yazıların ekrana basılması.
+
+## 5. Favori Sistemi (Bookmark)
+- **API Endpoints:**
+  - `POST /favorites` (Ekleme)
+  - `GET /favorites/{userId}` (Listeleme)
+  - `DELETE /favorites/{itemId}/{userId}` (Çıkarma)
+- **Görev:** Kullanıcıların beğendikleri rotaları kaydedip daha sonra ulaşabilecekleri kişiselleştirilmiş "Favorilerim" altyapısının kurulması.
+- **UI Bileşenleri:**
+  - Gezi kartları üzerinde konumlandırılmış interaktif "❤️ Favori" butonları.
+  - Favoriye eklenmiş yazılara özel listeleme sayfası.
+  - Listeden çıkarma işlemi için özel "❌ Favorilerden Çıkar" butonları.
+- **Kullanıcı Deneyimi (UX):**
+  - Optimistic UI (İyimser Arayüz): Favoriye ekle butonuna basıldığında ekrana rahatsız edici `alert()` çıkarmak yerine, butonun renginin anında yeşile dönmesi ve metnin "✅ Favorilere Eklendi" olarak değişmesi.
+  - Zaten favorilerde olan bir yazıya tekrar tıklandığında butonun sarı renge dönerek kullanıcıyı uyarması.
+  - Favorilerden çıkarma işlemi yapıldığında listenin anında `fetchFavorites()` ile kendini güncelleyerek silinen öğeyi ekrandan kaybetmesi.
+- **Teknik Detaylar:**
+  - İstek atılırken Buton DOM elementinin (`this`) fonksiyona parametre olarak geçirilerek sadece tıklanan butonun CSS stilinin JavaScript ile anında manipüle edilmesi.
+
+## 6. İnteraktif Puanlama (Rating) Sistemi
+- **API Endpoints:**
+  - `POST /ratings/{yaziId}` (Puan Verme)
+  - `DELETE /ratings/{yaziId}/{userId}` (Puan Silme)
+- **Görev:** Topluluk etkileşimini artırmak için gezi yazılarına 5 yıldız üzerinden puan verilmesini sağlayan dinamik derecelendirme modülünün geliştirilmesi.
+- **UI Bileşenleri:**
+  - Font boyutlarıyla ayarlanmış, fare ile üzerine gelindiğinde tepki veren 5'li yıldız (☆/★) komponenti.
+  - Puanı sıfırlamak için tasarlanmış minimalist silme butonu.
+- **Kullanıcı Deneyimi (UX):**
+  - Bağlamsal Görünüm: Ana sayfadaki (Dashboard) yıldızların sadece ortalama puanı göstermesi (tıklanamaz olması) ile sadeliğin korunması.
+  - Detay sayfasına girildiğinde yıldızların interaktif hale gelmesi ve kullanıcının verdiği puana göre (örneğin 3'e basıldığında ilk 3 yıldızın) anında sarı renge (`#ffc107`) boyanması.
+  - Puan silindiğinde ekran yenilenmesine gerek kalmadan tüm yıldızların tekrar gri boş yıldıza (☆) dönmesi.
+- **Teknik Detaylar:**
+  - DOM İterasyonu: Verilen puan sayısına göre JavaScript `for` döngüsü kullanılarak `NodeList` (yıldız elemanları) üzerinde anlık renk ve karakter (`innerText`) değişimi.
+  - Backend'den gelen `averageRating` (Ortalama Puan) verisinin `Math.round()` ile tam sayıya yuvarlanarak arayüzdeki yıldızlara hatasız yansıtılması.

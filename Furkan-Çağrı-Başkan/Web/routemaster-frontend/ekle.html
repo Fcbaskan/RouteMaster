@@ -7,23 +7,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;800&display=swap" rel="stylesheet">
     
     <style>
-        /* Genel Ayarlar & Temiz Tipografi */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { color: #fdfdfd; min-height: 100vh; position: relative; overflow-x: hidden; }
 
-        /* --- ARKA PLAN (Ana sayfa ile uyumlu) --- */
         body {
             background: url('https://images.unsplash.com/photo-1506929562872-bb421503ef21?q=80&w=2000&auto=format&fit=crop') no-repeat center center/cover fixed;
             display: flex; flex-direction: column;
         }
 
-        /* Arka plan karartması */
         body::before {
             content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.5); z-index: 1;
         }
 
-        /* Cam Panel (Glassmorphism) */
         .glass-panel {
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
@@ -32,7 +28,6 @@
             position: relative; z-index: 2;
         }
 
-        /* --- NAVBAR --- */
         .navbar {
             display: flex; justify-content: space-between; align-items: center;
             padding: 15px 5%; position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
@@ -50,7 +45,6 @@
         }
         .nav-btn:hover { background: rgba(0,0,0,0.6); }
 
-        /* --- FORM KONTEYNERİ --- */
         .form-container {
             max-width: 850px; margin: 120px auto 60px; padding: 40px; width: 90%;
         }
@@ -59,7 +53,6 @@
         .form-header h1 { font-size: 38px; font-weight: 800; color: #ffe066; margin-bottom: 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
         .form-header p { font-size: 17px; color: rgba(255,255,255,0.9); }
 
-        /* --- FORM ELEMANLARI --- */
         .form-group { margin-bottom: 22px; }
         .form-group label {
             display: block; font-size: 15px; font-weight: 500; margin-bottom: 8px; color: rgba(255,255,255,0.95);
@@ -82,10 +75,8 @@
         .row { display: flex; gap: 20px; }
         .row .form-group { flex: 1; }
 
-        /* Mobilde yan yana olanları alt alta al */
         @media (max-width: 650px) { .row { flex-direction: column; gap: 0; } }
 
-        /* --- GÖNDER BUTONU --- */
         .submit-btn {
             width: 100%; padding: 18px; background: linear-gradient(135deg, #008772 0%, #00b398 100%);
             color: white; border: none; border-radius: 12px; font-weight: 600; font-size: 18px;

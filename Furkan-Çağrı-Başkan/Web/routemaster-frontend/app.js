@@ -1,22 +1,18 @@
-// BURAYA KENDİ VERCEL LİNKİNİ YAZ (Sonunda / olmadan)
 const BASE_URL = "https://route-master-ten.vercel.app";
 
-// --- 1. KAYIT OL (REGISTER) İŞLEMİ ---
 const registerForm = document.getElementById('registerForm');
 
 if (registerForm) {
     registerForm.addEventListener('submit', async (e) => {
-        e.preventDefault(); // Sayfanın yenilenmesini durdur
+        e.preventDefault();
 
         try {
-            // HTML'deki yeni ID'lerle verileri çekiyoruz
             const firstName = document.getElementById('regFirstName').value;
             const lastName = document.getElementById('regLastName').value;
             const username = document.getElementById('regUsername').value;
             const email = document.getElementById('regEmail').value;
             const password = document.getElementById('regPassword').value;
 
-            // Vercel'e veriyi yolluyoruz
             const response = await fetch(`${BASE_URL}/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -25,10 +21,9 @@ if (registerForm) {
 
             if (response.ok) {
                 registerForm.reset(); 
-                // Eski alert yerine yeni fonksiyonumuz:
                 if (typeof showModal === "function") {
                     showModal("Aramıza Hoş Geldiniz! 🎉\nŞimdi giriş yapabilirsiniz.", true, () => {
-                        ekranDegistir('loginCard'); // "Tamam"a basınca giriş ekranına kaydır
+                        ekranDegistir('loginCard'); 
                     });
                 }
             }
@@ -45,13 +40,11 @@ if (registerForm) {
     });
 }
 
-// --- 2. GİRİŞ YAP (LOGIN) İŞLEMİ ---
 const loginForm = document.getElementById('loginForm');
 if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // 1. DÜZELTME: HTML'de güncellediğimiz yeni ID'leri buraya yazdık
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
 
@@ -62,11 +55,9 @@ if (loginForm) {
                 body: JSON.stringify({ email, password })
             });
 
-            // 2. DÜZELTME: response.json()'u SADECE BİR KERE burada okuyoruz!
             const data = await response.json();
 
             if (response.ok) {
-                // 3. DÜZELTME: Senin backend'ine göre ID yolu data.user._id şeklindedir!
                 localStorage.setItem("aktif_kullanici_id", data.user._id);
 
                 if (typeof showModal === "function") {
@@ -88,54 +79,35 @@ if (loginForm) {
     });
 }
 
-// --- 3. DASHBOARD (ANA SAYFA) İŞLEMLERİ ---
-
-// Sayfa yüklendiğinde otomatik çalışacak kontroller
-// --- DASHBOARD (ANA SAYFA) DOĞRUDAN BAŞLATICI ---
-
-// Sayfada 'traveloguesContainer' var mı diye bak (Yani Ana Sayfada mıyız?)
 const container = document.getElementById('traveloguesContainer');
 
 if (container) {
-    // Sayfadaysak beklemeden doğrudan çalıştır!
     checkAuth(); 
     fetchTravelogues(); 
 }
-// Güvenlik: Giriş yapmayanları index.html'e geri kovala!
-// Güvenlik: Giriş yapmayanları index.html'e geri kovala!
 function checkAuth() {
     const userId = localStorage.getItem("aktif_kullanici_id");
     
-    // Eğer ID yoksa veya kelime olarak "undefined" kaydedildiyse
     if (!userId || userId === "undefined" || userId === "null") {
-        localStorage.removeItem("aktif_kullanici_id"); // Bozuk veriyi temizle
+        localStorage.removeItem("aktif_kullanici_id");
         window.location.href = "index.html";
     }
 }
-// Çıkış Yapma Fonksiyonu
+
 function logout() {
     localStorage.removeItem("aktif_kullanici_id");
     window.location.href = "index.html";
 }
 
-// Vercel'den Gezi Yazılarını Çeken Fonksiyon
-// Güncellenmiş Vercel'den Yazı Çekme Fonksiyonu (Artık şehir de alabiliyor!)
 async function fetchTravelogues(arananSehir = "") {
     try {
-        // NOT: Eğer backend'de rotayı 'travelogue' (tekil) yaptıysan aşağıdaki 's' harfini sil.
-        // Postman'de hangisi çalıştıysa onu kullan: /travelogues veya /travelogue
         let url = `${BASE_URL}/travelogue`;
-
-        // Eğer bir şehir ismi gelmişse linke ekle
         if (arananSehir !== "") {
             url += `?city=${encodeURIComponent(arananSehir)}`;
         }
 
-
         const response = await fetch(url);
 
-        
-        // Eğer sunucu 404 veya 500 dönerse catch bloğuna gitmesi için kontrol
         if (!response.ok) throw new Error("Sunucu yanıt vermedi: " + response.status);
 
         const yazilar = await response.json();
@@ -150,15 +122,13 @@ async function fetchTravelogues(arananSehir = "") {
 yazilar.forEach(yazi => {
     const fotoUrl = `https://picsum.photos/seed/${yazi._id}/800/400`;
 
-    // YENİ: Puana göre yıldızları hazırlayan mantık
-    // Backend'den 'averageRating' (ortalama puan) geldiğini varsayıyoruz.
     const puan = Math.round(yazi.TravelogueRating || 0); 
     let yildizHtml = "";
     for (let i = 1; i <= 5; i++) {
         if (i <= puan) {
-            yildizHtml += `<span style="color:#ffc107; font-size:20px;">★</span>`; // Dolu yıldız
+            yildizHtml += `<span style="color:#ffc107; font-size:20px;">★</span>`;
         } else {
-            yildizHtml += `<span style="color:#ccc; font-size:20px;">☆</span>`; // Boş yıldız
+            yildizHtml += `<span style="color:#ccc; font-size:20px;">☆</span>`;
         }
     }
 
@@ -195,21 +165,17 @@ yazilar.forEach(yazi => {
     }
 }
 
-// Yeni Arama Butonu Fonksiyonu
-// Güncellenmiş Arama Butonu Fonksiyonu
 function sehireGoreAra() {
     const sehirAdi = document.getElementById('searchInput').value.trim();
     
-    // Eğer kutucuk boşsa (kullanıcı silip arama tuşuna bastıysa), TÜM yazıları getir!
     if (sehirAdi === "") {
         fetchTravelogues(); 
-    } else {
-        // Kutu doluysa, sadece o şehri getir
+    } 
+    else {
         fetchTravelogues(sehirAdi);
     }
 }
 
-// --- 4. YENİ GEZİ YAZISI EKLEME İŞLEMİ ---
 const addTravelogueForm = document.getElementById('addTravelogueForm');
 
 if (addTravelogueForm) {
@@ -218,9 +184,8 @@ if (addTravelogueForm) {
     addTravelogueForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Formdaki değerleri alıyoruz
         const title = document.getElementById('tTitle').value;
-        const authorName = document.getElementById('tAuthorName').value; // YENİ EKLENDİ!
+        const authorName = document.getElementById('tAuthorName').value;
         const city = document.getElementById('tCity').value;
         const country = document.getElementById('tCountry').value;
         const content = document.getElementById('tContent').value;
@@ -228,11 +193,9 @@ if (addTravelogueForm) {
         const placesToVisit = document.getElementById('tPlaces').value.split(',').map(place => place.trim());
         const userId = localStorage.getItem("aktif_kullanici_id");
 
-        // Backend'e gönderilecek JSON verisi (Eksik parçayı tamamladık!)
         const newTravelogue = {
             title: title,
-            authorName: authorName, // YENİ EKLENDİ!
-            city: city,
+            authorName: authorName,
             country: country,
             content: content,
             placesToVisit: placesToVisit,
@@ -262,14 +225,12 @@ if (addTravelogueForm) {
     });
 }
 
-// --- 5. FAVORİLERE EKLEME İŞLEMİ ---
 async function favoriyeEkle(yaziId, butonElementi) {
     const userId = localStorage.getItem("aktif_kullanici_id");
-    if (!userId) return; // Giriş yapmadıysa sessizce dur
+    if (!userId) return;
 
     const favoriVerisi = { userId: userId, itemId: yaziId, type: "travelogue" };
 
-    // Kullanıcıya anında tepki ver (Yükleniyor...)
     butonElementi.innerHTML = "⏳ Ekleniyor...";
     butonElementi.disabled = true;
 
@@ -281,53 +242,42 @@ async function favoriyeEkle(yaziId, butonElementi) {
         });
 
         if (response.ok) {
-            // Başarılı olursa butonu yeşil yap ve yazısını değiştir
             butonElementi.innerHTML = "✅ Favorilere Eklendi";
-            butonElementi.style.backgroundColor = "#28a745"; // Yeşil
+            butonElementi.style.backgroundColor = "#28a745";
             butonElementi.style.color = "white";
         } else {
-            // Eğer zaten ekliyse sarı yapıp bilgi ver
             butonElementi.innerHTML = "⭐ Zaten Favorilerde";
-            butonElementi.style.backgroundColor = "#ffc107"; // Sarı
+            butonElementi.style.backgroundColor = "#ffc107";
             butonElementi.style.color = "black";
         }
     } catch (error) {
         console.error("Favoriye eklerken hata:", error);
-        butonElementi.innerHTML = "❤️ Favoriye Ekle"; // Hata olursa eski haline döndür
+        butonElementi.innerHTML = "❤️ Favoriye Ekle";
         butonElementi.disabled = false;
     }
 }
 
-// --- 6. FAVORİLERİ GETİRME VE SİLME İŞLEMLERİ ---
-
-// Sayfa favoriler.html ise otomatik çalışsın
 const favContainer = document.getElementById('favoritesContainer');
 if (favContainer) {
     checkAuth();
     fetchFavorites();
 }
 
-// Favorileri Backend'den Çekme
 async function fetchFavorites() {
     const userId = localStorage.getItem("aktif_kullanici_id");
     
     try {
-        // DİKKAT: Backend'de favorileri getirme URL'ni buraya doğru yazmalısın.
-        // Genelde /favorites/:userId veya /users/:userId/favorites şeklinde olur.
         const response = await fetch(`${BASE_URL}/favorites/${userId}`);
         const favoriler = await response.json();
 
-        favContainer.innerHTML = ""; // Yükleniyor yazısını sil
+        favContainer.innerHTML = "";
 
         if (favoriler.length === 0) {
             favContainer.innerHTML = "<p>Henüz favorilere eklediğiniz bir gezi yazısı yok.</p>";
             return;
         }
 
-        // Favorileri ekrana bas (Backend'den dönen yapıya göre yazi.itemId.title da olabilir, direkt yazi.title da)
         favoriler.forEach(fav => {
-            // Eğer backend gezi yazısı detaylarını (populate) getirmiyorsa, sadece ID'ler döner.
-            // Biz şimdilik verilerin tam geldiğini varsayarak yazdırıyoruz:
             favContainer.innerHTML += `
                 <div class="card">
                     <h3>Favori Gezi Yazısı ID: ${fav.itemId || fav._id}</h3>
@@ -343,7 +293,6 @@ async function fetchFavorites() {
     }
 }
 
-// Favorilerden Çıkarma (DELETE) - Hatırlarsan bunu sadece URL'den yollayarak çözmüştük!
 async function favoridenCikar(itemId) {
     const userId = localStorage.getItem("aktif_kullanici_id");
 
@@ -351,14 +300,13 @@ async function favoridenCikar(itemId) {
     if (!onay) return;
 
     try {
-        // Tam olarak Postman'de düzelttiğimiz o harika DELETE URL yapısı:
         const response = await fetch(`${BASE_URL}/favorites/${itemId}/${userId}`, {
             method: 'DELETE'
         });
 
         if (response.ok) {
             alert("Yazı favorilerden başarıyla çıkarıldı!");
-            fetchFavorites(); // Listeyi otomatik olarak yenile (silinen ekrandan gitsin)
+            fetchFavorites();
         } else {
             const data = await response.json();
             alert("Hata: " + (data.message || "Silinemedi"));
@@ -368,8 +316,6 @@ async function favoridenCikar(itemId) {
         alert("Sunucu bağlantı hatası.");
     }
 }
-
-// --- 7. BENİM YAZILARIM (FİLTRELEME VE SİLME) ---
 
 const myContainer = document.getElementById('myTraveloguesContainer');
 if (myContainer) {
@@ -381,14 +327,11 @@ async function fetchMyTravelogues() {
     const userId = localStorage.getItem("aktif_kullanici_id");
     
     try {
-        // Tüm yazıları çekiyoruz
-        const response = await fetch(`${BASE_URL}/travelogue`); // Sendeki link tekil miydi çoğul muydu, ona dikkat et (/travelogues de olabilir)
+        const response = await fetch(`${BASE_URL}/travelogue`);
         const tumYazilar = await response.json();
 
         myContainer.innerHTML = ""; 
 
-        // SADECE yazar ID'si benim ID'm ile eşleşenleri filtrele!
-        // (Backend'de yazar bilgisini 'author' adıyla kaydetmiştik hatırlarsan)
         const benimYazilarim = tumYazilar.filter(yazi => yazi.author === userId || yazi.userId === userId);
 
         if (benimYazilarim.length === 0) {
@@ -417,20 +360,18 @@ benimYazilarim.forEach(yazi => {
     }
 }
 
-// Gezi Yazısını Veritabanından Silme (DELETE)
 async function yaziSil(yaziId) {
     const onay = confirm("Bu gezi yazısını KESİNLİKLE silmek istiyor musunuz? Bu işlem geri alınamaz!");
     if (!onay) return;
 
     try {
-        // Vercel'deki silme rotasına istek atıyoruz
         const response = await fetch(`${BASE_URL}/travelogue/${yaziId}`, {
             method: 'DELETE'
         });
 
         if (response.ok) {
             alert("Yazınız veritabanından başarıyla silindi! 🚀");
-            fetchMyTravelogues(); // Silinen yazının ekrandan anında kaybolması için listeyi yenile
+            fetchMyTravelogues();
         } else {
             const data = await response.json();
             alert("Silinemedi: " + (data.message || "Bilinmeyen hata"));
@@ -441,35 +382,28 @@ async function yaziSil(yaziId) {
     }
 }
 
-// Düzenle Butonuna Basılınca ID'yi alıp yeni sayfaya götürür
 function duzenleyeGit(yaziId) {
     window.location.href = `duzenle.html?id=${yaziId}`;
 }
-
-// --- 8. YAZI DÜZENLEME (UPDATE) İŞLEMLERİ ---
 
 const editForm = document.getElementById('editTravelogueForm');
 
 if (editForm) {
     checkAuth();
     
-    // Linkteki ?id=... kısmından yazi ID'sini yakalıyoruz
     const urlParams = new URLSearchParams(window.location.search);
     const yaziId = urlParams.get('id');
 
     if (yaziId) {
-        // Sayfa açılır açılmaz eski verileri kutulara doldur!
         eskiVerileriDoldur(yaziId);
     } else {
         alert("Düzenlenecek yazı bulunamadı!");
         window.location.href = "benimyazilarim.html";
     }
 
-    // "Değişiklikleri Kaydet" Butonuna Basıldığında (PUT İsteği)
     editForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Kutulardaki yeni (değiştirilmiş) verileri topla
         const updatedData = {
             title: document.getElementById('eTitle').value,
             authorName: document.getElementById('eAuthorName').value,
@@ -481,9 +415,8 @@ if (editForm) {
         };
 
         try {
-            // Vercel'e PUT (Güncelle) isteği atıyoruz
             const response = await fetch(`${BASE_URL}/travelogue/${yaziId}`, {
-                method: 'PUT', // DİKKAT: Backend'de güncelleme metodun PUT mu PATCH mi ayarladığına göre değişir. Genelde PUT'tur.
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedData)
             });
@@ -502,7 +435,6 @@ if (editForm) {
     });
 }
 
-// Eski verileri çekip kutulara yapıştıran fonksiyon
 async function eskiVerileriDoldur(id) {
     try {
         const response = await fetch(`${BASE_URL}/travelogue/${id}`);
@@ -510,7 +442,6 @@ async function eskiVerileriDoldur(id) {
         
         const yazi = await response.json();
 
-        // Kutuların içini veritabanından gelen verilerle doldur
         document.getElementById('eTitle').value = yazi.title;
         document.getElementById('eAuthorName').value = yazi.authorName || "";
         document.getElementById('eCity').value = yazi.city;
@@ -524,35 +455,30 @@ async function eskiVerileriDoldur(id) {
     }
 }
 
-// --- 9. PUANLAMA (RATING) İŞLEMLERİ ---
-
 async function puanVer(yaziId, verilenPuan) {
     const userId = localStorage.getItem("aktif_kullanici_id");
     if (!userId) return;
 
-    // 1. ADIM: Ekranda alert vermek yerine yıldızları anında sarıya boya!
     const container = document.getElementById(`star-container-${yaziId}`);
     if (container) {
         const yildizlar = container.getElementsByTagName('span');
         for (let i = 0; i < 5; i++) {
             if (i < verilenPuan) {
-                yildizlar[i].innerText = "★"; // Dolu yıldız
-                yildizlar[i].style.color = "#ffc107"; // Sarı renk
+                yildizlar[i].innerText = "★";
+                yildizlar[i].style.color = "#ffc107";
             } else {
-                yildizlar[i].innerText = "☆"; // Boş yıldız
-                yildizlar[i].style.color = "#ccc"; // Gri renk
+                yildizlar[i].innerText = "☆";
+                yildizlar[i].style.color = "#ccc";
             }
         }
     }
 
-    // 2. ADIM: Arka planda Vercel'e sessizce kaydet
     try {
         await fetch(`${BASE_URL}/ratings/${yaziId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId: userId, rating: verilenPuan })
         });
-        // İşlem tamamlandı, alert YOLK!
     } catch (error) {
         console.error("Puanlama hatası:", error);
     }
@@ -568,7 +494,6 @@ async function puanSil(yaziId) {
         });
 
         if (response.ok) {
-            // Silme başarılıysa alert verme, sadece yıldızları tekrar gri yap (sıfırla)
             const container = document.getElementById(`star-container-${yaziId}`);
             if (container) {
                 const yildizlar = container.getElementsByTagName('span');
@@ -583,16 +508,13 @@ async function puanSil(yaziId) {
     }
 }
 
-// --- 10. PROFİL YÖNETİMİ İŞLEMLERİ ---
-
 const profileUpdateForm = document.getElementById('profileUpdateForm');
 const passwordUpdateForm = document.getElementById('passwordUpdateForm');
 
 if (profileUpdateForm && passwordUpdateForm) {
     checkAuth();
-    profilGetir(); // Sayfa açılınca mevcut bilgileri kutulara doldur
+    profilGetir();
 
-    // 1. PROFİL BİLGİLERİNİ GETİRME (GET)
     async function profilGetir() {
         const userId = localStorage.getItem("aktif_kullanici_id");
         try {
@@ -601,7 +523,6 @@ if (profileUpdateForm && passwordUpdateForm) {
             if (response.ok) {
             const user = await response.json();
             
-            // Backend'den artık firstName ve lastName geliyor
             document.getElementById('pName').value = user.firstName || "";
             document.getElementById('pSurname').value = user.lastName || "";
             document.getElementById('pUsername').value = user.username || "";
@@ -612,13 +533,10 @@ if (profileUpdateForm && passwordUpdateForm) {
         }
     }
 
-    // 2. PROFİL GÜNCELLEME (PUT)
     profileUpdateForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const userId = localStorage.getItem("aktif_kullanici_id");
 
-        // Backend'inin tam olarak beklediği paket: { email, displayName }
-// Backend'inin tam olarak beklediği paket: { email, firstName, lastName }
         const updatedData = {
             firstName: document.getElementById('pName').value,
             lastName: document.getElementById('pSurname').value,
@@ -644,12 +562,9 @@ if (profileUpdateForm && passwordUpdateForm) {
         }
     });
 
-    // 3. ŞİFRE GÜNCELLEME (PUT)
     passwordUpdateForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const userId = localStorage.getItem("aktif_kullanici_id");
-        
-        // Backend'inin tam olarak beklediği değişken isimleri: currentPassword, newPassword
         const currentPassword = document.getElementById('oldPassword').value;
         const newPassword = document.getElementById('newPassword').value;
 
@@ -663,7 +578,7 @@ if (profileUpdateForm && passwordUpdateForm) {
             const data = await response.json();
             
             if (response.ok) {
-                alert(data.message); // Backend'den gelen "Şifre başarıyla güncellendi!" mesajı
+                alert(data.message);
                 document.getElementById('oldPassword').value = "";
                 document.getElementById('newPassword').value = "";
             } else {
@@ -675,7 +590,6 @@ if (profileUpdateForm && passwordUpdateForm) {
     });
 }
 
-// 4. HESAP SİLME (DELETE)
 async function hesapSil() {
     const userId = localStorage.getItem("aktif_kullanici_id");
     if (!userId) return;
@@ -691,7 +605,6 @@ async function hesapSil() {
             method: 'DELETE' 
         });
 
-        // Backend 204 (No Content) döndüğü için response.json() yapmıyoruz, direkt siliyoruz!
         if (response.ok) {
             alert("Hesabınız başarıyla silindi. Elveda! 👋");
             localStorage.removeItem("aktif_kullanici_id"); 
@@ -705,13 +618,11 @@ async function hesapSil() {
     }
 }
 
-// --- 11. DETAY SAYFASI (TEKİL GEZİ YAZISI) İŞLEMLERİ ---
 const detayContainer = document.getElementById('geziDetayContainer');
 
 if (detayContainer) {
     checkAuth();
     
-    // Tarayıcıdaki linkten id'yi yakala (Örn: detay.html?id=12345)
     const urlParams = new URLSearchParams(window.location.search);
     const yaziId = urlParams.get('id');
 
@@ -729,8 +640,6 @@ async function geziDetaylariniGetir(id) {
         
         const yazi = await response.json();
         const fotoUrl = `https://picsum.photos/seed/${yazi._id}/1000/500`;
-
-        // Mevcut puanı hesapla (Backend yapına göre yazi.averageRating veya yazi.userRating)
         const mevcutPuan = Math.round(yazi.TravelogueRating || 0);
 
         detayContainer.innerHTML = `

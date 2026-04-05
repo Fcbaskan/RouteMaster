@@ -1,6 +1,6 @@
 # Furkan Çağrı Başkan'ın REST API Metotları
 
-**API Test Videosu:** [API Test Videosunu İzle]()
+**API Test Videosu:** [API Test Videosunu İzle](https://youtu.be/r1zliDBzwsQ)
 
 ---
 
@@ -39,7 +39,7 @@
 - **Response:** `200 OK` - Giriş başarılı (Kullanıcı bilgileri ve Token döner)
 
 ### 3. Kullanıcı Bilgilerini Görüntüleme
-- **Endpoint:** `GET /users/{userId}`
+- **Endpoint:** `GET /auth/users/{userId}`
 
 - **Açıklama:** Belirli bir kullanıcının profil detaylarını getirir.
 
@@ -48,16 +48,15 @@
 - **Response:** `200 OK` - Kullanıcı bilgileri başarıyla getirildi
 
 ### 4. Kullanıcı Bilgilerini Güncelleme
-- **Endpoint:** `PUT /users/{userId}`
+- **Endpoint:** `PUT /auth/users/{userId}`
 
 - **Açıklama:** Kullanıcıların kendi profil bilgilerini güncellemesini sağlar.
 
 - **Request Body:**
 ```json
 {
-"firstName": "Ahmet",
-"lastName": "Yılmaz",
-"phone": "+905551234567"
+"displayName": "yılmazahmet",
+"email": "ahmety@routemaster.com"
 }
 ```
 
@@ -65,8 +64,25 @@
 
 - **Response:** `200 OK` - Kullanıcı başarıyla güncellendi
 
-### 5. Kullanıcı Silme
-- **Endpoint:** `DELETE /users/{userId}`
+### 5. Şifre Güncelleme
+- **Endpoint:** `PUT /auth/users/{userId}/password`
+
+- **Açıklama:** Kullanıcıların kendi şifresini güncellemesini sağlar.
+
+- **Request Body:**
+```json
+{
+"currentPassword": "ahmet123",
+"newPassword": "yılmaz123"
+}
+```
+
+- **Path Parameters:** - userId (string, required) - Kullanıcı ID'si
+
+- **Response:** `200 OK` - Şifre başarıyla güncellendi
+
+### 6. Kullanıcı Silme
+- **Endpoint:** `DELETE /auth/users/{userId}`
 
 - **Açıklama:** Kullanıcı hesabını sistemden kalıcı olarak siler.
 
@@ -75,23 +91,7 @@
 - **Response:** `204 No Content` - Kullanıcı başarıyla silindi
 
 ## GEZİ YAZILARI (TRAVELOGUES)
-### 6. Tüm Gezi Yazılarını Listeleme
-- **Endpoint:** `GET /travelogues`
-
-- **Açıklama:** Platformdaki diğer gezginler tarafından paylaşılmış tüm gezi yazılarını (rotaları) listeler.
-
-- **Response:** `200 OK` - Gezi yazıları listesi başarıyla getirildi
-
-### 7. Gezi Yazısı Detayı Getirme
-- **Endpoint:** `GET /travelogues/{id}`
-
-- **Açıklama:** Belirli bir gezi yazısının tüm detaylarını (içerik, yazar, konum) getirir.
-
-- **Path Parameters:** - id (string, required) - Gezi Yazısı ID'si
-
-- **Response:** `200 OK` - Gezi yazısı detayı getirildi
-
-### 8. Yeni Gezi Yazısı Ekleme
+### 7. Yeni Gezi Yazısı Ekleme
 - **Endpoint:** `POST /travelogues`
 
 - **Açıklama:** Kullanıcının yeni bir rota/gezi yazısı paylaşmasını sağlar.
@@ -108,7 +108,23 @@
 
 - **Response:** `201 Created` - Gezi yazısı başarıyla paylaşıldı
 
-### 9. Gezi Yazısı Güncelleme
+### 8. Tüm Gezi Yazılarını Listeleme
+- **Endpoint:** `GET /travelogues`
+
+- **Açıklama:** Platformdaki diğer gezginler tarafından paylaşılmış tüm gezi yazılarını (rotaları) listeler.
+
+- **Response:** `200 OK` - Gezi yazıları listesi başarıyla getirildi
+
+### 9. Gezi Yazısı Detayı Getirme
+- **Endpoint:** `GET /travelogues/{id}`
+
+- **Açıklama:** Belirli bir gezi yazısının tüm detaylarını (içerik, yazar, konum) getirir.
+
+- **Path Parameters:** - id (string, required) - Gezi Yazısı ID'si
+
+- **Response:** `200 OK` - Gezi yazısı detayı getirildi
+
+### 10. Gezi Yazısı Güncelleme
 - **Endpoint:** `PUT /travelogues/{id}`
 
 - **Açıklama:** Kullanıcının kendi oluşturduğu bir gezi yazısında düzenleme yapmasını sağlar.
@@ -124,7 +140,7 @@
 
 - **Response:** `200 OK` - Gezi yazısı başarıyla güncellendi
 
-### 10. Gezi Yazısı Silme
+### 11. Gezi Yazısı Silme
 - **Endpoint:** `DELETE /travelogues/{id}`
 
 - **Açıklama:** Kullanıcının kendi gezi yazısını platformdan kaldırmasını sağlar.
@@ -133,20 +149,11 @@
 
 - **Response:** `204 No Content` - Gezi yazısı silindi
 
-## ŞEHİR PUANLAMA (CITY RATINGS)
-### 11. Şehir Puanlamalarını Getirme
-- **Endpoint:** `GET /city-ratings/{city}`
+## Yazı PUANLAMA
+### 12. Yazıyı Puanlama
+- **Endpoint:** `POST /ratings/{userId}`
 
-- **Açıklama:** Belirli bir şehre yapılmış tüm yorumları ve ortalama puanı getirir.
-
-- **Path Parameters:** - city (string, required) - Şehir adı (Örn: Antalya)
-
-- **Response:** `200 OK` - Şehir puanları getirildi
-
-### 12. Şehre Puan Verme
-- **Endpoint:** `POST /city-ratings`
-
-- **Açıklama:** Kullanıcının ziyaret ettiği bir şehre 1-5 arası puan vermesini ve yorum yapmasını sağlar.
+- **Açıklama:** Kullanıcının Yazdığı Yazıya 1-5 arası puan vermesini ve yorum yapmasını sağlar.
 
 - **Request Body:**
 ```json
@@ -160,26 +167,17 @@
 
 - **Response:** `201 Created` - Puanlama eklendi
 
-### 13. Puan/Yorum Silme
-- **Endpoint:** `DELETE /city-ratings/{id}`
+### 13. Yazı Puan Silme
+- **Endpoint:** `POST /ratings/{id}/{userId}`
 
-- **Açıklama:** Kullanıcının daha önce bir şehre yaptığı değerlendirmeyi kaldırmasını sağlar.
+- **Açıklama:** Kullanıcının Yazısına Verdiği Puanı Silmesini Sağlar.
 
-- **Path Parameters:** - id (string, required) - Puanlama ID'si
+- **Path Parameters:** - id (string, required) - Gezi Yazısı ID'si - userId (string, required) - Kullanıcı ID'si
 
-- **Response:** `204 No Content` - Puanlama silindi
+- **Response:** `204 No Content` - Puan Silme
 
 ## FAVORİLER (FAVORITES)
-### 14. Kullanıcının Favorilerini Listeleme
-- **Endpoint:** `GET /favorites/{userId}`
-
-- **Açıklama:** Belirli bir kullanıcının favorilerine eklediği tüm gezi yazılarını (rotaları) getirir.
-
-- **Path Parameters:** - userId (string, required) - Kullanıcı ID'si
-
-- **Response:** `200 OK` - Favori listesi getirildi
-
-### 15. Favorilere Ekleme
+### 14. Favorilere Ekleme
 - **Endpoint:** `POST /favorites`
 
 - **Açıklama:** Kullanıcının beğendiği bir gezi yazısını kendi favori listesine eklemesini sağlar.
@@ -193,6 +191,15 @@
 ```
 
 - **Response:** `201 Created` - Rota favorilere eklendi
+
+### 15. Kullanıcının Favorilerini Listeleme
+- **Endpoint:** `GET /favorites/{userId}`
+
+- **Açıklama:** Belirli bir kullanıcının favorilerine eklediği tüm gezi yazılarını getirir.
+
+- **Path Parameters:** - userId (string, required) - Kullanıcı ID'si
+
+- **Response:** `200 OK` - Favori listesi getirildi
 
 ### 16. Favorilerden Çıkarma
 - **Endpoint:** `DELETE /favorites/{id}`

@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+  routemaster_api:
+    build: ./Furkan-Çağrı-Başkan/Web/routemaster-backend
+    container_name: routemasterapi_kapsayici
+    ports:
+      - "3000:3000"
+    networks:
+      - routemaster_ag
+    restart: always
+    depends_on:
+      - mongo
+    environment:
+      - MONGODB_URI=mongodb://mongodb_kapsayici:27017/routemasterdb
+    command: npm start
+
+  mongo:
+    image: mongo:latest
+    container_name: mongodb_kapsayici
+    networks:
+      - routemaster_ag
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data/db:/data/db
+
+networks:
+  routemaster_ag:
+    driver: bridge

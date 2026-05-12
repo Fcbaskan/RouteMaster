@@ -4,7 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const redis = require('redis');
-const amqp = require('amqplib'); // BURA EKLENDİ
+const amqp = require('amqplib'); 
 
 const { User, Travelogue, TravelogueRating, Favorite } = require('./models');
 
@@ -13,6 +13,8 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+//Redis Bağlantısı
+
 const redisClient = redis.createClient({
     url: process.env.REDIS_URL || 'redis://localhost:6379'
 });
@@ -20,29 +22,26 @@ const redisClient = redis.createClient({
 redisClient.on('error', (err) => console.error('Redis Hatası:', err));
 redisClient.connect().then(() => console.log("Redis'e Başarıyla Bağlanıldı! 🚀")).catch(console.error);
 
-// RABBITMQ BAĞLANTISI VE TÜKETİCİ (Consumer) KURULUMU
+// RabbitMQ Bağlantısı
 let rabbitChannel;
 async function connectRabbitMQ() {
     try {
-        // Docker'ın RabbitMQ'yu tam ayağa kaldırması için 5-10 saniye beklemesi gerekebilir
         const amqpServer = process.env.RABBITMQ_URL || 'amqp://localhost:5672';
         const connection = await amqp.connect(amqpServer);
         rabbitChannel = await connection.createChannel();
         await rabbitChannel.assertQueue('notification_queue');
         console.log("RabbitMQ'ya Başarıyla Bağlanıldı! 🐇");
 
-        // Tüketici (Consumer): Kuyruğa düşen mesajları arka planda okur
         rabbitChannel.consume('notification_queue', (message) => {
             if (message !== null) {
                 console.log("🔔 [RABBITMQ BİLDİRİM YAKALANDI]:", message.content.toString());
-                rabbitChannel.ack(message); // Mesajın işlendiğini onaylar
+                rabbitChannel.ack(message);
             }
         });
     } catch (error) {
         console.error("RabbitMQ Bağlantı Hatası (Sistem tekrar deneyecek):", error.message);
     }
 }
-// Bağlantıyı başlat (Docker beklemeleri için ufak bir gecikme iyi olur)
 setTimeout(connectRabbitMQ, 10000);
 
 app.get('/', (req, res) => {
@@ -216,7 +215,6 @@ app.post('/travelogue', async (req, res) => {
         await newTravelogue.save();
         await redisClient.flushAll();
 
-        // BURA EKLENDİ: Yeni yazı eklendiğinde RabbitMQ'ya mesaj yolla
         if (rabbitChannel) {
             const mesaj = `Kullanıcı yeni bir rota ekledi: ${newTravelogue.title} (${newTravelogue.city})`;
             rabbitChannel.sendToQueue('notification_queue', Buffer.from(mesaj));
@@ -279,10 +277,8 @@ app.get('/travelogue', async (req, res) => {
     try {
         const { city, country, limit = 10, page = 1 } = req.query;
         
-        // Önbellek anahtarımızı belirliyoruz (Aramaya göre özel anahtar)
         const cacheKey = `travelogues_${city || 'all'}_${country || 'all'}_${page}_${limit}`;
         
-        // 1. Önce Redis'e sor: "Bu veriler sende var mı?"
         const cachedData = await redisClient.get(cacheKey);
 
         if (cachedData) {
@@ -290,7 +286,6 @@ app.get('/travelogue', async (req, res) => {
             return res.status(200).json(JSON.parse(cachedData));
         }
 
-        // 2. Eğer Redis'te yoksa mecburen MongoDB'ye git
         console.log("🐢 Veriler MongoDB'den çekiliyor...");
         let filter = {};
         if (city) filter.city = new RegExp(city, 'i');
@@ -303,7 +298,6 @@ app.get('/travelogue', async (req, res) => {
             .limit(parseInt(limit))
             .sort({ createdAt: -1 }); 
 
-        // 3. Veritabanından gelen veriyi 1 saatliğine (3600 sn) Redis'e kaydet ki bir dahaki sefere hızlı gelsin
         await redisClient.setEx(cacheKey, 3600, JSON.stringify(travelogues));
 
         res.status(200).json(travelogues);

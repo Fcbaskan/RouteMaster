@@ -10,7 +10,6 @@ export default function CreateScreen() {
   const [loading, setLoading] = useState(false);
 
   const handleShare = () => {
-    // 1. Boş alan kontrolü
     if (!title || !city || !country || !content) {
       Alert.alert('Eksik Bilgi', 'Lütfen tüm alanları doldurun!');
       return;
@@ -18,23 +17,18 @@ export default function CreateScreen() {
 
     setLoading(true);
 
-    // 2. API'nin beklediği veri yapısı
     const newPost = {
       title: title,
       city: city,
       country: country,
       content: content,
-      // Şimdilik sahte bir MongoDB ID'si ve yazar adı veriyoruz. 
-      // İleride Login (Giriş) sistemini yapınca buraya giriş yapan kullanıcının ID'si gelecek.
       authorId: "60d5ec49c1b3a324a0d9b5c2", 
       authorName: "Mobil Gezgin" 
     };
 
-    // 3. Vercel'deki canlı veritabanına POST isteği atıyoruz
     axios.post('https://route-master-ten.vercel.app/travelogue', newPost)
       .then(response => {
         Alert.alert('Harika! 🚀', 'Gezi yazınız başarıyla paylaşıldı.');
-        // Başarılı olunca içerdeki yazıları temizle
         setTitle('');
         setCity('');
         setCountry('');
@@ -125,7 +119,7 @@ const styles = StyleSheet.create({
   },
   textArea: {
     height: 120,
-    textAlignVertical: 'top', // Android'de yazının üstten başlaması için
+    textAlignVertical: 'top',
   },
   button: {
     backgroundColor: '#e67e22',

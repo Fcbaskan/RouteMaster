@@ -13,18 +13,18 @@ interface Travelogue {
 
 export default function FeedScreen() {
   const [posts, setPosts] = useState<Travelogue[]>([]);
-  const [loading, setLoading] = useState(true); // İlk açılıştaki yükleme durumu
-  const [refreshing, setRefreshing] = useState(false); // Kaydırarak yenileme durumu
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false); 
 
-  // Verileri çekme işlemini ayrı bir fonksiyona aldık
+
   const fetchPosts = () => {
-    const API_URL = 'https://route-master-ten.vercel.app/travelogue'; 
+    const API_URL = 'https://10.34.47.203:3000/travelogue'; 
 
     axios.get(API_URL)
       .then(response => {
         setPosts(response.data);
         setLoading(false);
-        setRefreshing(false); // Yenileme bitince dönen ikonu durdur
+        setRefreshing(false);
       })
       .catch(error => {
         console.error("Veri çekme hatası:", error);
@@ -33,15 +33,13 @@ export default function FeedScreen() {
       });
   };
 
-  // Ekran İLK açıldığında verileri çek
   useEffect(() => {
     fetchPosts();
   }, []);
 
-  // Ekran aşağı KAYDIRILDIĞINDA çalışacak fonksiyon
   const onRefresh = () => {
-    setRefreshing(true); // Dönen ikonu başlat
-    fetchPosts(); // Verileri baştan çek
+    setRefreshing(true); 
+    fetchPosts();
   };
 
   const renderItem = ({ item }: { item: Travelogue }) => (
@@ -69,13 +67,12 @@ export default function FeedScreen() {
         keyExtractor={(item, index) => item._id ? item._id.toString() : index.toString()}
         renderItem={renderItem}
         contentContainerStyle={{ padding: 10 }}
-        // İşte sihir burada gerçekleşiyor:
         refreshControl={
           <RefreshControl 
             refreshing={refreshing} 
             onRefresh={onRefresh} 
-            colors={['#e67e22']} // Android için dönen ikonun rengi
-            tintColor="#e67e22" // iOS için dönen ikonun rengi
+            colors={['#e67e22']} 
+            tintColor="#e67e22" 
           />
         }
       />

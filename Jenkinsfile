@@ -1,7 +1,6 @@
 pipeline {
     agent any
 
-    // Pipeline'ın geçeceği aşamalar (Hocanın videoda görmek istediği kısımlar)
     stages {
         stage('1. Checkout (Kodları Çekme)') {
             steps {
@@ -32,7 +31,6 @@ pipeline {
         }
     }
     
-    // İşlem bittikten sonra verilecek tepkiler
     post {
         success {
             echo '🎉 TEBRİKLER! Tüm testler başarıyla geçti. Uygulama canlıda.'

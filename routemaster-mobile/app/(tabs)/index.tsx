@@ -18,7 +18,7 @@ export default function FeedScreen() {
 
 
   const fetchPosts = () => {
-    const API_URL = 'https://10.34.47.203:3000/travelogue'; 
+    const API_URL = 'http://10.34.47.203:3000/travelogue'; 
 
     axios.get(API_URL)
       .then(response => {

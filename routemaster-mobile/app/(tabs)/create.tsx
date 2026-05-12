@@ -26,7 +26,7 @@ export default function CreateScreen() {
       authorName: "Mobil Gezgin" 
     };
 
-    axios.post('https://route-master-ten.vercel.app/travelogue', newPost)
+    axios.post('http://10.34.47.203:3000/travelogue', newPost)
       .then(response => {
         Alert.alert('Harika! 🚀', 'Gezi yazınız başarıyla paylaşıldı.');
         setTitle('');

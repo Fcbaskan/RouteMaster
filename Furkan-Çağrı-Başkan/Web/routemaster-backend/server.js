@@ -265,11 +265,13 @@ app.put('/travelogue/:travelogueId', async (req, res) => {
 app.delete('/travelogue/:travelogueId', async (req, res) => {
     try {
         const deletedTravelogue = await Travelogue.findByIdAndDelete(req.params.travelogueId);
+        // Örnek bir önbellek temizleme kodu:
         
         if (!deletedTravelogue) {
             return res.status(404).json({ message: "Gezi yazısı bulunamadı" });
         }
         res.status(204).send();
+        redisClient.del('travelogues'); // Veya benzeri bir önbellek silme komutu
     } catch (error) {
         res.status(400).json({ message: "Geçersiz ID formatı veya sunucu hatası." });
     }

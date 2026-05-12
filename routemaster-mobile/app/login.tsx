@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, Image } from 'react-native';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -32,9 +33,9 @@ export default function LoginScreen() {
       const data = await response.json();
 
       if (response.ok) {
+        await AsyncStorage.setItem('user', JSON.stringify(data.user));
         Alert.alert('Başarılı', 'Giriş yapıldı! 🚀');
-        // Giriş başarılıysa ana sayfaya (tabs) yönlendir
-        router.replace('/(tabs)');
+        router.replace('/(tabs)/profile'); // Giriş yapınca direkt profile gitsin
       } else {
         Alert.alert('Giriş Başarısız', data.message || 'E-posta veya şifre hatalı.');
       }

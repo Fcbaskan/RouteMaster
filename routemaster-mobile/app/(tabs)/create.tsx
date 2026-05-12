@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
-import axios from 'axios';
+import axios from 'axios'
+import AsyncStorage from '@react-native-async-storage/async-storage';;
 
 export default function CreateScreen() {
   const [title, setTitle] = useState('');
@@ -9,7 +10,8 @@ export default function CreateScreen() {
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleShare = () => {
+  // Fonksiyonun başına "async" ekledik
+  const handleShare = async () => { 
     if (!title || !city || !country || !content) {
       Alert.alert('Eksik Bilgi', 'Lütfen tüm alanları doldurun!');
       return;
@@ -17,29 +19,49 @@ export default function CreateScreen() {
 
     setLoading(true);
 
-    const newPost = {
-      title: title,
-      city: city,
-      country: country,
-      content: content,
-      authorId: "60d5ec49c1b3a324a0d9b5c2", 
-      authorName: "Mobil Gezgin" 
-    };
+    try {
+      // 1. ÖNCE TELEFONUN HAFIZASINDAN GİRİŞ YAPAN KULLANICIYI BULUYORUZ
+      const storedUser = await AsyncStorage.getItem('user');
+      const user = storedUser ? JSON.parse(storedUser) : null;
 
-    axios.post('http://10.34.47.203:3000/travelogue', newPost)
-      .then(response => {
-        Alert.alert('Harika! 🚀', 'Gezi yazınız başarıyla paylaşıldı.');
-        setTitle('');
-        setCity('');
-        setCountry('');
-        setContent('');
+      // Eğer kimse giriş yapmamışsa engelle
+      if (!user) {
+        Alert.alert("Hata", "Yazı paylaşmak için önce giriş yapmalısınız!");
         setLoading(false);
-      })
-      .catch(error => {
-        console.error("Gönderme hatası:", error);
-        Alert.alert('Hata', 'Yazı paylaşılırken bir sorun oluştu.');
-        setLoading(false);
-      });
+        return;
+      }
+
+      // 2. GERÇEK KULLANICI BİLGİLERİYLE YENİ YAZIYI OLUŞTURUYORUZ
+      const newPost = {
+        title: title,
+        city: city,
+        country: country,
+        content: content,
+        authorId: user._id,           // SABİT ID YERİNE GERÇEK ID GELDİ
+        authorName: user.username     // SABİT İSİM YERİNE GERÇEK KULLANICI ADI GELDİ
+      };
+
+      // 3. API'YE GÖNDERİYORUZ (Senin kendi IP adresinle aynı bıraktım)
+      axios.post('http://10.34.47.203:3000/travelogue', newPost)
+        .then(response => {
+          Alert.alert('Harika! 🚀', 'Gezi yazınız başarıyla paylaşıldı.');
+          setTitle('');
+          setCity('');
+          setCountry('');
+          setContent('');
+          setLoading(false);
+        })
+        .catch(error => {
+          console.error("Gönderme hatası:", error);
+          Alert.alert('Hata', 'Yazı paylaşılırken bir sorun oluştu.');
+          setLoading(false);
+        });
+
+    } catch (error) {
+      console.error("Hafıza okuma hatası:", error);
+      Alert.alert('Hata', 'Kullanıcı bilgileri okunamadı.');
+      setLoading(false);
+    }
   };
 
   return (

@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl,TouchableOpacity, } from 'react-native';
 import axios from 'axios';
+import { useRouter } from 'expo-router';
+import { useFocusEffect } from 'expo-router';
+import { useCallback } from 'react';
 
 interface Travelogue {
   _id: string;
@@ -15,6 +18,7 @@ export default function FeedScreen() {
   const [posts, setPosts] = useState<Travelogue[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false); 
+  const router = useRouter();
 
 
   const fetchPosts = () => {
@@ -33,9 +37,17 @@ export default function FeedScreen() {
       });
   };
 
-  useEffect(() => {
-    fetchPosts();
-  }, []);
+// Sayfaya her odaklanıldığında (geri gelindiğinde) çalışır
+useFocusEffect(
+    useCallback(() => {
+      // 1. AŞAMA: Ekrana "Yükleniyor" animasyonunu sok veya listeyi zorla boşalt
+      // setPosts([]); // Eğer state ismin posts ise bunu kullan
+      setLoading(true); 
+
+      // 2. AŞAMA: Verileri sunucudan sıfırdan çek
+      fetchPosts(); // (Kendi fonksiyon ismin neyse o)
+    }, [])
+  );
 
   const onRefresh = () => {
     setRefreshing(true); 
@@ -43,12 +55,18 @@ export default function FeedScreen() {
   };
 
   const renderItem = ({ item }: { item: Travelogue }) => (
-    <View style={styles.card}>
+    <TouchableOpacity 
+    style={styles.card} 
+    onPress={() => router.push({ 
+  pathname: "/detail/[id]", 
+  params: { id: item._id } 
+})} // Tıklananın ID'sini gönder
+  >
       <Text style={styles.title}>{item.title}</Text>
       <Text style={styles.location}>📍 {item.city}, {item.country}</Text>
       <Text style={styles.content} numberOfLines={3}>{item.content}</Text>
       <Text style={styles.author}>✍️ Yazar: {item.authorName}</Text>
-    </View>
+    </TouchableOpacity>
   );
 
   if (loading) {

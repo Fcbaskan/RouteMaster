@@ -2,12 +2,38 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from 'expo-router';
+import { useCallback } from 'react';
 
 export default function ProfileScreen() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [user, setUser] = useState(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const storedUser = await AsyncStorage.getItem('user');
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        }
+      } catch (error) {
+        console.error("Hafıza okuma hatası:", error);
+      }
+    };
+
+    loadUserData();
+    fetchMyRoutes();
+  }, []);
+
+  // Çıkış Yapma Fonksiyonu
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem('user'); // Hafızayı sil
+    router.replace('/login'); // Giriş ekranına şutla
+  };
   
 
   // ⚠️ DİKKAT: Buradaki IP adresini kendi güncel bilgisayar IP'n ile değiştirmeyi unutma!
@@ -28,9 +54,16 @@ export default function ProfileScreen() {
     }
   };
 
-  useEffect(() => {
-    fetchMyRoutes();
-  }, []);
+useFocusEffect(
+    useCallback(() => {
+      // 1. AŞAMA: Ekrana "Yükleniyor" animasyonunu sok veya listeyi zorla boşalt
+      // setPosts([]); // Eğer state ismin posts ise bunu kullan
+      setLoading(true); 
+
+      // 2. AŞAMA: Verileri sunucudan sıfırdan çek
+      fetchMyRoutes(); // (Kendi fonksiyon ismin neyse o)
+    }, [])
+  );
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -44,40 +77,47 @@ export default function ProfileScreen() {
         source={{ uri: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' }} 
         style={styles.avatar} 
       />
-      <Text style={styles.userName}>Furkan Çağrı</Text>
-      <Text style={styles.userBio}>Gezgin, Yazılımcı & Kahve Aşığı 🌍✈️</Text>
+      {/* İSİM VE KULLANICI ADI ARTIK DİNAMİK */}
+      <Text style={styles.userName}>
+        {user ? `${user.firstName} ${user.lastName}` : 'Misafir Kullanıcı'}
+      </Text>
+      <Text style={styles.userBio}>
+        @{user ? user.username : 'misafir'} | Gezgin 🌍
+      </Text>
       
+      {/* İstatistikler şimdilik sabit kalsın, sonra bağlarız */}
       <View style={styles.statsContainer}>
         <View style={styles.statBox}>
           <Text style={styles.statNumber}>{posts.length}</Text>
           <Text style={styles.statLabel}>Rota</Text>
         </View>
-        <View style={styles.statBox}>
-          <Text style={styles.statNumber}>128</Text>
-          <Text style={styles.statLabel}>Takipçi</Text>
-        </View>
-        <View style={styles.statBox}>
-          <Text style={styles.statNumber}>45</Text>
-          <Text style={styles.statLabel}>Takip</Text>
-        </View>
       </View>
 
-      <TouchableOpacity style={styles.editButton}>
-        <Text style={styles.editButtonText}>Profili Düzenle</Text>
-      </TouchableOpacity>
+      <View style={{ flexDirection: 'row', gap: 10 }}>
+        <TouchableOpacity style={styles.editButton}>
+          <Text style={styles.editButtonText}>Profili Düzenle</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity 
-        style={[styles.editButton, { marginTop: 10, backgroundColor: '#333' }]} 
-        onPress={() => router.push('/login')}
-      >
-        <Text style={styles.editButtonText}>Giriş Yap / Kayıt Ol (Test)</Text>
-      </TouchableOpacity>
+        {/* ÇIKIŞ YAP BUTONU */}
+        <TouchableOpacity 
+          style={[styles.editButton, { backgroundColor: '#e74c3c' }]} 
+          onPress={handleLogout}
+        >
+          <Text style={styles.editButtonText}>Çıkış Yap</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
   // Alt Kısım: Rota Kartları (Izgara Görünümü)
   const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.gridItem}>
+    <TouchableOpacity 
+    style={styles.gridItem}
+    onPress={() => router.push({ 
+  pathname: "/detail/[id]", 
+  params: { id: item._id } 
+})}
+    >
       <Image 
         source={{ uri: item.imageUrl || 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1' }} 
         style={styles.postImage} 

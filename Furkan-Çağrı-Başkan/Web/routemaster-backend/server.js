@@ -213,13 +213,14 @@ app.post('/travelogue', async (req, res) => {
         });
 
         await newTravelogue.save();
-        await redisClient.flushAll();
+        if(redisClient.isReady) {
+            await redisClient.flushAll(); 
+        };
 
         if (rabbitChannel) {
-            const mesaj = `Kullanıcı yeni bir rota ekledi: ${newTravelogue.title} (${newTravelogue.city})`;
+            const mesaj = `Kullanıcı yeni bir rota ekledi: ${newTravelogue.title}`;
             rabbitChannel.sendToQueue('notification_queue', Buffer.from(mesaj));
         }
-
         res.status(201).json(newTravelogue);
 
     } catch (error) {

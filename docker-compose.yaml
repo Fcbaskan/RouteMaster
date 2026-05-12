@@ -47,7 +47,24 @@ services:
       - "5672:5672"
       - "15672:15672"
 
-# İşte unutulan o sihirli bağlantı noktası:
+  # İŞTE HOCANIN EKRANINDAKİ EKSİK PARÇA: JENKINS
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins_kapsayici
+    user: root # Lokal kurulumlarda yetki hatası almamak için
+    networks:
+      - routemaster_ag
+    restart: always
+    ports:
+      - "8080:8080"   # Jenkins'in Görsel Web Arayüzü
+      - "50000:50000" # Hocanın görselinde gözüken Agent portu
+    volumes:
+      - jenkins_data:/var/jenkins_home
+
 networks:
   routemaster_ag:
     driver: bridge
+
+# Jenkins'in verilerinin (ayarlarının) kalıcı olması için:
+volumes:
+  jenkins_data:

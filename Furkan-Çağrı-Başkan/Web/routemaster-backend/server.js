@@ -104,6 +104,7 @@ app.post('/auth/register', async (req, res) => {
         delete userResponse.password;
 
         res.status(201).json(userResponse);
+        console.log(`Yeni kullanıcı başarıyla kaydedildi: ${username} 🚀`);
 
     } catch (error) {
         console.error("Kayıt hatası:", error);

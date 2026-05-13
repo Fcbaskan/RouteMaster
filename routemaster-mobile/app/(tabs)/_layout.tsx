@@ -34,7 +34,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="create"
         options={{
-          title: 'Yeni Rota',
+          title: 'Yeni Gezi',
           tabBarIcon: () => <Text style={{ fontSize: 24 }}>➕</Text>,
         }}
       />

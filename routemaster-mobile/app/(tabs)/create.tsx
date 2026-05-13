@@ -1,7 +1,9 @@
 import { useState, useRef } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
-import axios from 'axios'
-import AsyncStorage from '@react-native-async-storage/async-storage';;
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform, Image } from 'react-native';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function CreateScreen() {
   const [title, setTitle] = useState('');
@@ -18,7 +20,7 @@ export default function CreateScreen() {
 
   const handleShare = async () => { 
     if (!title || !city || !country || !content) {
-      Alert.alert('Eksik Bilgi', 'Lütfen tüm alanları doldurun!');
+      Alert.alert('Eksik Bilgi', 'Lütfen başlık, şehir, ülke ve deneyim alanlarını doldurun!');
       return;
     }
 
@@ -74,149 +76,219 @@ export default function CreateScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: '#f5f5f5' }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View style={styles.container}>
-          <Text style={styles.headerTitle}>Yeni Rota Ekle</Text>
-
-          <TextInput
-            style={styles.input}
-            placeholder="Başlık (Örn: Harika Bir Hafta Sonu)"
-            value={title}
-            onChangeText={setTitle}
-            returnKeyType="next"
-            onSubmitEditing={() => cityRef.current?.focus()}
-            blurOnSubmit={false}
-          />
-
-          <View style={styles.row}>
-            <TextInput
-              ref={cityRef}
-              style={[styles.input, { flex: 1, marginRight: 5 }]}
-              placeholder="Şehir"
-              value={city}
-              onChangeText={setCity}
-              returnKeyType="next"
-              onSubmitEditing={() => countryRef.current?.focus()}
-              blurOnSubmit={false}
-            />
-            <TextInput
-              ref={countryRef}
-              style={[styles.input, { flex: 1, marginLeft: 5 }]}
-              placeholder="Ülke"
-              value={country}
-              onChangeText={setCountry}
-              returnKeyType="next"
-              onSubmitEditing={() => placesRef.current?.focus()}
-              blurOnSubmit={false}
-            />
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Header Area */}
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>Dünyayı Keşfet</Text>
+            <Text style={styles.headerSubtitle}>Yeni bir gezi yazısı oluştur ve deneyimlerini paylaş.</Text>
           </View>
 
-          <Text style={styles.fieldLabel}>🗺️ Gezilecek Yerler</Text>
-          <TextInput
-            ref={placesRef}
-            style={styles.input}
-            placeholder="Örn: Ayasofya, Topkapı Sarayı, Kapalıçarşı"
-            value={placesToVisit}
-            onChangeText={setPlacesToVisit}
-            returnKeyType="next"
-            onSubmitEditing={() => contentRef.current?.focus()}
-            blurOnSubmit={false}
-          />
-          <Text style={styles.hint}>Birden fazla yer eklemek için virgül (,) kullanın</Text>
+          {/* Form Card */}
+          <View style={styles.card}>
+            
+            {/* Title Input */}
+            <View style={styles.inputWrapper}>
+              <Ionicons name="text" size={20} color="#e67e22" style={styles.icon} />
+              <TextInput
+                style={styles.input}
+                placeholder="Başlık (Örn: Harika Bir Hafta Sonu)"
+                placeholderTextColor="#999"
+                value={title}
+                onChangeText={setTitle}
+                returnKeyType="next"
+                onSubmitEditing={() => cityRef.current?.focus()}
+                blurOnSubmit={false}
+              />
+            </View>
 
-          <TextInput
-            ref={contentRef}
-            style={[styles.input, styles.textArea]}
-            placeholder="Deneyimlerini anlat..."
-            value={content}
-            onChangeText={setContent}
-            multiline={true}
-            numberOfLines={6}
-            returnKeyType="done"
-          />
+            {/* City & Country Row */}
+            <View style={styles.row}>
+              <View style={[styles.inputWrapper, { flex: 1, marginRight: 8 }]}>
+                <Ionicons name="business" size={20} color="#e67e22" style={styles.icon} />
+                <TextInput
+                  ref={cityRef}
+                  style={styles.input}
+                  placeholder="Şehir"
+                  placeholderTextColor="#999"
+                  value={city}
+                  onChangeText={setCity}
+                  returnKeyType="next"
+                  onSubmitEditing={() => countryRef.current?.focus()}
+                  blurOnSubmit={false}
+                />
+              </View>
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleShare}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>Paylaş 🚀</Text>
-            )}
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+              <View style={[styles.inputWrapper, { flex: 1, marginLeft: 8 }]}>
+                <Ionicons name="earth" size={20} color="#e67e22" style={styles.icon} />
+                <TextInput
+                  ref={countryRef}
+                  style={styles.input}
+                  placeholder="Ülke"
+                  placeholderTextColor="#999"
+                  value={country}
+                  onChangeText={setCountry}
+                  returnKeyType="next"
+                  onSubmitEditing={() => placesRef.current?.focus()}
+                  blurOnSubmit={false}
+                />
+              </View>
+            </View>
+
+            {/* Places to Visit */}
+            <View style={styles.inputWrapper}>
+              <Ionicons name="map" size={20} color="#e67e22" style={styles.icon} />
+              <TextInput
+                ref={placesRef}
+                style={styles.input}
+                placeholder="Gezilecek Yerler (Virgülle ayırın)"
+                placeholderTextColor="#999"
+                value={placesToVisit}
+                onChangeText={setPlacesToVisit}
+                returnKeyType="next"
+                onSubmitEditing={() => contentRef.current?.focus()}
+                blurOnSubmit={false}
+              />
+            </View>
+
+            {/* Content Textarea */}
+            <View style={[styles.inputWrapper, styles.textAreaWrapper]}>
+              <Ionicons name="journal" size={20} color="#e67e22" style={styles.iconTop} />
+              <TextInput
+                ref={contentRef}
+                style={[styles.input, styles.textArea]}
+                placeholder="Bu gezide neler yaşadın? Tavsiyelerin neler?"
+                placeholderTextColor="#999"
+                value={content}
+                onChangeText={setContent}
+                multiline={true}
+                numberOfLines={8}
+                returnKeyType="default"
+              />
+            </View>
+
+            {/* Submit Button */}
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleShare}
+              disabled={loading}
+              activeOpacity={0.8}
+            >
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <>
+                  <Ionicons name="paper-plane" size={20} color="#fff" style={{ marginRight: 8 }} />
+                  <Text style={styles.buttonText}>Hemen Paylaş</Text>
+                </>
+              )}
+            </TouchableOpacity>
+
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#f8f9fa',
+  },
   scrollContainer: {
     flexGrow: 1,
+    paddingBottom: 40,
   },
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#f5f5f5',
+  header: {
+    paddingHorizontal: 25,
     paddingTop: 30,
+    paddingBottom: 20,
+    backgroundColor: '#f8f9fa',
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#333',
-    textAlign: 'center'
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#2c3e50',
+    marginBottom: 8,
   },
-  fieldLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 6,
+  headerSubtitle: {
+    fontSize: 15,
+    color: '#7f8c8d',
+    lineHeight: 22,
   },
-  hint: {
-    fontSize: 12,
-    color: '#999',
-    marginTop: -10,
-    marginBottom: 15,
-    marginLeft: 4,
+  card: {
+    backgroundColor: '#fff',
+    marginHorizontal: 20,
+    borderRadius: 24,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.05,
+    shadowRadius: 15,
+    elevation: 4,
+  },
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f1f3f5',
+    borderRadius: 16,
+    marginBottom: 16,
+    paddingHorizontal: 15,
+    minHeight: 56,
+  },
+  textAreaWrapper: {
+    alignItems: 'flex-start',
+    paddingTop: 15,
+  },
+  icon: {
+    marginRight: 10,
+  },
+  iconTop: {
+    marginRight: 10,
+    marginTop: 2,
   },
   input: {
-    backgroundColor: '#fff',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: '#ddd',
+    flex: 1,
     fontSize: 15,
+    color: '#333',
+    paddingVertical: 15,
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   textArea: {
-    height: 120,
+    height: 140,
     textAlignVertical: 'top',
+    paddingTop: 0,
   },
   button: {
     backgroundColor: '#e67e22',
-    padding: 15,
-    borderRadius: 10,
+    flexDirection: 'row',
+    borderRadius: 16,
+    paddingVertical: 18,
     alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 10,
+    shadowColor: '#e67e22',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 6,
   },
   buttonText: {
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+    letterSpacing: 0.5,
   }
-});
+});

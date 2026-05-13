@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl, TouchableOpacity, TextInput, Image } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import axios from 'axios';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
@@ -62,12 +63,18 @@ useFocusEffect(
     onPress={() => router.push({ 
   pathname: "/detail/[id]", 
   params: { id: item._id } 
-})} // Tıklananın ID'sini gönder
+})}
   >
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.location}>📍 {item.city}, {item.country}</Text>
-      <Text style={styles.content} numberOfLines={3}>{item.content}</Text>
-      <Text style={styles.author}>✍️ Yazar: {item.authorName}</Text>
+      <Image 
+        source={{ uri: `https://picsum.photos/seed/${item._id}/400/200` }} 
+        style={styles.cardImage} 
+      />
+      <View style={styles.cardContent}>
+        <Text style={styles.title}>{item.title}</Text>
+        <Text style={styles.location}>📍 {item.city}, {item.country}</Text>
+        <Text style={styles.content} numberOfLines={3}>{item.content}</Text>
+        <Text style={styles.author}>✍️ Yazar: {item.authorName}</Text>
+      </View>
     </TouchableOpacity>
   );
 
@@ -90,7 +97,7 @@ useFocusEffect(
   });
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.searchContainer}>
         <Ionicons name="search" size={20} color="#888" style={styles.searchIcon} />
         <TextInput
@@ -125,7 +132,7 @@ useFocusEffect(
           </View>
         }
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -164,7 +171,6 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: '#fff',
-    padding: 15,
     marginBottom: 15,
     borderRadius: 10,
     shadowColor: '#000',
@@ -172,6 +178,15 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    overflow: 'hidden',
+  },
+  cardImage: {
+    width: '100%',
+    height: 150,
+    backgroundColor: '#eee',
+  },
+  cardContent: {
+    padding: 15,
   },
   title: {
     fontSize: 20,

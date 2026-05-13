@@ -177,7 +177,7 @@ export default function ProfileScreen() {
 
   const renderItem = ({ item }: any) => (
     <TouchableOpacity style={styles.gridItem} onPress={() => router.push({ pathname: "/detail/[id]", params: { id: item._id } })}>
-      <Image source={{ uri: item.imageUrl || 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1' }} style={styles.postImage} />
+      <Image source={{ uri: item.imageUrl || `https://picsum.photos/seed/${item._id}/400/200` }} style={styles.postImage} />
       <View style={styles.postOverlay}>
         <Text style={styles.postCity} numberOfLines={1}>{item.city || 'Belirtilmedi'}</Text>
       </View>

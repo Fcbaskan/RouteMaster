@@ -116,7 +116,7 @@ export default function DetailScreen() {
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.imageContainer}>
-        <Image source={{ uri: post.imageUrl || 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1' }} style={styles.image} />
+        <Image source={{ uri: post.imageUrl || `https://picsum.photos/seed/${post._id}/800/600` }} style={styles.image} />
         {!isEditing && (
           <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={24} color="#fff" />

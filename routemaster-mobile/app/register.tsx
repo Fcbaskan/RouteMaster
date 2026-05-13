@@ -19,7 +19,7 @@ export default function RegisterScreen() {
   const passwordRef = useRef<TextInput>(null);
 
   // ⚠️ Kendi IP adresini buraya yazmayı unutma
-  const API_URL = 'http://10.34.47.203:3000/auth/register';
+  const API_URL = 'http://10.90.251.203:3000/auth/register';
 
   const handleRegister = async () => {
     if (!username || !email || !password) {

@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform, Image } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_BASE } from '@/constants/api';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -52,7 +53,7 @@ export default function CreateScreen() {
         authorName: user.username
       };
 
-      axios.post('http://10.90.251.203:3000/travelogue', newPost)
+      axios.post(`${API_BASE}/travelogue`, newPost)
         .then(() => {
           Alert.alert('Harika! 🚀', 'Gezi yazınız başarıyla paylaşıldı.');
           setTitle('');

@@ -5,7 +5,7 @@ import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from 'expo-router';
 
-const API_BASE = 'http://10.90.251.203:3000';
+import { API_BASE } from '@/constants/api';
 
 export default function ProfileScreen() {
   const [posts, setPosts] = useState([]);

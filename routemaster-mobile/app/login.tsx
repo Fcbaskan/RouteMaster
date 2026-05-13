@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, Image, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_BASE } from '@/constants/api';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -11,7 +12,7 @@ export default function LoginScreen() {
   const router = useRouter();
 
   // ⚠️ Kendi IP adresini buraya yazmayı unutma
-  const API_URL = 'http://10.90.251.203:3000/auth/login';
+  const API_URL = `${API_BASE}/auth/login`;
 
   const handleLogin = async () => {
     if (!email || !password) {

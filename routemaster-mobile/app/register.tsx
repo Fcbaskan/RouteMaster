@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
+import { API_BASE } from '@/constants/api';
 
 export default function RegisterScreen() {
   const [firstName, setFirstName] = useState('');
@@ -19,7 +20,7 @@ export default function RegisterScreen() {
   const passwordRef = useRef<TextInput>(null);
 
   // ⚠️ Kendi IP adresini buraya yazmayı unutma
-  const API_URL = 'http://10.90.251.203:3000/auth/register';
+  const API_URL = `${API_BASE}/auth/register`;
 
   const handleRegister = async () => {
     if (!username || !email || !password) {

@@ -1,4 +1,4 @@
-const BASE_URL = "https://route-master-ten.vercel.app";
+const BASE_URL = "http://localhost:3000";
 
 const registerForm = document.getElementById('registerForm');
 

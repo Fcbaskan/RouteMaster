@@ -4,7 +4,7 @@ import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_BASE = 'http://10.90.251.203:3000';
+const API_BASE = 'https://routemaster-api-furkan.loca.lt';
 
 export default function DetailScreen() {
   const { id } = useLocalSearchParams();
@@ -327,8 +327,8 @@ export default function DetailScreen() {
             <Text style={styles.sectionTitle}>Yazıyı Düzenle</Text>
             <TextInput style={styles.input} value={editData.title} onChangeText={(t) => setEditData({ ...editData, title: t })} placeholder="Başlık" placeholderTextColor="#999" />
             <View style={{ flexDirection: 'row', gap: 10 }}>
-              <TextInput style={[styles.input, { flex: 1 }]} value={editData.city} onChangeText={(t) => setEditData({ ...editData, city: t })} placeholder="Şehir" />
-              <TextInput style={[styles.input, { flex: 1 }]} value={editData.country} onChangeText={(t) => setEditData({ ...editData, country: t })} placeholder="Ülke" />
+              <TextInput style={[styles.input, { flex: 1 }]} value={editData.city} onChangeText={(t) => setEditData({ ...editData, city: t })} placeholder="Şehir" placeholderTextColor="#999" />
+              <TextInput style={[styles.input, { flex: 1 }]} value={editData.country} onChangeText={(t) => setEditData({ ...editData, country: t })} placeholder="Ülke" placeholderTextColor="#999" />
             </View>
             <TextInput style={styles.input} value={editData.placesToVisit} onChangeText={(t) => setEditData({ ...editData, placesToVisit: t })} placeholder="Gezilecek Yerler (virgülle ayırın)" placeholderTextColor="#999" />
             <TextInput style={[styles.input, { height: 120, textAlignVertical: 'top' }]} value={editData.content} onChangeText={(t) => setEditData({ ...editData, content: t })} multiline numberOfLines={5} placeholder="Gezi Notları" placeholderTextColor="#999" />

@@ -6,7 +6,7 @@ import { useRouter } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
-const API_BASE = 'http://10.90.251.203:3000';
+const API_BASE = 'https://routemaster-api-furkan.loca.lt';
 
 interface Travelogue {
   _id: string;

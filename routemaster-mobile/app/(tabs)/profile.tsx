@@ -41,11 +41,21 @@ export default function ProfileScreen() {
 
   const fetchMyRoutes = async () => {
     try {
+      const storedUser = await AsyncStorage.getItem('user');
+      if (!storedUser) {
+        setPosts([]);
+        return;
+      }
+      const currentUser = JSON.parse(storedUser);
+
       const response = await fetch(API_URL);
       const data = await response.json();
-      // Gerçek bir uygulamada burada sadece giriş yapan kullanıcının rotaları filtrelenir.
-      // Şimdilik sistemdeki tüm rotaları kullanıcınınmış gibi gösteriyoruz.
-      setPosts(data);
+
+      // Sadece giriş yapan kullanıcının yazılarını filtrele
+      const myPosts = data.filter(
+        (post: any) => post.author === currentUser._id
+      );
+      setPosts(myPosts);
     } catch (error) {
       console.error('Profiller çekilirken hata:', error);
     } finally {

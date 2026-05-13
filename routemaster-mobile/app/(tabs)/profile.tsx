@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl, Modal, TextInput, Alert, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from 'expo-router';
-import { useCallback } from 'react';
 
 const API_BASE = 'http://10.34.47.203:3000';
 
@@ -16,6 +15,12 @@ export default function ProfileScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
 
+  // Favoriler
+  const [favModalVisible, setFavModalVisible] = useState(false);
+  const [favorites, setFavorites] = useState<any[]>([]);
+  const [favLoading, setFavLoading] = useState(false);
+
+  // Düzenleme form alanları
   const [editFirstName, setEditFirstName] = useState('');
   const [editLastName, setEditLastName] = useState('');
   const [editUsername, setEditUsername] = useState('');
@@ -65,6 +70,46 @@ export default function ProfileScreen() {
     } finally {
       setLoading(false);
       setRefreshing(false);
+    }
+  };
+
+  const fetchFavorites = async () => {
+    if (!user) return;
+    setFavLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/favorites/${user._id}`);
+      const favs = await res.json();
+
+      // Her favorinin travelogue detayını çek
+      const detailPromises = favs.map(async (fav: any) => {
+        try {
+          const r = await fetch(`${API_BASE}/travelogue/${fav.itemId}`);
+          if (r.ok) return await r.json();
+          return null;
+        } catch { return null; }
+      });
+
+      const details = await Promise.all(detailPromises);
+      setFavorites(details.filter(d => d !== null));
+    } catch {
+      Alert.alert('Hata', 'Favoriler yüklenemedi.');
+    } finally {
+      setFavLoading(false);
+    }
+  };
+
+  const handleOpenFavorites = () => {
+    setFavModalVisible(true);
+    fetchFavorites();
+  };
+
+  const handleRemoveFavorite = async (postId: string) => {
+    if (!user) return;
+    try {
+      await fetch(`${API_BASE}/favorites/${postId}/${user._id}`, { method: 'DELETE' });
+      setFavorites(prev => prev.filter(p => p._id !== postId));
+    } catch {
+      Alert.alert('Hata', 'Favoriden çıkarılamadı.');
     }
   };
 
@@ -164,14 +209,26 @@ export default function ProfileScreen() {
         </View>
       </View>
 
-      <View style={{ flexDirection: 'row', gap: 10 }}>
+      {/* Butonlar */}
+      <View style={styles.buttonRow}>
         <TouchableOpacity style={styles.editButton} onPress={() => setModalVisible(true)}>
+          <Ionicons name="create-outline" size={16} color="#fff" style={{ marginRight: 4 }} />
           <Text style={styles.editButtonText}>Profili Düzenle</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.editButton, { backgroundColor: '#e74c3c' }]} onPress={handleLogout}>
-          <Text style={styles.editButtonText}>Çıkış Yap</Text>
+          <Ionicons name="log-out-outline" size={16} color="#fff" style={{ marginRight: 4 }} />
+          <Text style={styles.editButtonText}>Çıkış</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Favorilerim Butonu */}
+      <TouchableOpacity style={styles.favoritesButton} onPress={handleOpenFavorites}>
+        <Ionicons name="heart" size={18} color="#e74c3c" style={{ marginRight: 8 }} />
+        <Text style={styles.favoritesButtonText}>Favorilerim</Text>
+        <Ionicons name="chevron-forward" size={18} color="#e74c3c" />
+      </TouchableOpacity>
+
+      <Text style={styles.myPostsLabel}>Yazılarım</Text>
     </View>
   );
 
@@ -197,13 +254,70 @@ export default function ProfileScreen() {
         contentContainerStyle={styles.listContainer}
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#e67e22']} tintColor="#e67e22" />}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Ionicons name="document-text-outline" size={50} color="#ddd" />
+            <Text style={styles.emptyText}>Henüz bir gezi yazısı paylaşmadınız.</Text>
+          </View>
+        }
       />
 
-      {/* PROFİL DÜZENLEME MODAL */}
+      {/* ===== FAVORİLER MODAL ===== */}
+      <Modal visible={favModalVisible} animationType="slide" onRequestClose={() => setFavModalVisible(false)}>
+        <View style={styles.favModal}>
+          {/* Header */}
+          <View style={styles.favModalHeader}>
+            <TouchableOpacity onPress={() => setFavModalVisible(false)}>
+              <Ionicons name="arrow-back" size={26} color="#333" />
+            </TouchableOpacity>
+            <Text style={styles.favModalTitle}>❤️ Favorilerim</Text>
+            <View style={{ width: 26 }} />
+          </View>
+
+          {favLoading ? (
+            <View style={styles.centerContainer}>
+              <ActivityIndicator size="large" color="#e67e22" />
+            </View>
+          ) : favorites.length === 0 ? (
+            <View style={styles.centerContainer}>
+              <Ionicons name="heart-outline" size={60} color="#ddd" />
+              <Text style={styles.emptyText}>Henüz favori eklemediniz.</Text>
+            </View>
+          ) : (
+            <FlatList
+              data={favorites}
+              keyExtractor={(item: any) => item._id}
+              contentContainerStyle={{ padding: 16 }}
+              renderItem={({ item }: any) => (
+                <TouchableOpacity
+                  style={styles.favCard}
+                  onPress={() => { setFavModalVisible(false); router.push({ pathname: "/detail/[id]", params: { id: item._id } }); }}
+                  activeOpacity={0.85}
+                >
+                  <Image source={{ uri: item.imageUrl || `https://picsum.photos/seed/${item._id}/400/200` }} style={styles.favCardImage} />
+                  <View style={styles.favCardContent}>
+                    <Text style={styles.favCardTitle} numberOfLines={1}>{item.title}</Text>
+                    <Text style={styles.favCardLocation}>📍 {item.city}, {item.country}</Text>
+                    <Text style={styles.favCardAuthor}>✍️ {item.authorName}</Text>
+                  </View>
+                  <TouchableOpacity
+                    style={styles.removeFavBtn}
+                    onPress={() => handleRemoveFavorite(item._id)}
+                  >
+                    <Ionicons name="heart-dislike" size={22} color="#e74c3c" />
+                  </TouchableOpacity>
+                </TouchableOpacity>
+              )}
+            />
+          )}
+        </View>
+      </Modal>
+
+      {/* ===== PROFİL DÜZENLEME MODAL ===== */}
       <Modal visible={modalVisible} animationType="slide" onRequestClose={() => setModalVisible(false)}>
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
           <ScrollView contentContainerStyle={styles.modalContainer} keyboardShouldPersistTaps="handled">
-            
+
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Profili Düzenle</Text>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
@@ -216,7 +330,6 @@ export default function ProfileScreen() {
             <TextInput style={styles.input} placeholder="Soyad" value={editLastName} onChangeText={setEditLastName} />
             <TextInput style={styles.input} placeholder="Kullanıcı Adı" value={editUsername} onChangeText={setEditUsername} autoCapitalize="none" />
             <TextInput style={styles.input} placeholder="E-Posta" value={editEmail} onChangeText={setEditEmail} keyboardType="email-address" autoCapitalize="none" />
-
             <TouchableOpacity style={styles.saveButton} onPress={handleSaveProfile} disabled={saveLoading}>
               {saveLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.saveButtonText}>Bilgileri Kaydet</Text>}
             </TouchableOpacity>
@@ -225,7 +338,6 @@ export default function ProfileScreen() {
             <Text style={styles.sectionTitle}>🔒 Şifre Değiştir</Text>
             <TextInput style={styles.input} placeholder="Mevcut Şifre" value={currentPassword} onChangeText={setCurrentPassword} secureTextEntry />
             <TextInput style={styles.input} placeholder="Yeni Şifre" value={newPassword} onChangeText={setNewPassword} secureTextEntry />
-
             <TouchableOpacity style={[styles.saveButton, { backgroundColor: '#3498db' }]} onPress={handleChangePassword} disabled={saveLoading}>
               <Text style={styles.saveButtonText}>Şifreyi Güncelle</Text>
             </TouchableOpacity>
@@ -249,20 +361,38 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
   centerContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   listContainer: { paddingBottom: 20 },
-  headerContainer: { alignItems: 'center', paddingVertical: 20, borderBottomWidth: 1, borderBottomColor: '#f0f0f0', marginBottom: 5 },
+  emptyContainer: { padding: 40, alignItems: 'center', marginTop: 20 },
+  emptyText: { color: '#aaa', fontSize: 15, textAlign: 'center', marginTop: 12 },
+  headerContainer: { alignItems: 'center', paddingVertical: 24, borderBottomWidth: 1, borderBottomColor: '#f0f0f0', marginBottom: 5, paddingHorizontal: 16 },
   avatar: { width: 100, height: 100, borderRadius: 50, borderWidth: 3, borderColor: '#e67e22', marginBottom: 10 },
-  userName: { fontSize: 22, fontWeight: 'bold', color: '#333' },
-  userBio: { fontSize: 14, color: '#666', marginTop: 5, marginBottom: 15 },
-  statsContainer: { flexDirection: 'row', justifyContent: 'space-around', width: '100%', paddingHorizontal: 20, marginBottom: 15 },
+  userName: { fontSize: 22, fontWeight: 'bold', color: '#2c3e50' },
+  userBio: { fontSize: 14, color: '#666', marginTop: 4, marginBottom: 14 },
+  statsContainer: { flexDirection: 'row', justifyContent: 'space-around', width: '100%', paddingHorizontal: 20, marginBottom: 14 },
   statBox: { alignItems: 'center' },
-  statNumber: { fontSize: 18, fontWeight: 'bold', color: '#333' },
+  statNumber: { fontSize: 20, fontWeight: 'bold', color: '#2c3e50' },
   statLabel: { fontSize: 13, color: '#888', marginTop: 2 },
-  editButton: { backgroundColor: '#e67e22', paddingVertical: 8, paddingHorizontal: 20, borderRadius: 20 },
-  editButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 14 },
+  buttonRow: { flexDirection: 'row', gap: 10, marginBottom: 12 },
+  editButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#e67e22', paddingVertical: 9, paddingHorizontal: 18, borderRadius: 20 },
+  editButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 13 },
+  favoritesButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff5f5', borderWidth: 1.5, borderColor: '#e74c3c', paddingVertical: 10, paddingHorizontal: 24, borderRadius: 20, marginBottom: 16 },
+  favoritesButtonText: { color: '#e74c3c', fontWeight: 'bold', fontSize: 14, flex: 1 },
+  myPostsLabel: { fontSize: 16, fontWeight: '700', color: '#2c3e50', alignSelf: 'flex-start', marginTop: 4, marginBottom: 6 },
   gridItem: { flex: 1, margin: 5, height: 150, borderRadius: 10, overflow: 'hidden' },
   postImage: { width: '100%', height: '100%' },
   postOverlay: { position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: 'rgba(0,0,0,0.5)', padding: 5 },
   postCity: { color: '#fff', fontSize: 12, fontWeight: 'bold', textAlign: 'center' },
+  // Favoriler Modal
+  favModal: { flex: 1, backgroundColor: '#f8f9fa' },
+  favModalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 55, paddingBottom: 15, backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#eee' },
+  favModalTitle: { fontSize: 18, fontWeight: 'bold', color: '#2c3e50' },
+  favCard: { flexDirection: 'row', backgroundColor: '#fff', borderRadius: 14, marginBottom: 12, overflow: 'hidden', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 6, elevation: 3 },
+  favCardImage: { width: 90, height: 90 },
+  favCardContent: { flex: 1, padding: 12, justifyContent: 'center' },
+  favCardTitle: { fontSize: 15, fontWeight: 'bold', color: '#2c3e50', marginBottom: 3 },
+  favCardLocation: { fontSize: 12, color: '#e67e22', marginBottom: 3 },
+  favCardAuthor: { fontSize: 11, color: '#999', fontStyle: 'italic' },
+  removeFavBtn: { padding: 12, justifyContent: 'center', alignItems: 'center' },
+  // Profil Düzenleme Modal
   modalContainer: { padding: 20, backgroundColor: '#fff', flexGrow: 1 },
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 40, marginBottom: 20 },
   modalTitle: { fontSize: 22, fontWeight: 'bold', color: '#333' },

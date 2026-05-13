@@ -367,6 +367,42 @@ app.delete('/ratings/:travelogueId/:userId', async (req, res) => {
     }
 });
 
+// Bir yazının ortalama puanını ve toplam oy sayısını getir
+app.get('/ratings/:travelogueId', async (req, res) => {
+    try {
+        const travelogueId = req.params.travelogueId;
+        const ratings = await TravelogueRating.find({ travelogueId });
+
+        if (ratings.length === 0) {
+            return res.status(200).json({ average: 0, count: 0 });
+        }
+
+        const total = ratings.reduce((sum, r) => sum + r.rating, 0);
+        const average = (total / ratings.length).toFixed(1);
+
+        res.status(200).json({ average: parseFloat(average), count: ratings.length });
+    } catch (error) {
+        res.status(500).json({ message: "Puan bilgisi getirilirken hata oluştu.", error: error.message });
+    }
+});
+
+// Belirli bir kullanıcının bir yazıya verdiği puanı getir
+app.get('/ratings/:travelogueId/:userId', async (req, res) => {
+    try {
+        const { travelogueId, userId } = req.params;
+        const rating = await TravelogueRating.findOne({ travelogueId, userId });
+
+        if (!rating) {
+            return res.status(200).json({ rating: null });
+        }
+
+        res.status(200).json({ rating: rating.rating });
+    } catch (error) {
+        res.status(500).json({ message: "Puan bilgisi getirilirken hata oluştu.", error: error.message });
+    }
+});
+
+
 app.put('/auth/users/:userid/password', async (req, res) => {
     try {
         const { currentPassword, newPassword } = req.body;

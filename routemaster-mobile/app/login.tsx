@@ -11,7 +11,7 @@ export default function LoginScreen() {
   const router = useRouter();
 
   // ⚠️ Kendi IP adresini buraya yazmayı unutma
-  const API_URL = 'https://routemaster-api-furkan.loca.lt/auth/login';
+  const API_URL = 'http://10.90.251.203:3000/auth/login';
 
   const handleLogin = async () => {
     if (!email || !password) {

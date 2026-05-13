@@ -52,7 +52,7 @@ export default function CreateScreen() {
         authorName: user.username
       };
 
-      axios.post('https://routemaster-api-furkan.loca.lt/travelogue', newPost)
+      axios.post('http://10.90.251.203:3000/travelogue', newPost)
         .then(() => {
           Alert.alert('Harika! 🚀', 'Gezi yazınız başarıyla paylaşıldı.');
           setTitle('');

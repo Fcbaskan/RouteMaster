@@ -4,7 +4,7 @@ import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_BASE = 'https://routemaster-api-furkan.loca.lt';
+const API_BASE = 'http://10.90.251.203:3000';
 
 export default function DetailScreen() {
   const { id } = useLocalSearchParams();

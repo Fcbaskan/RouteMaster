@@ -76,6 +76,7 @@ export default function RegisterScreen() {
             <TextInput
               style={styles.input}
               placeholder="Örn: Furkan Çağrı"
+              placeholderTextColor="#999"
               value={firstName}
               onChangeText={setFirstName}
               returnKeyType="next"
@@ -88,6 +89,7 @@ export default function RegisterScreen() {
               ref={lastNameRef}
               style={styles.input}
               placeholder="Örn: Başkan"
+              placeholderTextColor="#999"
               value={lastName}
               onChangeText={setLastName}
               returnKeyType="next"
@@ -100,6 +102,7 @@ export default function RegisterScreen() {
               ref={usernameRef}
               style={styles.input}
               placeholder="Kullanıcı adınızı belirleyin"
+              placeholderTextColor="#999"
               value={username}
               onChangeText={setUsername}
               autoCapitalize="none"
@@ -113,6 +116,7 @@ export default function RegisterScreen() {
               ref={emailRef}
               style={styles.input}
               placeholder="ornek@mail.com"
+              placeholderTextColor="#999"
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
@@ -127,6 +131,7 @@ export default function RegisterScreen() {
               ref={passwordRef}
               style={styles.input}
               placeholder="En az 6 karakter"
+              placeholderTextColor="#999"
               value={password}
               onChangeText={setPassword}
               secureTextEntry

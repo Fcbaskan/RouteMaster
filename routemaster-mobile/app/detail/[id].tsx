@@ -325,13 +325,13 @@ export default function DetailScreen() {
           /* ================= DÜZENLEME MODU ================= */
           <>
             <Text style={styles.sectionTitle}>Yazıyı Düzenle</Text>
-            <TextInput style={styles.input} value={editData.title} onChangeText={(t) => setEditData({ ...editData, title: t })} placeholder="Başlık" />
+            <TextInput style={styles.input} value={editData.title} onChangeText={(t) => setEditData({ ...editData, title: t })} placeholder="Başlık" placeholderTextColor="#999" />
             <View style={{ flexDirection: 'row', gap: 10 }}>
               <TextInput style={[styles.input, { flex: 1 }]} value={editData.city} onChangeText={(t) => setEditData({ ...editData, city: t })} placeholder="Şehir" />
               <TextInput style={[styles.input, { flex: 1 }]} value={editData.country} onChangeText={(t) => setEditData({ ...editData, country: t })} placeholder="Ülke" />
             </View>
-            <TextInput style={styles.input} value={editData.placesToVisit} onChangeText={(t) => setEditData({ ...editData, placesToVisit: t })} placeholder="Gezilecek Yerler (virgülle ayırın)" />
-            <TextInput style={[styles.input, { height: 120, textAlignVertical: 'top' }]} value={editData.content} onChangeText={(t) => setEditData({ ...editData, content: t })} multiline numberOfLines={5} placeholder="Gezi Notları" />
+            <TextInput style={styles.input} value={editData.placesToVisit} onChangeText={(t) => setEditData({ ...editData, placesToVisit: t })} placeholder="Gezilecek Yerler (virgülle ayırın)" placeholderTextColor="#999" />
+            <TextInput style={[styles.input, { height: 120, textAlignVertical: 'top' }]} value={editData.content} onChangeText={(t) => setEditData({ ...editData, content: t })} multiline numberOfLines={5} placeholder="Gezi Notları" placeholderTextColor="#999" />
             <View style={styles.actionButtonsContainer}>
               <TouchableOpacity style={[styles.actionButton, { backgroundColor: '#2ecc71' }]} onPress={handleUpdate} disabled={updateLoading}>
                 {updateLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.actionButtonText}>Kaydet</Text>}

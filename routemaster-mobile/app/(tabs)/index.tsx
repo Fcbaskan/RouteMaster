@@ -143,6 +143,7 @@ export default function FeedScreen() {
         <TextInput
           style={styles.searchInput}
           placeholder="Şehir, ülke veya başlık ara..."
+          placeholderTextColor="#999"
           value={searchQuery}
           onChangeText={setSearchQuery}
         />

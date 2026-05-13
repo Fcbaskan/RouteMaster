@@ -326,18 +326,18 @@ export default function ProfileScreen() {
             </View>
 
             <Text style={styles.sectionTitle}>👤 Kişisel Bilgiler</Text>
-            <TextInput style={styles.input} placeholder="Ad" value={editFirstName} onChangeText={setEditFirstName} />
-            <TextInput style={styles.input} placeholder="Soyad" value={editLastName} onChangeText={setEditLastName} />
-            <TextInput style={styles.input} placeholder="Kullanıcı Adı" value={editUsername} onChangeText={setEditUsername} autoCapitalize="none" />
-            <TextInput style={styles.input} placeholder="E-Posta" value={editEmail} onChangeText={setEditEmail} keyboardType="email-address" autoCapitalize="none" />
+            <TextInput style={styles.input} placeholder="Ad" placeholderTextColor="#999" value={editFirstName} onChangeText={setEditFirstName} />
+            <TextInput style={styles.input} placeholder="Soyad" placeholderTextColor="#999" value={editLastName} onChangeText={setEditLastName} />
+            <TextInput style={styles.input} placeholder="Kullanıcı Adı" placeholderTextColor="#999" value={editUsername} onChangeText={setEditUsername} autoCapitalize="none" />
+            <TextInput style={styles.input} placeholder="E-Posta" placeholderTextColor="#999" value={editEmail} onChangeText={setEditEmail} keyboardType="email-address" autoCapitalize="none" />
             <TouchableOpacity style={styles.saveButton} onPress={handleSaveProfile} disabled={saveLoading}>
               {saveLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.saveButtonText}>Bilgileri Kaydet</Text>}
             </TouchableOpacity>
 
             <View style={styles.divider} />
             <Text style={styles.sectionTitle}>🔒 Şifre Değiştir</Text>
-            <TextInput style={styles.input} placeholder="Mevcut Şifre" value={currentPassword} onChangeText={setCurrentPassword} secureTextEntry />
-            <TextInput style={styles.input} placeholder="Yeni Şifre" value={newPassword} onChangeText={setNewPassword} secureTextEntry />
+            <TextInput style={styles.input} placeholder="Mevcut Şifre" placeholderTextColor="#999" value={currentPassword} onChangeText={setCurrentPassword} secureTextEntry />
+            <TextInput style={styles.input} placeholder="Yeni Şifre" placeholderTextColor="#999" value={newPassword} onChangeText={setNewPassword} secureTextEntry />
             <TouchableOpacity style={[styles.saveButton, { backgroundColor: '#3498db' }]} onPress={handleChangePassword} disabled={saveLoading}>
               <Text style={styles.saveButtonText}>Şifreyi Güncelle</Text>
             </TouchableOpacity>

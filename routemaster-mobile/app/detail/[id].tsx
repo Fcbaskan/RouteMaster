@@ -36,7 +36,7 @@ export default function DetailScreen() {
                 title: data.title,
                 city: data.city,
                 country: data.country,
-                placesToVisit: data.placesToVisit || '',
+                placesToVisit: Array.isArray(data.placesToVisit) ? data.placesToVisit.join(', ') : (data.placesToVisit || ''),
                 content: data.content
               });
             } else {
@@ -78,10 +78,19 @@ export default function DetailScreen() {
   const handleUpdate = async () => {
     setUpdateLoading(true);
     try {
+      const placesArray = typeof editData.placesToVisit === 'string'
+        ? editData.placesToVisit.split(',').map(p => p.trim()).filter(p => p.length > 0)
+        : editData.placesToVisit;
+
+      const payload = {
+        ...editData,
+        placesToVisit: placesArray
+      };
+
       const response = await fetch(API_URL, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(editData),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {

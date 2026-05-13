@@ -1,6 +1,6 @@
 services:
   routemaster_api:
-    build: ./Furkan-Çağrı-Başkan/Web/routemaster-backend
+    build: ./Furkan-Cagri-Baskan/Web/routemaster-backend
     container_name: routemasterapi_kapsayici
     ports:
       - "3000:3000"

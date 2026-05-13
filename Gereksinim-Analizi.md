@@ -69,4 +69,4 @@
 
 # Gereksinim Dağılımları
 
-1. [Furkan Çağrı Başkan'ın Gereksinimleri](Furkan-Çağrı-Başkan/Furkan-Çağrı-Başkan-Gereksinimler.md)
+1. [Furkan Cagri Baskan'ın Gereksinimleri](Furkan-Cagri-Baskan/Furkan-Cagri-Baskan-Gereksinimler.md)

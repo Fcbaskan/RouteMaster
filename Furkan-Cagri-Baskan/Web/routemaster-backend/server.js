@@ -4,7 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const redis = require('redis');
-const amqp = require('amqplib'); 
+const amqp = require('amqplib');
 
 const { User, Travelogue, TravelogueRating, Favorite } = require('./models');
 
@@ -13,8 +13,6 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-//Redis Bağlantısı
-
 const redisClient = redis.createClient({
     url: process.env.REDIS_URL || 'redis://localhost:6379'
 });
@@ -22,7 +20,6 @@ const redisClient = redis.createClient({
 redisClient.on('error', (err) => console.error('Redis Hatası:', err));
 redisClient.connect().then(() => console.log("Redis'e Başarıyla Bağlanıldı! 🚀")).catch(console.error);
 
-// RabbitMQ Bağlantısı
 let rabbitChannel;
 async function connectRabbitMQ() {
     try {
@@ -54,7 +51,7 @@ const connectDB = async () => {
     if (isConnected) {
         return;
     }
-    
+
     try {
         const db = await mongoose.connect(process.env.MONGODB_URI);
         isConnected = db.connections[0].readyState === 1;
@@ -82,10 +79,10 @@ app.post('/auth/register', async (req, res) => {
             return res.status(400).json({ message: "Kullanıcı adı, e-posta ve şifre zorunludur!" });
         }
 
-        const existingUser = await User.findOne({ 
-            $or: [{ email: email }, { username: username }] 
+        const existingUser = await User.findOne({
+            $or: [{ email: email }, { username: username }]
         });
-        
+
         if (existingUser) {
             return res.status(409).json({ message: "Bu e-posta adresi veya kullanıcı adı zaten kayıtlı!" });
         }
@@ -129,9 +126,9 @@ app.post('/auth/login', async (req, res) => {
         const userResponse = user.toObject();
         delete userResponse.password;
 
-        res.status(200).json({ 
-            message: "Giriş başarılı!", 
-            user: userResponse 
+        res.status(200).json({
+            message: "Giriş başarılı!",
+            user: userResponse
         });
 
     } catch (error) {
@@ -142,12 +139,12 @@ app.post('/auth/login', async (req, res) => {
 
 app.put('/auth/users/:userid', async (req, res) => {
     try {
-        const userId = req.params.userid; 
+        const userId = req.params.userid;
         const { email, firstName, lastName, username } = req.body;
 
         const updatedUser = await User.findByIdAndUpdate(
-            userId, 
-            { email, firstName, lastName,username },
+            userId,
+            { email, firstName, lastName, username },
             { new: true, runValidators: true }
         );
 
@@ -172,7 +169,7 @@ app.put('/auth/users/:userid', async (req, res) => {
 app.get('/auth/users/:userid', async (req, res) => {
     try {
         const user = await User.findById(req.params.userid).select('-password');
-        
+
         if (!user) {
             return res.status(404).json({ message: "Profil bulunamadı" });
         }
@@ -185,11 +182,11 @@ app.get('/auth/users/:userid', async (req, res) => {
 app.delete('/auth/users/:userid', async (req, res) => {
     try {
         const deletedUser = await User.findByIdAndDelete(req.params.userid);
-        
+
         if (!deletedUser) {
             return res.status(404).json({ message: "Kullanıcı bulunamadı" });
         }
-        res.status(204).send(); 
+        res.status(204).send();
     } catch (error) {
         res.status(400).json({ message: "Geçersiz ID formatı veya sunucu hatası." });
     }
@@ -214,9 +211,9 @@ app.post('/travelogue', async (req, res) => {
         });
 
         await newTravelogue.save();
-        if(redisClient.isReady) {
-            await redisClient.flushAll(); 
-        };
+        if (redisClient.isReady) {
+            await redisClient.flushAll();
+        }
 
         if (rabbitChannel) {
             const mesaj = `Kullanıcı yeni bir rota ekledi: ${newTravelogue.title}`;
@@ -233,7 +230,7 @@ app.post('/travelogue', async (req, res) => {
 app.get('/travelogue/:travelogueId', async (req, res) => {
     try {
         const travelogue = await Travelogue.findById(req.params.travelogueId);
-        
+
         if (!travelogue) {
             return res.status(404).json({ message: "Gezi yazısı bulunamadı" });
         }
@@ -246,7 +243,7 @@ app.get('/travelogue/:travelogueId', async (req, res) => {
 app.put('/travelogue/:travelogueId', async (req, res) => {
     try {
         const { title, content, city, country, placesToVisit } = req.body;
-        
+
         const updatedTravelogue = await Travelogue.findByIdAndUpdate(
             req.params.travelogueId,
             { title, content, city, country, placesToVisit, updatedAt: Date.now() },
@@ -257,8 +254,8 @@ app.put('/travelogue/:travelogueId', async (req, res) => {
             return res.status(404).json({ message: "Gezi yazısı bulunamadı" });
         }
 
-        if(redisClient.isReady) {
-            await redisClient.flushAll(); 
+        if (redisClient.isReady) {
+            await redisClient.flushAll();
         }
 
         res.status(200).json(updatedTravelogue);
@@ -274,8 +271,8 @@ app.delete('/travelogue/:travelogueId', async (req, res) => {
             return res.status(404).json({ message: "Gezi yazısı bulunamadı" });
         }
 
-        if(redisClient.isReady) {
-            await redisClient.flushAll(); 
+        if (redisClient.isReady) {
+            await redisClient.flushAll();
         }
 
         res.status(204).send();
@@ -287,8 +284,7 @@ app.delete('/travelogue/:travelogueId', async (req, res) => {
 app.get('/travelogue', async (req, res) => {
     try {
         const { city, country, limit = 10, page = 1 } = req.query;
-        
-        // Sadece Redis bağlıysa önbellekten oku
+
         if (redisClient.isReady) {
             const cacheKey = `travelogues_${city || 'all'}_${country || 'all'}_${page}_${limit}`;
             const cachedData = await redisClient.get(cacheKey);
@@ -308,9 +304,8 @@ app.get('/travelogue', async (req, res) => {
         const travelogues = await Travelogue.find(filter)
             .skip(skip)
             .limit(parseInt(limit))
-            .sort({ createdAt: -1 }); 
+            .sort({ createdAt: -1 });
 
-        // Sadece Redis bağlıysa önbelleğe yaz
         if (redisClient.isReady) {
             const cacheKey = `travelogues_${city || 'all'}_${country || 'all'}_${page}_${limit}`;
             await redisClient.setEx(cacheKey, 3600, JSON.stringify(travelogues));
@@ -325,12 +320,12 @@ app.get('/travelogue', async (req, res) => {
 app.post('/ratings/:travelogueId', async (req, res) => {
     try {
         const travelogueId = req.params.travelogueId;
-        const { userId, rating } = req.body; 
+        const { userId, rating } = req.body;
 
         if (!userId || !rating) {
             return res.status(400).json({ message: "Kullanıcı ID ve puan (rating) zorunludur." });
         }
-    
+
         const newRating = new TravelogueRating({
             travelogueId: travelogueId,
             userId: userId,
@@ -352,9 +347,9 @@ app.delete('/ratings/:travelogueId/:userId', async (req, res) => {
         const travelogueId = req.params.travelogueId;
         const userId = req.params.userId;
 
-        const deletedRating = await TravelogueRating.findOneAndDelete({ 
-            travelogueId: travelogueId, 
-            userId: userId 
+        const deletedRating = await TravelogueRating.findOneAndDelete({
+            travelogueId: travelogueId,
+            userId: userId
         });
 
         if (!deletedRating) {
@@ -367,7 +362,6 @@ app.delete('/ratings/:travelogueId/:userId', async (req, res) => {
     }
 });
 
-// Bir yazının ortalama puanını ve toplam oy sayısını getir
 app.get('/ratings/:travelogueId', async (req, res) => {
     try {
         const travelogueId = req.params.travelogueId;
@@ -386,7 +380,6 @@ app.get('/ratings/:travelogueId', async (req, res) => {
     }
 });
 
-// Belirli bir kullanıcının bir yazıya verdiği puanı getir
 app.get('/ratings/:travelogueId/:userId', async (req, res) => {
     try {
         const { travelogueId, userId } = req.params;
@@ -402,11 +395,10 @@ app.get('/ratings/:travelogueId/:userId', async (req, res) => {
     }
 });
 
-
 app.put('/auth/users/:userid/password', async (req, res) => {
     try {
         const { currentPassword, newPassword } = req.body;
-        
+
         const user = await User.findById(req.params.userid);
         if (!user) {
             return res.status(404).json({ message: "Kullanıcı bulunamadı" });
@@ -432,14 +424,14 @@ app.post('/favorites', async (req, res) => {
         const newFavorite = new Favorite({ userId, itemId, type });
         await newFavorite.save();
 
-        res.status(201).json({ 
-            message: "Başarıyla favorilere eklendi!", 
-            favorite: newFavorite 
+        res.status(201).json({
+            message: "Başarıyla favorilere eklendi!",
+            favorite: newFavorite
         });
     } catch (error) {
-        res.status(500).json({ 
-            error: "Favori eklenirken sunucu hatası oluştu.", 
-            detay: error.message 
+        res.status(500).json({
+            error: "Favori eklenirken sunucu hatası oluştu.",
+            detay: error.message
         });
     }
 });
@@ -447,7 +439,7 @@ app.post('/favorites', async (req, res) => {
 app.get('/favorites/:userId', async (req, res) => {
     try {
         const userFavorites = await Favorite.find({ userId: req.params.userId });
-        
+
         res.status(200).json(userFavorites);
     } catch (error) {
         res.status(500).json({ error: "Favoriler getirilirken hata oluştu." });
@@ -459,15 +451,15 @@ app.delete('/favorites/:itemId/:userId', async (req, res) => {
         const itemId = req.params.itemId;
         const userId = req.params.userId;
 
-        const deletedFavorite = await Favorite.findOneAndDelete({ 
-            userId: userId, 
-            itemId: itemId 
+        const deletedFavorite = await Favorite.findOneAndDelete({
+            userId: userId,
+            itemId: itemId
         });
-        
+
         if (!deletedFavorite) {
             return res.status(404).json({ message: "Bu gezi yazısı zaten favorilerinizde yok." });
         }
-        
+
         res.status(200).json({ message: "Gezi yazısı favorilerden başarıyla çıkarıldı." });
     } catch (error) {
         res.status(500).json({ message: "Favori silinirken bir hata oluştu.", error: error.message });

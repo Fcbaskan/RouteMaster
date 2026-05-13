@@ -6,5 +6,5 @@ Bu dokümanda, proje ekibindeki her üyenin geliştirmekten sorumlu olduğu REST
 
 ## Grup Üyelerinin REST API Metotları
 
-1. [Furkan Çağrı Başkan'ın REST API Metotları](Furkan-Çağrı-Başkan/Furkan-Çağrı-Başkan-Rest-API-Gorevleri.md)
+1. [Furkan Cagri Baskan'ın REST API Metotları](Furkan-Cagri-Baskan/Furkan-Cagri-Baskan-Rest-API-Gorevleri.md)
 

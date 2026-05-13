@@ -8,7 +8,7 @@ Bu dokümanda, web uygulamasının kullanıcı arayüzü (UI) ve kullanıcı den
 
 ## Grup Üyelerinin Web Frontend Görevleri
 
-1. [Furkan Çağrı Başkan Web Frontend Görevleri](Furkan-Çağrı-Başkan/Furkan-Çağrı-Başkan-Web-Frontend-Gorevleri.md)
+1. [Furkan Cagri Baskan Web Frontend Görevleri](Furkan-Cagri-Baskan/Furkan-Cagri-Baskan-Web-Frontend-Gorevleri.md)
 
 ---
 

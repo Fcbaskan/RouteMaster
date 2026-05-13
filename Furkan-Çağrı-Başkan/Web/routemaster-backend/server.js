@@ -288,13 +288,14 @@ app.get('/travelogue', async (req, res) => {
     try {
         const { city, country, limit = 10, page = 1 } = req.query;
         
-        const cacheKey = `travelogues_${city || 'all'}_${country || 'all'}_${page}_${limit}`;
-        
-        const cachedData = await redisClient.get(cacheKey);
-
-        if (cachedData) {
-            console.log("⚡ Veriler çok hızlı bir şekilde Redis'ten (Önbellekten) getirildi!");
-            return res.status(200).json(JSON.parse(cachedData));
+        // Sadece Redis bağlıysa önbellekten oku
+        if (redisClient.isReady) {
+            const cacheKey = `travelogues_${city || 'all'}_${country || 'all'}_${page}_${limit}`;
+            const cachedData = await redisClient.get(cacheKey);
+            if (cachedData) {
+                console.log("⚡ Veriler Redis'ten (Önbellekten) getirildi!");
+                return res.status(200).json(JSON.parse(cachedData));
+            }
         }
 
         console.log("🐢 Veriler MongoDB'den çekiliyor...");
@@ -309,7 +310,11 @@ app.get('/travelogue', async (req, res) => {
             .limit(parseInt(limit))
             .sort({ createdAt: -1 }); 
 
-        await redisClient.setEx(cacheKey, 3600, JSON.stringify(travelogues));
+        // Sadece Redis bağlıysa önbelleğe yaz
+        if (redisClient.isReady) {
+            const cacheKey = `travelogues_${city || 'all'}_${country || 'all'}_${page}_${limit}`;
+            await redisClient.setEx(cacheKey, 3600, JSON.stringify(travelogues));
+        }
 
         res.status(200).json(travelogues);
     } catch (error) {

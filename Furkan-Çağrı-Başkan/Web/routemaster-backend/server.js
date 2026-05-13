@@ -256,6 +256,11 @@ app.put('/travelogue/:travelogueId', async (req, res) => {
         if (!updatedTravelogue) {
             return res.status(404).json({ message: "Gezi yazısı bulunamadı" });
         }
+
+        if(redisClient.isReady) {
+            await redisClient.flushAll(); 
+        }
+
         res.status(200).json(updatedTravelogue);
     } catch (error) {
         res.status(400).json({ message: "Geçersiz istek veya sunucu hatası.", error: error.message });
@@ -265,13 +270,15 @@ app.put('/travelogue/:travelogueId', async (req, res) => {
 app.delete('/travelogue/:travelogueId', async (req, res) => {
     try {
         const deletedTravelogue = await Travelogue.findByIdAndDelete(req.params.travelogueId);
-        // Örnek bir önbellek temizleme kodu:
-        
         if (!deletedTravelogue) {
             return res.status(404).json({ message: "Gezi yazısı bulunamadı" });
         }
+
+        if(redisClient.isReady) {
+            await redisClient.flushAll(); 
+        }
+
         res.status(204).send();
-        redisClient.del('travelogues'); // Veya benzeri bir önbellek silme komutu
     } catch (error) {
         res.status(400).json({ message: "Geçersiz ID formatı veya sunucu hatası." });
     }

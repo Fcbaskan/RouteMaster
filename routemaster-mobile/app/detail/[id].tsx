@@ -128,8 +128,25 @@ export default function DetailScreen() {
             <Text style={styles.authorText}>Yazar: {post.authorName || 'Bilinmiyor'}</Text>
             
             <View style={styles.divider} />
-            <Text style={styles.sectionTitle}>Gezilecek Yerler</Text>
-            <Text style={styles.placesText}>{post.placesToVisit}</Text>
+            <Text style={styles.sectionTitle}>🗺️ Gezilecek Yerler</Text>
+            {post.placesToVisit && post.placesToVisit.length > 0 ? (
+              <View style={styles.placesContainer}>
+                {(Array.isArray(post.placesToVisit)
+                  ? post.placesToVisit
+                  : post.placesToVisit.split(',').map((p: string) => p.trim())
+                ).map((yer: string, index: number, arr: string[]) => (
+                  <View key={index} style={styles.placeRow}>
+                    <View style={styles.placeDot} />
+                    <Text style={styles.placeText}>{yer}</Text>
+                    {index < arr.length - 1 && (
+                      <Text style={styles.placeArrow}>→</Text>
+                    )}
+                  </View>
+                ))}
+              </View>
+            ) : (
+              <Text style={styles.placesText}>Belirtilmemiş</Text>
+            )}
             
             <View style={styles.divider} />
             <Text style={styles.sectionTitle}>Gezi Notları</Text>
@@ -192,6 +209,11 @@ const styles = StyleSheet.create({
   divider: { height: 1, backgroundColor: '#eee', marginVertical: 15 },
   sectionTitle: { fontSize: 18, fontWeight: 'bold', color: '#e67e22', marginBottom: 10 },
   placesText: { fontSize: 16, color: '#444', lineHeight: 24, fontStyle: 'italic' },
+  placesContainer: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 6 },
+  placeRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  placeDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#e67e22' },
+  placeText: { fontSize: 15, color: '#333', fontWeight: '500' },
+  placeArrow: { fontSize: 18, color: '#e67e22', fontWeight: 'bold', marginHorizontal: 2 },
   contentText: { fontSize: 16, color: '#333', lineHeight: 26 },
   actionButtonsContainer: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 30, paddingTop: 20, borderTopWidth: 1, borderColor: '#eee' },
   actionButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', flex: 1, padding: 12, borderRadius: 10, marginHorizontal: 5 },

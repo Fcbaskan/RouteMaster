@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, Image, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -48,62 +48,81 @@ export default function LoginScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        {/* Havalı bir ikon veya logo */}
-        <Image 
-          source={{ uri: 'https://cdn-icons-png.flaticon.com/512/2060/2060284.png' }} 
-          style={styles.logo} 
-        />
-        <Text style={styles.title}>RouteMaster'a Hoş Geldin</Text>
-        <Text style={styles.subtitle}>Gezginlerin buluşma noktası</Text>
-      </View>
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: '#fff' }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.container}>
+          <View style={styles.header}>
+            {/* Havalı bir ikon veya logo */}
+            <Image 
+              source={{ uri: 'https://cdn-icons-png.flaticon.com/512/2060/2060284.png' }} 
+              style={styles.logo} 
+            />
+            <Text style={styles.title}>RouteMaster'a Hoş Geldin</Text>
+            <Text style={styles.subtitle}>Gezginlerin buluşma noktası</Text>
+          </View>
 
-      <View style={styles.form}>
-        <Text style={styles.label}>E-Posta Adresi</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="ornek@mail.com"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
+          <View style={styles.form}>
+            <Text style={styles.label}>E-Posta Adresi</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="ornek@mail.com"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              returnKeyType="next"
+            />
 
-        <Text style={styles.label}>Şifre</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="********"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+            <Text style={styles.label}>Şifre</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="********"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              returnKeyType="done"
+              onSubmitEditing={handleLogin}
+            />
 
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin} disabled={loading}>
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.loginButtonText}>Giriş Yap</Text>
-          )}
-        </TouchableOpacity>
+            <TouchableOpacity style={styles.loginButton} onPress={handleLogin} disabled={loading}>
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.loginButtonText}>Giriş Yap</Text>
+              )}
+            </TouchableOpacity>
 
-        <View style={styles.registerContainer}>
-          <Text style={styles.registerText}>Hesabın yok mu? </Text>
-          <TouchableOpacity onPress={() => router.push('/register')}>
-            <Text style={styles.registerLink}>Hemen Kayıt Ol</Text>
-          </TouchableOpacity>
+            <View style={styles.registerContainer}>
+              <Text style={styles.registerText}>Hesabın yok mu? </Text>
+              <TouchableOpacity onPress={() => router.push('/register')}>
+                <Text style={styles.registerLink}>Hemen Kayıt Ol</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-      </View>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
     justifyContent: 'center',
     padding: 20,
+    paddingTop: 60,
+    paddingBottom: 40,
   },
   header: {
     alignItems: 'center',

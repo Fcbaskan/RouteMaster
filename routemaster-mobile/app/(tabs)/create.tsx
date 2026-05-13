@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { useState, useRef } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage';;
 
@@ -7,10 +7,15 @@ export default function CreateScreen() {
   const [title, setTitle] = useState('');
   const [city, setCity] = useState('');
   const [country, setCountry] = useState('');
+  const [placesToVisit, setPlacesToVisit] = useState('');
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Fonksiyonun başına "async" ekledik
+  const cityRef = useRef<TextInput>(null);
+  const countryRef = useRef<TextInput>(null);
+  const placesRef = useRef<TextInput>(null);
+  const contentRef = useRef<TextInput>(null);
+
   const handleShare = async () => { 
     if (!title || !city || !country || !content) {
       Alert.alert('Eksik Bilgi', 'Lütfen tüm alanları doldurun!');
@@ -20,34 +25,38 @@ export default function CreateScreen() {
     setLoading(true);
 
     try {
-      // 1. ÖNCE TELEFONUN HAFIZASINDAN GİRİŞ YAPAN KULLANICIYI BULUYORUZ
       const storedUser = await AsyncStorage.getItem('user');
       const user = storedUser ? JSON.parse(storedUser) : null;
 
-      // Eğer kimse giriş yapmamışsa engelle
       if (!user) {
         Alert.alert("Hata", "Yazı paylaşmak için önce giriş yapmalısınız!");
         setLoading(false);
         return;
       }
 
-      // 2. GERÇEK KULLANICI BİLGİLERİYLE YENİ YAZIYI OLUŞTURUYORUZ
+      // Virgülle ayrılmış yerleri diziye çevir
+      const placesArray = placesToVisit
+        .split(',')
+        .map(p => p.trim())
+        .filter(p => p.length > 0);
+
       const newPost = {
-        title: title,
-        city: city,
-        country: country,
-        content: content,
-        authorId: user._id,           // SABİT ID YERİNE GERÇEK ID GELDİ
-        authorName: user.username     // SABİT İSİM YERİNE GERÇEK KULLANICI ADI GELDİ
+        title,
+        city,
+        country,
+        content,
+        placesToVisit: placesArray,
+        authorId: user._id,
+        authorName: user.username
       };
 
-      // 3. API'YE GÖNDERİYORUZ (Senin kendi IP adresinle aynı bıraktım)
       axios.post('http://10.34.47.203:3000/travelogue', newPost)
-        .then(response => {
+        .then(() => {
           Alert.alert('Harika! 🚀', 'Gezi yazınız başarıyla paylaşıldı.');
           setTitle('');
           setCity('');
           setCountry('');
+          setPlacesToVisit('');
           setContent('');
           setLoading(false);
         })
@@ -65,54 +74,154 @@ export default function CreateScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.headerTitle}>Yeni Rota Ekle</Text>
-
-      <TextInput 
-        style={styles.input} 
-        placeholder="Başlık (Örn: Harika Bir Hafta Sonu)" 
-        value={title} 
-        onChangeText={setTitle} 
-      />
-      
-      <View style={styles.row}>
-        <TextInput 
-          style={[styles.input, { flex: 1, marginRight: 5 }]} 
-          placeholder="Şehir" 
-          value={city} 
-          onChangeText={setCity} 
-        />
-        <TextInput 
-          style={[styles.input, { flex: 1, marginLeft: 5 }]} 
-          placeholder="Ülke" 
-          value={country} 
-          onChangeText={setCountry} 
-        />
-      </View>
-
-      <TextInput 
-        style={[styles.input, styles.textArea]} 
-        placeholder="Deneyimlerini anlat..." 
-        value={content} 
-        onChangeText={setContent} 
-        multiline={true} 
-        numberOfLines={6} 
-      />
-
-      <TouchableOpacity 
-        style={styles.button} 
-        onPress={handleShare} 
-        disabled={loading}
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: '#f5f5f5' }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        {loading ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.buttonText}>Paylaş</Text>
-        )}
-      </TouchableOpacity>
-    </View>
+        <View style={styles.container}>
+          <Text style={styles.headerTitle}>Yeni Rota Ekle</Text>
+
+          <TextInput
+            style={styles.input}
+            placeholder="Başlık (Örn: Harika Bir Hafta Sonu)"
+            value={title}
+            onChangeText={setTitle}
+            returnKeyType="next"
+            onSubmitEditing={() => cityRef.current?.focus()}
+            blurOnSubmit={false}
+          />
+
+          <View style={styles.row}>
+            <TextInput
+              ref={cityRef}
+              style={[styles.input, { flex: 1, marginRight: 5 }]}
+              placeholder="Şehir"
+              value={city}
+              onChangeText={setCity}
+              returnKeyType="next"
+              onSubmitEditing={() => countryRef.current?.focus()}
+              blurOnSubmit={false}
+            />
+            <TextInput
+              ref={countryRef}
+              style={[styles.input, { flex: 1, marginLeft: 5 }]}
+              placeholder="Ülke"
+              value={country}
+              onChangeText={setCountry}
+              returnKeyType="next"
+              onSubmitEditing={() => placesRef.current?.focus()}
+              blurOnSubmit={false}
+            />
+          </View>
+
+          <Text style={styles.fieldLabel}>🗺️ Gezilecek Yerler</Text>
+          <TextInput
+            ref={placesRef}
+            style={styles.input}
+            placeholder="Örn: Ayasofya, Topkapı Sarayı, Kapalıçarşı"
+            value={placesToVisit}
+            onChangeText={setPlacesToVisit}
+            returnKeyType="next"
+            onSubmitEditing={() => contentRef.current?.focus()}
+            blurOnSubmit={false}
+          />
+          <Text style={styles.hint}>Birden fazla yer eklemek için virgül (,) kullanın</Text>
+
+          <TextInput
+            ref={contentRef}
+            style={[styles.input, styles.textArea]}
+            placeholder="Deneyimlerini anlat..."
+            value={content}
+            onChangeText={setContent}
+            multiline={true}
+            numberOfLines={6}
+            returnKeyType="done"
+          />
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleShare}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Paylaş 🚀</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
+
+const styles = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+  },
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#f5f5f5',
+    paddingTop: 30,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#333',
+    textAlign: 'center'
+  },
+  fieldLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 6,
+  },
+  hint: {
+    fontSize: 12,
+    color: '#999',
+    marginTop: -10,
+    marginBottom: 15,
+    marginLeft: 4,
+  },
+  input: {
+    backgroundColor: '#fff',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    fontSize: 15,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  textArea: {
+    height: 120,
+    textAlignVertical: 'top',
+  },
+  button: {
+    backgroundColor: '#e67e22',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  }
+});
+
+
 
 const styles = StyleSheet.create({
   container: {

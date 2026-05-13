@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, ScrollView } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 
 export default function RegisterScreen() {
@@ -11,6 +11,12 @@ export default function RegisterScreen() {
   const [loading, setLoading] = useState(false);
   
   const router = useRouter();
+
+  // Input'lar arası geçiş için ref'ler
+  const lastNameRef = useRef<TextInput>(null);
+  const usernameRef = useRef<TextInput>(null);
+  const emailRef = useRef<TextInput>(null);
+  const passwordRef = useRef<TextInput>(null);
 
   // ⚠️ Kendi IP adresini buraya yazmayı unutma
   const API_URL = 'http://10.34.47.203:3000/auth/register';
@@ -50,75 +56,102 @@ export default function RegisterScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Aramıza Katıl</Text>
-          <Text style={styles.subtitle}>Yeni rotalar keşfetmeye hazır mısın?</Text>
-        </View>
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: '#fff' }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Text style={styles.title}>Aramıza Katıl</Text>
+            <Text style={styles.subtitle}>Yeni rotalar keşfetmeye hazır mısın?</Text>
+          </View>
 
-        <View style={styles.form}>
-          <Text style={styles.label}>Adınız</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Örn: Furkan Çağrı"
-            value={firstName}
-            onChangeText={setFirstName}
-          />
+          <View style={styles.form}>
+            <Text style={styles.label}>Adınız</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Örn: Furkan Çağrı"
+              value={firstName}
+              onChangeText={setFirstName}
+              returnKeyType="next"
+              onSubmitEditing={() => lastNameRef.current?.focus()}
+              blurOnSubmit={false}
+            />
 
-          <Text style={styles.label}>Soyadınız</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Örn: Başkan"
-            value={lastName}
-            onChangeText={setLastName}
-          />
+            <Text style={styles.label}>Soyadınız</Text>
+            <TextInput
+              ref={lastNameRef}
+              style={styles.input}
+              placeholder="Örn: Başkan"
+              value={lastName}
+              onChangeText={setLastName}
+              returnKeyType="next"
+              onSubmitEditing={() => usernameRef.current?.focus()}
+              blurOnSubmit={false}
+            />
 
-          <Text style={styles.label}>Kullanıcı Adı *</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Kullanıcı adınızı belirleyin"
-            value={username}
-            onChangeText={setUsername}
-            autoCapitalize="none"
-          />
+            <Text style={styles.label}>Kullanıcı Adı *</Text>
+            <TextInput
+              ref={usernameRef}
+              style={styles.input}
+              placeholder="Kullanıcı adınızı belirleyin"
+              value={username}
+              onChangeText={setUsername}
+              autoCapitalize="none"
+              returnKeyType="next"
+              onSubmitEditing={() => emailRef.current?.focus()}
+              blurOnSubmit={false}
+            />
 
-          <Text style={styles.label}>E-Posta Adresi *</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="ornek@mail.com"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
+            <Text style={styles.label}>E-Posta Adresi *</Text>
+            <TextInput
+              ref={emailRef}
+              style={styles.input}
+              placeholder="ornek@mail.com"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              returnKeyType="next"
+              onSubmitEditing={() => passwordRef.current?.focus()}
+              blurOnSubmit={false}
+            />
 
-          <Text style={styles.label}>Şifre *</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="En az 6 karakter"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
+            <Text style={styles.label}>Şifre *</Text>
+            <TextInput
+              ref={passwordRef}
+              style={styles.input}
+              placeholder="En az 6 karakter"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              returnKeyType="done"
+              onSubmitEditing={handleRegister}
+            />
 
-          <TouchableOpacity style={styles.registerButton} onPress={handleRegister} disabled={loading}>
-            {loading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.registerButtonText}>Kayıt Ol</Text>
-            )}
-          </TouchableOpacity>
-
-          <View style={styles.loginContainer}>
-            <Text style={styles.loginText}>Zaten bir hesabın var mı? </Text>
-            <TouchableOpacity onPress={() => router.push('/login')}>
-              <Text style={styles.loginLink}>Giriş Yap</Text>
+            <TouchableOpacity style={styles.registerButton} onPress={handleRegister} disabled={loading}>
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.registerButtonText}>Kayıt Ol</Text>
+              )}
             </TouchableOpacity>
+
+            <View style={styles.loginContainer}>
+              <Text style={styles.loginText}>Zaten bir hesabın var mı? </Text>
+              <TouchableOpacity onPress={() => router.push('/login')}>
+                <Text style={styles.loginLink}>Giriş Yap</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 

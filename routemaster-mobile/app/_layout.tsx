@@ -1,17 +1,16 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack, useRouter, useSegments } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
-import { useEffect, useState } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+// Auth kontrolü Stack içinde çalışan ayrı bir bileşende yapılıyor
+// Böylece router.replace() çağrıldığında navigator hazır oluyor
+function AuthGate() {
   const router = useRouter();
-  const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -24,20 +23,16 @@ export default function RootLayout() {
         }
       } catch (e) {
         router.replace('/login');
-      } finally {
-        setIsChecking(false);
       }
     };
     checkAuth();
   }, []);
 
-  if (isChecking) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#e67e22" />
-      </View>
-    );
-  }
+  return null;
+}
+
+export default function RootLayout() {
+  const colorScheme = useColorScheme();
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
@@ -47,6 +42,7 @@ export default function RootLayout() {
         <Stack.Screen name="register" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
       </Stack>
+      <AuthGate />
       <StatusBar style="auto" />
     </ThemeProvider>
   );

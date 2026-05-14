@@ -14,7 +14,7 @@ services:
     environment:
       - MONGODB_URI=${MONGODB_URI}
       - REDIS_URL=redis://redis_kapsayici:6379
-      - RABBITMQ_URL=amqp://rabbitmq_kapsayici:5672
+      - RABBITMQ_URL=amqp://rabbitmq:5672
     command: npm start
 
   mongo:
